@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.LocateCardMapper">
+
+    <resultMap type="LocateCard" id="LocateCardResult">
+        <result property="cardLocateId" column="card_locate_id"/>
+        <result property="cardLocateNo" column="card_locate_no"/>
+        <result property="cardLocateStatus" column="card_locate_status"/>
+        <result property="cardLocateUse" column="card_locate_use"/>
+        <result property="bindUserCode" column="bind_user_code"/>
+        <result property="bindUserName" column="bind_user_name"/>
+        <result property="leadName" column="lead_name"/>
+        <result property="leadTime" column="lead_time"/>
+        <result property="returnName" column="return_name"/>
+        <result property="returnTime" column="return_time"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <result property="bindUserIdCard" column="bind_user_id_card"/>
+        <result property="snNum" column="sn_num"/>
+        <result property="battery" column="battery"/>
+    </resultMap>
+
+    <sql id="selectLocateCardVo">
+        select card_locate_id, card_locate_no, card_locate_status, card_locate_use, bind_user_code, bind_user_name, lead_name, lead_time, return_name, return_time, del_flag, create_by, create_time, update_by, update_time, remark, bind_user_id_card,sn_num,battery from base_locate_card
+    </sql>
+
+    <select id="selectLocateCardList" parameterType="LocateCard" resultMap="LocateCardResult">
+        <include refid="selectLocateCardVo"/>
+        <where>
+            and del_flag = '0'
+            <if test="cardLocateNo != null  and cardLocateNo != ''">and card_locate_no = #{cardLocateNo}</if>
+            <if test="snNum != null  and snNum != ''">and sn_num = #{snNum}</if>
+            <if test="cardLocateStatus != null ">and card_locate_status = #{cardLocateStatus}</if>
+            <if test="cardLocateUse != null ">and card_locate_use = #{cardLocateUse}</if>
+            <if test="bindUserCode != null  and bindUserCode != ''">and bind_user_code = #{bindUserCode}</if>
+            <if test="bindUserName != null  and bindUserName != ''">and bind_user_name like concat('%', #{bindUserName},
+                '%')
+            </if>
+            <if test="leadName != null  and leadName != ''">and lead_name like concat('%', #{leadName}, '%')</if>
+            <if test="leadTime != null ">and lead_time = #{leadTime}</if>
+            <if test="returnName != null  and returnName != ''">and return_name like concat('%', #{returnName}, '%')
+            </if>
+            <if test="returnTime != null ">and return_time = #{returnTime}</if>
+            <if test="bindUserIdCard != null  and bindUserIdCard != ''">and bind_user_id_card = #{bindUserIdCard}</if>
+        </where>
+    </select>
+
+    <select id="selectLocateCardByCardLocateId" parameterType="Long" resultMap="LocateCardResult">
+        <include refid="selectLocateCardVo"/>
+        where card_locate_id = #{cardLocateId}
+    </select>
+
+    <select id="getByLocationCardNo" resultMap="LocateCardResult">
+        <include refid="selectLocateCardVo"/>
+        where card_locate_no = #{locationCardNo}
+        and del_flag = '0'
+    </select>
+    <update id="updateByLocationCardNo" parameterType="string">
+     update base_locate_card set card_locate_status = #{cardLocateStatus} where card_locate_no = #{locationCardNo}
+    </update>
+    <insert id="insertLocateCard" parameterType="LocateCard">
+        insert into base_locate_card
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cardLocateId != null">card_locate_id,</if>
+            <if test="snNum != null">sn_num,</if>
+            <if test="cardLocateNo != null">card_locate_no,</if>
+            <if test="cardLocateStatus != null">card_locate_status,</if>
+            <if test="cardLocateUse != null">card_locate_use,</if>
+            <if test="bindUserCode != null">bind_user_code,</if>
+            <if test="bindUserName != null">bind_user_name,</if>
+            <if test="leadName != null">lead_name,</if>
+            <if test="leadTime != null">lead_time,</if>
+            <if test="returnName != null">return_name,</if>
+            <if test="returnTime != null">return_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="bindUserIdCard != null">bind_user_id_card,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cardLocateId != null">#{cardLocateId},</if>
+            <if test="snNum != null">#{snNum},</if>
+            <if test="cardLocateNo != null">#{cardLocateNo},</if>
+            <if test="cardLocateStatus != null">#{cardLocateStatus},</if>
+            <if test="cardLocateUse != null">#{cardLocateUse},</if>
+            <if test="bindUserCode != null">#{bindUserCode},</if>
+            <if test="bindUserName != null">#{bindUserName},</if>
+            <if test="leadName != null">#{leadName},</if>
+            <if test="leadTime != null">#{leadTime},</if>
+            <if test="returnName != null">#{returnName},</if>
+            <if test="returnTime != null">#{returnTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="bindUserIdCard != null">#{bindUserIdCard},</if>
+        </trim>
+    </insert>
+
+    <update id="updateLocateCard" parameterType="LocateCard">
+        update base_locate_card
+        <trim prefix="SET" suffixOverrides=",">
+            card_locate_no = #{cardLocateNo},
+            sn_num = #{snNum},
+            card_locate_status = #{cardLocateStatus},
+            card_locate_use = #{cardLocateUse},
+            bind_user_code = #{bindUserCode},
+            bind_user_name = #{bindUserName},
+            lead_name = #{leadName},
+            lead_time = #{leadTime},
+            return_name = #{returnName},
+            return_time = #{returnTime},
+            bind_user_id_card = #{bindUserIdCard},
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where card_locate_id = #{cardLocateId}
+    </update>
+
+    <update id="deleteLocateCardByCardLocateId" parameterType="Long">
+        update base_locate_card set del_flag = '2' where card_locate_id = #{cardLocateId}
+    </update>
+
+    <update id="deleteLocateCardByCardLocateIds" parameterType="String">
+        update base_locate_card set del_flag = '2' where card_locate_id in
+        <foreach item="cardLocateId" collection="array" open="(" separator="," close=")">
+            #{cardLocateId}
+        </foreach>
+    </update>
+
+
+    <update id="updateNo" parameterType="String">
+          update base_locate_card set sn_num =#{snNum} where card_locate_no = #{cardLocateNo}
+    </update>
+
+    <!--根据SN号修改电量-->
+    <update id="updateBySn">
+      UPDATE base_locate_card SET battery=#{battery} WHERE sn_num=#{snNum}
+    </update>
+
+    <select id="selectCardBySn" parameterType="java.lang.String" resultMap="LocateCardResult">
+        <include refid="selectLocateCardVo"/>
+        where sn_num = #{snNum} and del_flag = '0'
+    </select>
+</mapper>

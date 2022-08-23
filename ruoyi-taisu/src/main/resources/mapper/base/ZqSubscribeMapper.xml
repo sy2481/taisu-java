@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.ZqSubscribeMapper">
+
+    <resultMap type="ZqSubscribe" id="ZqSubscribeResult">
+        <result property="id"    column="id"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="sendTime"    column="send_time"    />
+        <result property="dataType"    column="data_type"    />
+        <result property="socialCreditCode"    column="social_credit_code"    />
+        <result property="warnId"    column="warn_id"    />
+        <result property="warnTime"    column="warn_time"    />
+        <result property="warnType"    column="warn_type"    />
+        <result property="alarmInfo"    column="alarm_info"    />
+        <result property="cede"    column="cede"    />
+        <result property="alarmType"    column="alarm_type"    />
+        <result property="alarmLocation"    column="alarm_location"    />
+        <result property="deptId"    column="dept_id"    />
+    </resultMap>
+
+    <sql id="selectZqSubscribeVo">
+        select id, del_flag, create_by, create_time, update_by, update_time, remark, send_time, data_type, social_credit_code, warn_id, warn_time, warn_type, alarm_info, cede, alarm_type, alarm_location,dept_id from zq_subscribe
+    </sql>
+
+    <select id="selectZqSubscribeList" parameterType="ZqSubscribe" resultMap="ZqSubscribeResult">
+        <include refid="selectZqSubscribeVo"/>
+        <where>
+            <if test="deptIds != null  and deptIds != ''"> and dept_id in
+                <foreach collection='deptIds' item='item' separator=',' open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="sendTime != null ">
+                AND CONVERT(varchar(100), send_time, 23) &gt;= CONVERT(varchar(100), #{sendTime}, 23)
+             </if>
+            <if test="dataType != null  and dataType != ''"> and data_type = #{dataType}</if>
+            <if test="socialCreditCode != null  and socialCreditCode != ''"> and social_credit_code = #{socialCreditCode}</if>
+            <if test="warnId != null  and warnId != ''"> and warn_id = #{warnId}</if>
+            <if test="warnTime != null ">
+                AND CONVERT(varchar(100), warn_time, 23) &gt;= CONVERT(varchar(100), #{warnTime}, 23)
+             </if>
+            <if test="warnType != null  and warnType != ''"> and warn_type = #{warnType}</if>
+            <if test="alarmInfo != null  and alarmInfo != ''"> and alarm_info = #{alarmInfo}</if>
+            <if test="cede != null  and cede != ''"> and cede = #{cede}</if>
+            <if test="alarmType != null  and alarmType != ''"> and alarm_type = #{alarmType}</if>
+            <if test="alarmLocation != null  and alarmLocation != ''"> and alarm_location = #{alarmLocation}</if>
+            <if test="deptId != null"> and dept_id = #{deptId}</if>
+        </where>
+        ORDER BY warn_time DESC
+    </select>
+
+    <select id="selectZqSubscribeById" parameterType="Long" resultMap="ZqSubscribeResult">
+        <include refid="selectZqSubscribeVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertZqSubscribe" parameterType="ZqSubscribe">
+        insert into zq_subscribe
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="sendTime != null">send_time,</if>
+            <if test="dataType != null">data_type,</if>
+            <if test="socialCreditCode != null">social_credit_code,</if>
+            <if test="warnId != null">warn_id,</if>
+            <if test="warnTime != null">warn_time,</if>
+            <if test="warnType != null">warn_type,</if>
+            <if test="alarmInfo != null">alarm_info,</if>
+            <if test="cede != null">cede,</if>
+            <if test="alarmType != null">alarm_type,</if>
+            <if test="alarmLocation != null">alarm_location,</if>
+            <if test="deptId != null">dept_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="sendTime != null">#{sendTime},</if>
+            <if test="dataType != null">#{dataType},</if>
+            <if test="socialCreditCode != null">#{socialCreditCode},</if>
+            <if test="warnId != null">#{warnId},</if>
+            <if test="warnTime != null">#{warnTime},</if>
+            <if test="warnType != null">#{warnType},</if>
+            <if test="alarmInfo != null">#{alarmInfo},</if>
+            <if test="cede != null">#{cede},</if>
+            <if test="alarmType != null">#{alarmType},</if>
+            <if test="alarmLocation != null">#{alarmLocation},</if>
+            <if test="deptId != null">#{deptId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateZqSubscribe" parameterType="ZqSubscribe">
+        update zq_subscribe
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="sendTime != null">send_time = #{sendTime},</if>
+            <if test="dataType != null">data_type = #{dataType},</if>
+            <if test="socialCreditCode != null">social_credit_code = #{socialCreditCode},</if>
+            <if test="warnId != null">warn_id = #{warnId},</if>
+            <if test="warnTime != null">warn_time = #{warnTime},</if>
+            <if test="warnType != null">warn_type = #{warnType},</if>
+            <if test="alarmInfo != null">alarm_info = #{alarmInfo},</if>
+            <if test="cede != null">cede = #{cede},</if>
+            <if test="alarmType != null">alarm_type = #{alarmType},</if>
+            <if test="alarmLocation != null">alarm_location = #{alarmLocation},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteZqSubscribeById" parameterType="Long">
+        delete from zq_subscribe where id = #{id}
+    </delete>
+
+    <delete id="deleteZqSubscribeByIds" parameterType="String">
+        delete from zq_subscribe where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

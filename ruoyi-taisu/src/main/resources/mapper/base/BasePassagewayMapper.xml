@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.BasePassagewayMapper">
+    
+    <resultMap type="BasePassageway" id="BasePassagewayResult">
+        <result property="passagewayId"    column="passageway_id"    />
+        <result property="name"    column="name"    />
+        <result property="type"    column="type"    />
+        <result property="mode"    column="mode"    />
+        <result property="enable"    column="enable"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="creator"    column="creator"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="doorId"    column="door_id"    />
+        <result property="doorName"    column="door_name"    />
+        <result property="inOutMode"    column="in_out_mode"    />
+        <result property="plantAreaId"    column="plant_area_id"    />
+        <result property="plantAreaName"    column="plant_area_name"    />
+        <result property="hikEquipmentCount"    column="equipment_count"    />
+        <result property="operationCount"    column="operation_count"    />
+    </resultMap>
+
+    <sql id="selectBasePassagewayVo">
+        select p.passageway_id, p.name, p.type, p.mode, p.enable, p.create_time, p.creator, p.update_time, p.door_id, p.in_out_mode, d.plant_area_id, dept.dept_name as plant_area_name,d.name as door_name,
+        (case when e.equipment_count is null then 0 else e.equipment_count end) as equipment_count,
+        (case when o.operation_count is null then 0 else o.operation_count end) as operation_count
+        from base_passageway p
+        inner join base_door d on p.door_id=d.door_id
+        inner join sys_dept dept on dept.dept_id=d.plant_area_id
+        left join (select passageway_id,count(hik_equipment_id) as equipment_count from base_passageway_equipment group by passageway_id) as e
+        on p.passageway_id=e.passageway_id
+        left join (select passageway_id,count(operation_id) as operation_count from base_passageway_operation group by passageway_id) as o
+        on p.passageway_id=o.passageway_id
+    </sql>
+
+    <select id="selectBasePassagewayList" parameterType="BasePassageway" resultMap="BasePassagewayResult">
+        <include refid="selectBasePassagewayVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and p.name like concat('%', #{name}, '%')</if>
+            <if test="type != null  and type != ''"> and p.type = #{type}</if>
+            <if test="mode != null  and mode != ''"> and p.mode = #{mode}</if>
+            <if test="enable != null "> and p.enable = #{enable}</if>
+            <if test="creator != null  and creator != ''"> and p.creator = #{creator}</if>
+            <if test="doorId != null  and doorId != ''"> and p.door_id = #{doorId}</if>
+            <if test="doorName != null  and doorName != ''"> and d.name like concat('%', #{doorName}, '%')</if>
+            <if test="inOutMode != null  and inOutMode != ''"> and p.in_out_mode = #{inOutMode}</if>
+            <if test="plantAreaId != null  and plantAreaId != ''"> and d.plant_area_id = #{plantAreaId}</if>
+            <if test="plantAreaName != null  and plantAreaName != ''"> and dept.dept_name like concat('%', #{plantAreaName}, '%')</if>
+        </where>
+        order by d.plant_area_id,p.door_id,p.type,p.in_out_mode
+    </select>
+    
+    <select id="selectBasePassagewayById" parameterType="Long" resultMap="BasePassagewayResult">
+        <include refid="selectBasePassagewayVo"/>
+        where p.passageway_id = #{passagewayId}
+    </select>
+        
+    <insert id="insertBasePassageway" parameterType="BasePassageway">
+        insert into base_passageway
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="passagewayId != null">passageway_id,</if>
+            <if test="name != null">name,</if>
+            <if test="type != null">type,</if>
+            <if test="mode != null">mode,</if>
+            <if test="enable != null">enable,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="creator != null">creator,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="doorId != null">door_id,</if>
+            <if test="inOutMode != null">in_out_mode,</if>
+            <if test="plantAreaName != null">plant_area_name,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="passagewayId != null">#{passagewayId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="type != null">#{type},</if>
+            <if test="mode != null">#{mode},</if>
+            <if test="enable != null">#{enable},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="creator != null">#{creator},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="doorId != null">#{doorId},</if>
+            <if test="inOutMode != null">#{inOutMode},</if>
+            <if test="plantAreaName != null">#{plantAreaName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBasePassageway" parameterType="BasePassageway">
+        update base_passageway
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="mode != null">mode = #{mode},</if>
+            <if test="enable != null">enable = #{enable},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="creator != null">creator = #{creator},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="doorId != null">door_id = #{doorId},</if>
+            <if test="inOutMode != null">in_out_mode = #{inOutMode},</if>
+            <if test="plantAreaName != null">plant_area_name = #{plantAreaName},</if>
+        </trim>
+        where passageway_id = #{passagewayId}
+    </update>
+
+    <delete id="deleteBasePassagewayById" parameterType="Long">
+        delete from base_passageway where passageway_id = #{passagewayId}
+    </delete>
+
+    <delete id="deleteBasePassagewayByIds" parameterType="String">
+        delete from base_passageway where passageway_id in
+        <foreach item="passagewayId" collection="array" open="(" separator="," close=")">
+            #{passagewayId}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.CarCardMapper">
+    
+    <resultMap type="CarCard" id="CarCardResult">
+        <result property="cardCarId"    column="card_car_id"    />
+        <result property="cardCarNo"    column="card_car_no"    />
+        <result property="cardCarStatus"    column="card_car_status"    />
+        <result property="cardCarUse"    column="card_car_use"    />
+        <result property="bindPlateNo"    column="bind_plate_no"    />
+        <result property="leadName"    column="lead_name"    />
+        <result property="leadTime"    column="lead_time"    />
+        <result property="returnName"    column="return_name"    />
+        <result property="returnTime"    column="return_time"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectCarCardVo">
+        select card_car_id, card_car_no, card_car_status, card_car_use, bind_plate_no, lead_name, lead_time, return_name, return_time, del_flag, create_by, create_time, update_by, update_time, remark from base_car_card
+    </sql>
+
+    <select id="selectCarCardList" parameterType="CarCard" resultMap="CarCardResult">
+        <include refid="selectCarCardVo"/>
+        <where>
+            and del_flag = '0'
+            <if test="cardCarNo != null  and cardCarNo != ''"> and card_car_no = #{cardCarNo}</if>
+            <if test="cardCarStatus != null "> and card_car_status = #{cardCarStatus}</if>
+            <if test="cardCarUse != null "> and card_car_use = #{cardCarUse}</if>
+            <if test="bindPlateNo != null  and bindPlateNo != ''"> and bind_plate_no = #{bindPlateNo}</if>
+            <if test="leadName != null  and leadName != ''"> and lead_name like concat('%', #{leadName}, '%')</if>
+            <if test="leadTime != null "> and lead_time = #{leadTime}</if>
+            <if test="returnName != null  and returnName != ''"> and return_name like concat('%', #{returnName}, '%')</if>
+            <if test="returnTime != null "> and return_time = #{returnTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectCarCardByCardCarId" parameterType="Long" resultMap="CarCardResult">
+        <include refid="selectCarCardVo"/>
+        where card_car_id = #{cardCarId}
+    </select>
+
+    <select id="selectCarCardByCardCarNo" parameterType="string" resultMap="CarCardResult">
+        <include refid="selectCarCardVo"/>
+        where card_car_no = #{cardCarNo}  and del_flag = '0'
+    </select>
+        
+    <insert id="insertCarCard" parameterType="CarCard">
+        insert into base_car_card
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cardCarId != null">card_car_id,</if>
+            <if test="cardCarNo != null">card_car_no,</if>
+            <if test="cardCarStatus != null">card_car_status,</if>
+            <if test="cardCarUse != null">card_car_use,</if>
+            <if test="bindPlateNo != null">bind_plate_no,</if>
+            <if test="leadName != null">lead_name,</if>
+            <if test="leadTime != null">lead_time,</if>
+            <if test="returnName != null">return_name,</if>
+            <if test="returnTime != null">return_time,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cardCarId != null">#{cardCarId},</if>
+            <if test="cardCarNo != null">#{cardCarNo},</if>
+            <if test="cardCarStatus != null">#{cardCarStatus},</if>
+            <if test="cardCarUse != null">#{cardCarUse},</if>
+            <if test="bindPlateNo != null">#{bindPlateNo},</if>
+            <if test="leadName != null">#{leadName},</if>
+            <if test="leadTime != null">#{leadTime},</if>
+            <if test="returnName != null">#{returnName},</if>
+            <if test="returnTime != null">#{returnTime},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCarCard" parameterType="CarCard">
+        update base_car_card
+        <trim prefix="SET" suffixOverrides=",">
+            card_car_no = #{cardCarNo},
+            card_car_status = #{cardCarStatus},
+            card_car_use = #{cardCarUse},
+            bind_plate_no = #{bindPlateNo},
+            lead_name = #{leadName},
+            lead_time = #{leadTime},
+            return_name = #{returnName},
+            return_time = #{returnTime},
+            del_flag = #{delFlag},
+            create_by = #{createBy},
+            create_time = #{createTime},
+            update_by = #{updateBy},
+            update_time = #{updateTime},
+            remark = #{remark},
+        </trim>
+        where card_car_id = #{cardCarId}
+    </update>
+
+    <update id="updateCarCardByNo" parameterType="CarCard">
+        update base_car_card
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cardCarNo != null">card_car_no = #{cardCarNo},</if>
+            <if test="cardCarStatus != null">card_car_status = #{cardCarStatus},</if>
+            <if test="cardCarUse != null">card_car_use = #{cardCarUse},</if>
+            bind_plate_no = #{bindPlateNo},
+           lead_name = #{leadName},
+            lead_time = #{leadTime},
+            return_name = #{returnName},
+            return_time = #{returnTime},
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where card_car_no = #{cardCarNo} AND del_flag = '0'
+    </update>
+
+    <update id="deleteCarCardByCardCarId" parameterType="Long">
+        update base_car_card set del_flag = '2' where card_car_id = #{cardCarId}
+    </update>
+
+    <update id="deleteCarCardByCardCarIds" parameterType="String">
+        update base_car_card set del_flag = '2' where card_car_id in
+        <foreach item="cardCarId" collection="array" open="(" separator="," close=")">
+            #{cardCarId}
+        </foreach>
+    </update>
+
+    <update id="dailyClear">
+        update base_car_card set card_car_status = '0' where card_car_use = '2'
+    </update>
+</mapper>

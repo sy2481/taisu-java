@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.EquipmentMapper">
+
+    <resultMap type="HikEquipment" id="HikEquipmentResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="ip"    column="ip"    />
+        <result property="sign"    column="sign"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="indexCode"    column="index_code"    />
+        <result property="frontIp"    column="front_ip"    />
+        <result property="deviceType"    column="device_type"    />
+        <result property="subtitleMachineIp"    column="subtitle_machine_ip"    />
+        <result property="equipmentUseType"    column="equipment_use_type"    />
+        <result property="ledCode"    column="led_code"    />
+    </resultMap>
+
+    <select id="listCarEquipmentCode" resultType="java.lang.String">
+        SELECT he.index_code FROM plc_equipment opt
+        LEFT JOIN hik_equipment he ON he.front_ip = opt.ip
+        WHERE opt.ip = #{ip} AND device_type = '1'
+    </select>
+    <select id="listPersonEquipmentCode" resultType="java.lang.String">
+        SELECT he.index_code FROM plc_equipment opt
+        LEFT JOIN hik_equipment he ON he.front_ip = opt.ip
+        WHERE opt.ip = #{ip} AND device_type = '0'
+    </select>
+
+    <select id="listPlcRelation" resultType="com.ruoyi.base.bo.PlcRelationBO">
+        SELECT
+            pe.id as plcId,
+            pe.name as plcName,
+            pe.ip as plcIp,
+            pe.port as plcPort,
+            pe.control as control,
+            pe.time1 as time1,
+            pe.time2 as time2,
+            pe.time3 as time3,
+            pe.control_type as controlType,
+            ph.person_device_id as personId,
+            ph.car_device_id as carDeviceId,
+            ph.plc_command as plcCommand
+        FROM plc_equipment pe
+        LEFT JOIN plc_hik ph ON ph.plc_id = pe.id
+    </select>
+
+    <select id="getById" resultMap="HikEquipmentResult">
+        select * from hik_equipment where id = #{id}
+    </select>
+
+    <select id="findByFrontIp" resultMap="HikEquipmentResult">
+        select * from hik_equipment where front_ip = #{ip}
+    </select>
+
+    <select id="findLocationEquipList" resultType="java.lang.String">
+        SELECT index_code FROM hik_equipment WHERE equipment_use_type = '1'
+    </select>
+
+    <select id="findByIp" resultMap="HikEquipmentResult">
+        select * from hik_equipment where ip = #{ip}
+    </select>
+    <select id="listLocationEquip" resultMap="HikEquipmentResult">
+        select * from hik_equipment where equipment_use_type = '1'
+    </select>
+    <select id="listEquipByType" resultMap="HikEquipmentResult">
+        select * from hik_equipment where device_type = #{type}
+    </select>
+
+</mapper>

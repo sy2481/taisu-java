@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.ManFactoryMapper">
+
+    <resultMap type="com.ruoyi.base.domain.ManFactory" id="ManFactoryResult">
+        <result property="factoryId" column="factory_id"/>
+        <result property="idCard" column="id_card"/>
+        <result property="lcensePlate" column="lcense_plate"/>
+        <result property="name" column="name"/>
+        <result property="ipLtLic" column="ip_lt_lic"/>
+        <result property="factoryName" column="factory_name"/>
+        <result property="mngName" column="mng_name"/>
+        <result property="mngTime" column="mng_time"/>
+        <result property="type" column="type"/>
+        <result property="sex" column="sex"/>
+        <result property="face" column="face"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+        <result property="thisNumber" column="this_number"/>
+        <result property="birthDay" column="birth_day"/>
+        <result property="cardType" column="card_type"/>
+        <result property="locationCard" column="location_card"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="carCardNo" column="car_card_no"/>
+        <result property="workNo" column="work_no"/>
+        <result property="lead" column="lead"/>
+        <result property="entered" column="entered"/>
+        <result property="dangerType" column="danger_type"/>
+        <result property="sended" column="sended"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="snNum" column="sn_num"/>
+        <result property="picInsertTime" column="pic_insert_time"/>
+    </resultMap>
+
+    <sql id="selectManFactoryVo">
+        select factory_id, id_card, lcense_plate, name, ip_lt_lic, factory_name, mng_name,
+               mng_time, type, sex, face, phone, address, this_number, birth_day, card_type, location_card,
+               del_flag, create_by, create_time, car_card_no,work_no, lead, entered, danger_type, sended,dept_id,sn_num,pic_insert_time from man_factory
+    </sql>
+
+
+    <select id="selectManFactoryList" parameterType="com.ruoyi.base.domain.ManFactory" resultMap="ManFactoryResult">
+        <include refid="selectManFactoryVo"/>
+        <where>
+            del_flag = '0'
+            <if test="factoryIdList != null  and factoryIdList != ''"> and dept_id in
+                <foreach collection='factoryIdList' item='item' separator=',' open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="idCard != null  and idCard != ''">and id_card like concat('%', #{idCard}, '%')</if>
+            <if test="workNo != null  and workNo != ''">and work_no like concat('%', #{workNo}, '%')</if>
+            <if test="lcensePlate != null  and lcensePlate != ''">and lcense_plate like concat('%', #{lcensePlate},
+                '%')
+            </if>
+            <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
+            <if test="factoryName != null  and factoryName != ''">and factory_name like concat('%', #{factoryName},
+                '%')
+            </if>
+            <if test="phone != null  and phone != ''">and phone like concat('%', #{phone}, '%')</if>
+            <if test="ipLtLic != null  and ipLtLic != ''">and ip_lt_lic like concat('%', #{ipLtLic}, '%')</if>
+            <if test="thisNumber != null  and thisNumber != ''">and this_number = #{thisNumber}</if>
+            <if test="locationCard != null  and locationCard != ''">and location_card = #{locationCard}</if>
+            <if test="snNum != null  and snNum != ''">and sn_num like concat('%', #{snNum}, '%')</if>
+            <if test="dangerType != null">and danger_type = #{dangerType}</if>
+            <if test="sended != null">and sended = #{sended}</if>
+            <if test="existenceFace ==0">and (face !='' OR face IS NOT NULL)</if>
+            <if test="existenceFace ==1">and (face ='' OR face IS  NULL)</if>
+
+            <if test="today ==0">and (work_no !='' OR work_no IS NOT NULL)</if>
+            <if test="today ==1">and (work_no ='' OR work_no IS  NULL) </if>
+            <if test="haveCarNum ==0">and (lcense_plate !='' OR lcense_plate IS NOT NULL)</if>
+            <if test="haveCarNum ==1">and (lcense_plate ='' OR lcense_plate IS  NULL) </if>
+        </where>
+        order by factory_id desc
+    </select>
+
+    <select id="selectManFactoryByFactoryId" parameterType="Long" resultMap="ManFactoryResult">
+        <include refid="selectManFactoryVo"/>
+        where factory_id = #{factoryId}
+    </select>
+
+    <select id="selectManFactoryByIdCard" parameterType="String" resultMap="ManFactoryResult">
+        <include refid="selectManFactoryVo"/>
+        where id_card = #{idCard} and del_flag = '0'
+    </select>
+
+
+    <insert id="insertManFactory" useGeneratedKeys="true" keyProperty="factoryId"
+            parameterType="com.ruoyi.base.domain.ManFactory">
+        insert into man_factory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="factoryId != null">factory_id,</if>
+            <if test="idCard != null">id_card,</if>
+            <if test="lcensePlate != null">lcense_plate,</if>
+            <if test="name != null">name,</if>
+            <if test="ipLtLic != null">ip_lt_lic,</if>
+            <if test="factoryName != null">factory_name,</if>
+            <if test="mngName != null">mng_name,</if>
+            <if test="mngTime != null">mng_time,</if>
+            <if test="type != null">type,</if>
+            <if test="sex != null">sex,</if>
+            <if test="face != null">face,</if>
+            <if test="phone != null">phone,</if>
+            <if test="address != null">address,</if>
+            <if test="thisNumber != null">this_number,</if>
+            <if test="birthDay != null">birth_day,</if>
+            <if test="cardType != null">card_type,</if>
+            <if test="locationCard != null">location_card,</if>
+            <if test="snNum != null">sn_num,</if>
+            <if test="carCardNo != null">car_card_no,</if>
+            <if test="workNo != null">work_no,</if>
+            <if test="lead != null">lead,</if>
+            <if test="entered != null">entered,</if>
+            <if test="dangerType != null">danger_type,</if>
+            <if test="sended != null">sended,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="picInsertTime != null">pic_insert_time</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="factoryId != null">#{factoryId},</if>
+            <if test="idCard != null">#{idCard},</if>
+            <if test="lcensePlate != null">#{lcensePlate},</if>
+            <if test="name != null">#{name},</if>
+            <if test="ipLtLic != null">#{ipLtLic},</if>
+            <if test="factoryName != null">#{factoryName},</if>
+            <if test="mngName != null">#{mngName},</if>
+            <if test="mngTime != null">#{mngTime},</if>
+            <if test="type != null">#{type},</if>
+            <if test="sex != null">#{sex},</if>
+            <if test="face != null">#{face},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="address != null">#{address},</if>
+            <if test="thisNumber != null">#{thisNumber},</if>
+            <if test="birthDay != null">#{birthDay},</if>
+            <if test="cardType != null">#{cardType},</if>
+            <if test="locationCard != null">#{locationCard},</if>
+            <if test="snNum != null">#{snNum},</if>
+            <if test="carCardNo != null">#{carCardNo},</if>
+            <if test="workNo != null">#{workNo},</if>
+            <if test="lead != null">#{lead},</if>
+            <if test="entered != null">#{entered},</if>
+            <if test="dangerType != null">#{dangerType},</if>
+            <if test="sended != null">#{sended},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="picInsertTime != null">#{picInsertTime}</if>
+        </trim>
+    </insert>
+
+    <update id="updateManFactory" parameterType="com.ruoyi.base.domain.ManFactory">
+        update man_factory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="lcensePlate != null">lcense_plate = #{lcensePlate},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="ipLtLic != null">ip_lt_lic = #{ipLtLic},</if>
+            <if test="factoryName != null">factory_name = #{factoryName},</if>
+            <if test="mngName != null">mng_name = #{mngName},</if>
+            <if test="mngTime != null">mng_time = #{mngTime},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="face != null">face = #{face},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="thisNumber != null">this_number = #{thisNumber},</if>
+            <if test="birthDay != null">birth_day = #{birthDay},</if>
+            <if test="cardType != null">card_type = #{cardType},</if>
+            <if test="locationCard != null">location_card = #{locationCard},</if>
+            <if test="snNum != null">sn_num = #{snNum},</if>
+
+            <if test="carCardNo != null">car_card_no = #{carCardNo},</if>
+            <if test="workNo != null">work_no = #{workNo},</if>
+            <if test="lead != null">lead = #{lead},</if>
+            <if test="entered != null">entered = #{entered},</if>
+            <if test="sended != null">sended = #{sended},</if>
+            <if test="deptId != null">dept_id =#{deptId},</if>
+            <if test="picInsertTime !=null">pic_insert_time=#{picInsertTime},</if>
+        </trim>
+        where factory_id = #{factoryId}
+    </update>
+
+    <update id="updateManFactoryByWorkNo" parameterType="com.ruoyi.base.domain.ManFactory">
+        update man_factory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="lcensePlate != null">lcense_plate = #{lcensePlate},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="ipLtLic != null">ip_lt_lic = #{ipLtLic},</if>
+            <if test="factoryName != null">factory_name = #{factoryName},</if>
+            <if test="mngName != null">mng_name = #{mngName},</if>
+            <if test="mngTime != null">mng_time = #{mngTime},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="face != null">face = #{face},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="thisNumber != null">this_number = #{thisNumber},</if>
+            <if test="birthDay != null">birth_day = #{birthDay},</if>
+            <if test="cardType != null">card_type = #{cardType},</if>
+            <if test="locationCard != null">location_card = #{locationCard},</if>
+            <if test="carCardNo != null">car_card_no = #{carCardNo},</if>
+            <if test="lead != null">lead = #{lead},</if>
+            <if test="deptId != null">dept_id =#{deptId},</if>
+            <if test="picInsertTime != null">pic_insert_time=#{picInsertTime},</if>
+        </trim>
+        where work_no = #{workNo} and del_flag = '0'
+    </update>
+
+    <update id="deleteManFactoryByFactoryId" parameterType="Long">
+        update man_factory set del_flag = '2' where factory_id = #{factoryId}
+    </update>
+
+    <update id="deleteManFactoryByFactoryIds" parameterType="String">
+        update man_factory set del_flag = '2' where factory_id in
+        <foreach item="factoryId" collection="array" open="(" separator="," close=")">
+            #{factoryId}
+        </foreach>
+    </update>
+
+    <select id="listByWorkNoAndDate" resultType="com.ruoyi.base.bo.FactoryWorkBO">
+        select
+               opt.project_no AS projectNo, opt.work_no AS workNo, opt.work_time AS workTime,opt.car_id AS lcensePlate,
+               mf.factory_id AS factoryId, mf.id_card AS idCard, mf.name, mf.face,mf.phone,mf.address, mf.sended, mf.sex
+        from man_work opt
+         LEFT JOIN man_factory mf ON opt.work_no = mf.work_no
+        where mf.work_no like concat('%', #{workNo}, '%')
+          and CONVERT(varchar(100), opt.work_time, 23) = #{date}
+          and opt.work_type = #{workType}
+          and opt.del_flag = '0' and mf.del_flag = '0'
+    </select>
+
+    <select id="getByCommonParams" resultMap="ManFactoryResult">
+        select * from man_factory u
+        <where>
+            <if test="idCard != null and idCard != ''">
+                AND u.id_card = #{idCard}
+            </if>
+            <if test="locationCardNo != null and locationCardNo != ''">
+                AND u.location_card = #{locationCardNo}
+            </if>
+            <if test="carCardNo != null and carCardNo != ''">
+                AND u.car_card_no like concat('%', #{carCardNo}, '%')
+            </if>
+            <if test="plateNo != null and plateNo != ''">
+                AND u.lcense_plate like concat('%', #{plateNo}, '%')
+            </if>
+            AND u.del_flag = '0'
+        </where>
+    </select>
+    <update id="updateCar">
+        update man_factory set lcense_plate = '' ,car_card_no= '', work_no = null, entered = 0, sended = 0
+    </update>
+
+    <update id="deleteFaceByFactoryId">
+        update man_factory set face = null, sended = 0 where factory_id = #{factoryId}
+    </update>
+
+    <update id="sendBackStatus">
+        update man_factory set sended = #{sendedStatus} where factory_id = #{factoryId}
+    </update>
+    <delete id="delFactory">
+        DELETE FROM man_factory WHERE id_card=''
+    </delete>
+
+    <!--查询车牌（车牌+身份证）查询危险品车当日是否存在-->
+    <select id="selectCangerousCar" resultMap="ManFactoryResult">
+        select * from man_factory u
+        <where>
+            <if test="idCard != null and idCard != ''">
+                AND u.id_card = #{idCard}
+            </if>
+            <if test="plateNo != null and plateNo != ''">
+                AND u.lcense_plate = #{plateNo}
+            </if>
+            AND (work_no !='' OR work_no IS NOT NULL)
+            AND danger_type=1
+            AND u.del_flag = '0'
+        </where>
+    </select>
+
+    <select id="selectManFactoryByName" parameterType="com.ruoyi.base.domain.ManFactory" resultMap="ManFactoryResult">
+        <include refid="selectManFactoryVo"/>
+        <where>
+            del_flag = '0' and  name=#{name} and (work_no !='' OR work_no IS NOT NULL)
+        </where>
+    </select>
+    
+<!--    <select id="selectAllManFactory" resultType="String">-->
+<!--       SELECT-->
+<!--            face-->
+<!--        FROM-->
+<!--            ae_man_factory-->
+<!--            where id_card=#{idCard} and face is not null-->
+<!--    </select>-->
+
+    <select id="selectListFaceByIdCards" parameterType="java.util.List" resultMap="ManFactoryResult">
+        <include refid="selectManFactoryVo"/>
+        where del_flag = '0' and face is not null and id_card in
+        <foreach collection="idCards" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <update id="updateFaceByIdCard" parameterType="com.ruoyi.base.domain.ManFactory">
+        update man_factory set face = #{face},
+        phone=#{phone},
+        address=#{address}
+       where id_card = #{idCard}
+    </update>
+
+
+</mapper>

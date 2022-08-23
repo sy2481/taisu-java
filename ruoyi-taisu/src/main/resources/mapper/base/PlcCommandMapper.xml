@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.PlcCommandMapper">
+    
+    <resultMap type="PlcCommand" id="PlcCommandResult">
+        <result property="commandId"    column="command_id"    />
+        <result property="plcId"    column="plc_id"    />
+        <result property="plcName"    column="plc_name"    />
+        <result property="name"    column="name"    />
+        <result property="command"    column="command"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="creator"    column="creator"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="enable"    column="enable"    />
+        <result property="openCloseMode"    column="open_close_mode"    />
+        <result property="doorName"    column="door_name"    />
+        <result property="plandAreaName"    column="plant_area_name"    />
+    </resultMap>
+
+    <resultMap id="CommandTypeResult" type="CommandType">
+        <result property="command"    column="command"    />
+        <result property="openCloseMode"    column="openCloseMode"    />
+    </resultMap>
+
+    <sql id="selectPlcCommandVo">
+        select c.command_id, c.plc_id, c.name, c.command, c.create_time, c.creator, c.update_time, c.enable, c.open_close_mode,e.name as plc_name
+        from plc_command c
+        inner join plc_equipment e on c.plc_id=e.id
+    </sql>
+
+    <select id="selectPlcCommandList" parameterType="PlcCommand" resultMap="PlcCommandResult">
+        <include refid="selectPlcCommandVo"/>
+        <where>
+            <if test="plcId != null"> and c.plc_id = #{plcId}</if>
+            <if test="plcName != null  and plcName != ''"> and e.name like concat('%', #{plcName}, '%')</if>
+            <if test="name != null  and name != ''"> and c.name like concat('%', #{name}, '%')</if>
+            <if test="command != null  and command != ''"> and c.command = #{command}</if>
+            <if test="creator != null  and creator != ''"> and c.creator = #{creator}</if>
+            <if test="enable != null "> and c.enable = #{enable}</if>
+            <if test="openCloseMode != null  and openCloseMode != ''"> and c.open_close_mode = #{openCloseMode}</if>
+        </where>
+        order by c.plc_id
+    </select>
+    
+    <select id="selectPlcCommandById" parameterType="Long" resultMap="PlcCommandResult">
+        <include refid="selectPlcCommandVo"/>
+        where c.command_id = #{commandId}
+    </select>
+        
+    <insert id="insertPlcCommand" parameterType="PlcCommand">
+        insert into plc_command
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="commandId != null">command_id,</if>
+            <if test="plcId != null">plc_id,</if>
+            <if test="name != null">name,</if>
+            <if test="command != null">command,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="creator != null">creator,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="enable != null">enable,</if>
+            <if test="openCloseMode != null">open_close_mode,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="commandId != null">#{commandId},</if>
+            <if test="plcId != null">#{plcId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="command != null">#{command},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="creator != null">#{creator},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="enable != null">#{enable},</if>
+            <if test="openCloseMode != null">#{openCloseMode},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePlcCommand" parameterType="PlcCommand">
+        update plc_command
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="plcId != null">plc_id = #{plcId},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="command != null">command = #{command},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="creator != null">creator = #{creator},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="enable != null">enable = #{enable},</if>
+            <if test="openCloseMode != null">open_close_mode = #{openCloseMode},</if>
+        </trim>
+        where command_id = #{commandId}
+    </update>
+
+    <delete id="deletePlcCommandById" parameterType="Long">
+        delete from plc_command where command_id = #{commandId}
+    </delete>
+
+    <delete id="deletePlcCommandByIds" parameterType="String">
+        delete from plc_command where command_id in
+        <foreach item="commandId" collection="array" open="(" separator="," close=")">
+            #{commandId}
+        </foreach>
+    </delete>
+</mapper>

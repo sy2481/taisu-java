@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.ManBlackInfoMapper">
+
+    <resultMap type="com.ruoyi.base.domain.ManBlackInfo" id="ManBlackInfoResult">
+        <result property="id"    column="id"    />
+        <result property="factoryName"    column="factory_name"    />
+        <result property="idCard"    column="id_card"    />
+        <result property="blackType"    column="black_type"    />
+        <result property="blackInfo"    column="black_info"    />
+        <result property="blackAddName"    column="black_add_name"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectManBlackInfoVo">
+        select id, factory_name,id_card, black_type, black_info, black_add_name, del_flag, create_by, create_time, update_by, update_time, remark from man_black_info
+    </sql>
+
+    <select id="selectManBlackInfoList" parameterType="ManBlackInfo" resultMap="ManBlackInfoResult">
+        <include refid="selectManBlackInfoVo"/>
+        <where>
+            <if test="factoryName != null  and factoryName != ''"> and factory_name like concat('%', #{factoryName}, '%')</if>
+            <if test="idCard != null  and idCard != ''"> and id_card like concat('%', #{idCard}, '%')</if>
+            <if test="blackType != null "> and black_type = #{blackType}</if>
+            <if test="blackInfo != null  and blackInfo != ''"> and black_info = #{blackInfo}</if>
+            <if test="blackAddName != null  and blackAddName != ''"> and black_add_name like concat('%', #{blackAddName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectManBlackInfoById" parameterType="Long" resultMap="ManBlackInfoResult">
+        <include refid="selectManBlackInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertManBlackInfo" parameterType="ManBlackInfo">
+        insert into man_black_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="factoryName != null">factory_name,</if>
+            <if test="idCard != null">id_card,</if>
+            <if test="blackType != null">black_type,</if>
+            <if test="blackInfo != null">black_info,</if>
+            <if test="blackAddName != null">black_add_name,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="factoryName != null">#{factoryName},</if>
+            <if test="idCard != null">#{idCard},</if>
+            <if test="blackType != null">#{blackType},</if>
+            <if test="blackInfo != null">#{blackInfo},</if>
+            <if test="blackAddName != null">#{blackAddName},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateManBlackInfo" parameterType="ManBlackInfo">
+        update man_black_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="factoryName != null">factory_name = #{factoryName},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="blackType != null">black_type = #{blackType},</if>
+            <if test="blackInfo != null">black_info = #{blackInfo},</if>
+            <if test="blackAddName != null">black_add_name = #{blackAddName},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteManBlackInfoById" parameterType="Long">
+        delete from man_black_info where id = #{id}
+    </delete>
+
+    <delete id="deleteManBlackInfoByIds" parameterType="String">
+        delete from man_black_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <select id="getBlackInfo" parameterType="string" resultType="com.ruoyi.base.domain.ManBlackInfo">
+        <include refid="selectManBlackInfoVo"/>
+        where factory_name = #{factoryName}
+    </select>
+
+    <select id="getBlackInfoByCard" parameterType="string" resultType="com.ruoyi.base.domain.ManBlackInfo">
+        <include refid="selectManBlackInfoVo"/>
+        where id_card = #{idCard} and  black_type=0
+    </select>
+</mapper>

@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.ManWorkFactoryMapper">
+
+    <resultMap type="com.ruoyi.base.domain.ManWorkFactory" id="ManWorkFactoryResult">
+        <result property="workId" column="work_id"/>
+        <result property="factoryId" column="factory_id"/>
+        <result property="effectiveTime" column="effective_time"/>
+
+        <result property="idCard" column="id_card"/>
+        <result property="lcensePlate" column="lcense_plate"/>
+        <result property="name" column="name"/>
+        <result property="ipLtLic" column="ip_lt_lic"/>
+        <result property="factoryName" column="factory_name"/>
+        <result property="mngName" column="mng_name"/>
+        <result property="mngTime" column="mng_time"/>
+        <result property="type" column="type"/>
+        <result property="sex" column="sex"/>
+        <result property="face" column="face"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+        <result property="thisNumber" column="this_number"/>
+        <result property="birthDay" column="birth_day"/>
+        <result property="cardType" column="card_type"/>
+        <result property="locationCard" column="location_card"/>
+        <result property="projectNo" column="project_no"/>
+        <result property="workNo" column="work_no"/>
+        <result property="workTime" column="work_time"/>
+        <result property="carId" column="car_id"/>
+        <result property="projectName" column="project_name"/>
+        <result property="jobCategory" column="job_category"/>
+        <result property="inspector" column="inspector"/>
+        <result property="inspector2" column="inspector2"/>
+        <result property="carCard" column="car_card"/>
+        <result property="xtInNum" column="xt_in_num"/>
+        <result property="comInNum" column="com_in_num"/>
+        <result property="ip" column="ip"/>
+        <result property="factoryDoorName" column="factory_door_name"/>
+        <result property="workType" column="work_type"/>
+        <result property="workStatus" column="work_status"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="extendStartTime" column="extend_start_time"/>
+        <result property="extendEndTime" column="extend_end_time"/>
+
+    </resultMap>
+
+    <sql id="selectManWorkFactoryVo">
+        select work_id, factory_id, effective_time,id_card, lcense_plate, name, ip_lt_lic, factory_name, mng_name,
+               mng_time, type, sex, face, phone, address, this_number, birth_day, card_type, location_card,
+               project_no, work_no, work_time, car_id, project_name, job_category, inspector, inspector2, car_card,
+               xt_in_num, com_in_num, ip,factory_door_name,
+               work_type, work_status,dept_id from man_work_factory
+    </sql>
+
+    <select id="selectManWorkInfo" parameterType="ManWorkFactory" resultMap="ManWorkFactoryResult">
+        <include refid="selectManWorkFactoryVo"/>
+        <where>
+            <if test="workId != null  and workId != ''">and work_id = #{workId}</if>
+            <if test="factoryId != null  and factoryId != ''">and factory_id = #{factoryId}</if>
+            <if test="effectiveTime != null  and effectiveTime != ''">and effective_time = #{effectiveTime}</if>
+        </where>
+    </select>
+
+    <select id="selectManWorkByWorkId" parameterType="Long" resultMap="ManWorkFactoryResult">
+        <include refid="selectManWorkFactoryVo"/>
+        where work_id = #{workId}
+    </select>
+
+    <select id="selectManWorkByFactoryId" parameterType="Long" resultMap="ManWorkFactoryResult">
+        <include refid="selectManWorkFactoryVo"/>
+        where factory_id = #{factoryId}
+    </select>
+    <insert id="insertManWorkFactory" parameterType="com.ruoyi.base.domain.ManWorkFactory">
+        insert into man_work_factory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="workId != null">work_id,</if>
+            <if test="factoryId != null">factory_id,</if>
+            <if test="effectiveTime != null">effective_time,</if>
+            <if test="idCard != null">id_card,</if>
+            <if test="lcensePlate != null">lcense_plate,</if>
+            <if test="name != null">name,</if>
+            <if test="ipLtLic != null">ip_lt_lic,</if>
+            <if test="factoryName != null">factory_name,</if>
+            <if test="mngName != null">mng_name,</if>
+            <if test="mngTime != null">mng_time,</if>
+            <if test="type != null">type,</if>
+            <if test="sex != null">sex,</if>
+            <if test="face != null">face,</if>
+            <if test="phone != null">phone,</if>
+            <if test="address != null">address,</if>
+            <if test="thisNumber != null">this_number,</if>
+            <if test="birthDay != null">birth_day,</if>
+            <if test="cardType != null">card_type,</if>
+            <if test="locationCard != null">location_card,</if>
+            <if test="projectNo != null">project_no,</if>
+            <if test="workNo != null">work_no,</if>
+            <if test="workTime != null">work_time,</if>
+            <if test="carId != null">car_id,</if>
+            <if test="projectName != null">project_name,</if>
+            <if test="jobCategory != null">job_category,</if>
+            <if test="inspector != null">inspector,</if>
+            <if test="inspector2 != null">inspector2,</if>
+            <if test="carCard != null">inspector2,</if>
+            <if test="xtInNum != null">xt_in_num,</if>
+            <if test="comInNum != null">com_in_num,</if>
+            <if test="ip != null">ip,</if>
+            <if test="factoryDoorName!=null">factory_door_name,</if>
+            <if test="workType != null">work_type,</if>
+            <if test="workStatus != null">work_status,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="startTime !=null">start_time,</if>
+            <if test="endTime !=null">end_time,</if>
+            <if test="extendStartTime!=null">extend_start_time,</if>
+            <if test="extendEndTime!=null">extend_end_time,</if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="workId != null">#{workId},</if>
+            <if test="factoryId != null">#{factoryId},</if>
+            <if test="effectiveTime != null">#{effectiveTime},</if>
+            <if test="idCard != null">#{idCard},</if>
+            <if test="lcensePlate != null">#{lcensePlate},</if>
+            <if test="name != null">#{name},</if>
+            <if test="ipLtLic != null">#{ipLtLic},</if>
+            <if test="factoryName != null">#{factoryName},</if>
+            <if test="mngName != null">#{mngName},</if>
+            <if test="mngTime != null">#{mngTime},</if>
+            <if test="type != null">#{type},</if>
+            <if test="sex != null">#{sex},</if>
+            <if test="face != null">#{face},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="address != null">#{address},</if>
+            <if test="thisNumber != null">#{thisNumber},</if>
+            <if test="birthDay != null">#{birthDay},</if>
+            <if test="cardType != null">#{cardType},</if>
+            <if test="locationCard != null">#{locationCard},</if>
+            <if test="projectNo != null">#{projectNo},</if>
+            <if test="workNo != null">#{workNo},</if>
+            <if test="workTime != null">#{workTime},</if>
+            <if test="carId != null">#{carId},</if>
+            <if test="projectName != null">#{projectName},</if>
+            <if test="jobCategory != null">#{jobCategory},</if>
+            <if test="inspector != null">#{inspector},</if>
+            <if test="inspector2 != null">#{inspector2},</if>
+            <if test="carCard != null">#{carCard},</if>
+            <if test="xtInNum != null">#{xtInNum},</if>
+            <if test="comInNum != null">#{comInNum},</if>
+            <if test="ip != null">#{ip},</if>
+            <if test="factoryDoorName!=null">#{factoryDoorName},</if>
+            <if test="workType != null">#{workType},</if>
+            <if test="workStatus != null">#{workStatus},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="startTime !=null">#{startTime},</if>
+            <if test="endTime !=null">#{endTime},</if>
+            <if test="extendStartTime!=null">#{extendStartTime},</if>
+            <if test="extendEndTime!=null">#{extendEndTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateManWorkByFactoryId" parameterType="Long">
+        update man_work_factory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="workId != null">work_id = #{workId},</if>
+            <if test="projectNo != null">project_no = #{projectNo},</if>
+            <if test="workNo != null">work_no = #{workNo},</if>
+            <if test="mngName != null">mng_name = #{mngName},</if>
+            <if test="mngTime != null">mng_time = #{mngTime},</if>
+            <if test="workTime != null">work_time = #{workTime},</if>
+            <if test="carId != null">car_id = #{carId},</if>
+            <if test="projectName != null">project_name = #{projectName},</if>
+            <if test="jobCategory != null">job_category = #{jobCategory},</if>
+            <if test="inspector != null">inspector = #{inspector},</if>
+            <if test="inspector2 != null">inspector2 = #{inspector2},</if>
+            <if test="carCard != null">car_card = #{carCard},</if>
+            <if test="xtInNum != null">xt_in_num = #{xtInNum},</if>
+            <if test="comInNum != null">com_in_num = #{comInNum},</if>
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="factoryDoorName !=null">factory_door_name = #{factoryDoorName},</if>
+            <if test="workStatus != null">work_status = #{workStatus},</if>
+            <if test="deptId != null">dept_id=#{deptId},</if>
+            <if test="startTime !=null">start_time = #{startTime},</if>
+            <if test="endTime !=null">end_time = #{endTime},</if>
+            <if test="extendStartTime!=null">extend_start_time=#{extendStartTime},</if>
+            <if test="extendEndTime!=null">extend_end_time=#{extendEndTime},</if>
+        </trim>
+        where factory_id = #{factoryId}
+    </update>
+
+    <delete id="deleteWorkFactory" parameterType="long">
+        DELETE FROM man_work_factory WHERE factory_id = #{factoryId}
+    </delete>
+
+    <delete id="delTimeFactory">
+      DELETE FROM
+        man_work_factory
+      WHERE
+        factory_id NOT IN ( SELECT * FROM ( SELECT factory_id FROM man_factory ) T )
+        or
+        factory_id IS NULL
+    </delete>
+</mapper>

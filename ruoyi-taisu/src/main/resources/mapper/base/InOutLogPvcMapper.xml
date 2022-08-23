@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.InOutLogPvcMapper">
+    
+    <resultMap type="InOutLogPvc" id="InOutLogPvcResult">
+        <result property="workTime"    column="work_time"    />
+        <result property="areaNo"    column="area_no"    />
+        <result property="ip"    column="ip"    />
+        <result property="vhNo"    column="vh_no"    />
+        <result property="egNo"    column="eg_no"    />
+        <result property="egName"    column="eg_name"    />
+        <result property="oprEnvt"    column="opr_envt"    />
+        <result property="idno"    column="idno"    />
+        <result property="name"    column="name"    />
+        <result property="ipltLic"    column="iplt_lic"    />
+        <result property="pz"    column="pz"    />
+        <result property="tkVnd"    column="tk_vnd"    />
+        <result property="beginTime"    column="begin_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="inTime"    column="in_time"    />
+        <result property="outTime"    column="out_time"    />
+        <result property="inspector"    column="inspector"    />
+        <result property="inspector2"    column="inspector2"    />
+        <result property="mark"    column="mark"    />
+        <result property="profsId"    column="profs_id"    />
+        <result property="opltTime"    column="oplt_time"    />
+        <result property="doutTime"    column="dout_time"    />
+        <result property="fvId"    column="fv_id"    />
+        <result property="fctDoorNm"    column="fct_door_nm"    />
+        <result property="aid"    column="aid"    />
+        <result property="insertTime"    column="insert_time"    />
+        <result property="isProcess"    column="is_process"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectInOutLogPvcVo">
+        select work_time, area_no, ip, vh_no, eg_no, eg_name, opr_envt, idno, name, iplt_lic, pz, tk_vnd, begin_time, end_time, in_time, out_time, inspector, inspector2, mark, profs_id, oplt_time, dout_time, fv_id, fct_door_nm, aid, insert_time, is_process, del_flag, create_by, create_time, update_by, update_time, remark from in_out_log_pvc
+    </sql>
+
+    <select id="selectInOutLogPvcList" parameterType="InOutLogPvc" resultMap="InOutLogPvcResult">
+        <include refid="selectInOutLogPvcVo"/>
+        <where>
+            <if test="workTime != null  and workTime != ''"> and work_time = #{workTime}</if>
+            <if test="areaNo != null  and areaNo != ''"> and area_no = #{areaNo}</if>
+            <if test="ip != null  and ip != ''"> and ip = #{ip}</if>
+            <if test="vhNo != null  and vhNo != ''"> and vh_no = #{vhNo}</if>
+            <if test="egNo != null  and egNo != ''"> and eg_no = #{egNo}</if>
+            <if test="egName != null  and egName != ''"> and eg_name like concat('%', #{egName}, '%')</if>
+            <if test="oprEnvt != null  and oprEnvt != ''"> and opr_envt = #{oprEnvt}</if>
+            <if test="idno != null  and idno != ''"> and idno = #{idno}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="ipltLic != null  and ipltLic != ''"> and iplt_lic = #{ipltLic}</if>
+            <if test="pz != null  and pz != ''"> and pz = #{pz}</if>
+            <if test="tkVnd != null  and tkVnd != ''"> and tk_vnd = #{tkVnd}</if>
+            <if test="beginTime != null  and beginTime != ''"> and begin_time = #{beginTime}</if>
+            <if test="endTime != null  and endTime != ''"> and end_time = #{endTime}</if>
+            <if test="inTime != null  and inTime != ''"> and in_time = #{inTime}</if>
+            <if test="outTime != null  and outTime != ''"> and out_time = #{outTime}</if>
+            <if test="inspector != null  and inspector != ''"> and inspector = #{inspector}</if>
+            <if test="inspector2 != null  and inspector2 != ''"> and inspector2 = #{inspector2}</if>
+            <if test="mark != null  and mark != ''"> and mark = #{mark}</if>
+            <if test="profsId != null  and profsId != ''"> and profs_id = #{profsId}</if>
+            <if test="opltTime != null  and opltTime != ''"> and oplt_time = #{opltTime}</if>
+            <if test="doutTime != null  and doutTime != ''"> and dout_time = #{doutTime}</if>
+            <if test="fvId != null  and fvId != ''"> and fv_id = #{fvId}</if>
+            <if test="fctDoorNm != null  and fctDoorNm != ''"> and fct_door_nm = #{fctDoorNm}</if>
+            <if test="aid != null "> and aid = #{aid}</if>
+            <if test="insertTime != null "> and insert_time = #{insertTime}</if>
+            <if test="isProcess != null "> and is_process = #{isProcess}</if>
+        </where>
+    </select>
+    
+    <select id="selectInOutLogPvcByWorkTime" parameterType="String" resultMap="InOutLogPvcResult">
+        <include refid="selectInOutLogPvcVo"/>
+        where work_time = #{workTime}
+    </select>
+
+
+    <select id="selectInOutLogPvcByAid" parameterType="Integer" resultType="Integer">
+        select count(aid) from in_out_log_pvc where aid = #{aid}
+    </select>
+
+    <insert id="insertInOutLogPvc" parameterType="InOutLogPvc">
+        insert into in_out_log_pvc
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="workTime != null">work_time,</if>
+            <if test="areaNo != null">area_no,</if>
+            <if test="ip != null">ip,</if>
+            <if test="vhNo != null">vh_no,</if>
+            <if test="egNo != null">eg_no,</if>
+            <if test="egName != null">eg_name,</if>
+            <if test="oprEnvt != null">opr_envt,</if>
+            <if test="idno != null">idno,</if>
+            <if test="name != null">name,</if>
+            <if test="ipltLic != null">iplt_lic,</if>
+            <if test="pz != null">pz,</if>
+            <if test="tkVnd != null">tk_vnd,</if>
+            <if test="beginTime != null">begin_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="inTime != null">in_time,</if>
+            <if test="outTime != null">out_time,</if>
+            <if test="inspector != null">inspector,</if>
+            <if test="inspector2 != null">inspector2,</if>
+            <if test="mark != null">mark,</if>
+            <if test="profsId != null">profs_id,</if>
+            <if test="opltTime != null">oplt_time,</if>
+            <if test="doutTime != null">dout_time,</if>
+            <if test="fvId != null">fv_id,</if>
+            <if test="fctDoorNm != null">fct_door_nm,</if>
+            <if test="aid != null">aid,</if>
+            <if test="insertTime != null">insert_time,</if>
+            <if test="isProcess != null">is_process,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="workTime != null">#{workTime},</if>
+            <if test="areaNo != null">#{areaNo},</if>
+            <if test="ip != null">#{ip},</if>
+            <if test="vhNo != null">#{vhNo},</if>
+            <if test="egNo != null">#{egNo},</if>
+            <if test="egName != null">#{egName},</if>
+            <if test="oprEnvt != null">#{oprEnvt},</if>
+            <if test="idno != null">#{idno},</if>
+            <if test="name != null">#{name},</if>
+            <if test="ipltLic != null">#{ipltLic},</if>
+            <if test="pz != null">#{pz},</if>
+            <if test="tkVnd != null">#{tkVnd},</if>
+            <if test="beginTime != null">#{beginTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="inTime != null">#{inTime},</if>
+            <if test="outTime != null">#{outTime},</if>
+            <if test="inspector != null">#{inspector},</if>
+            <if test="inspector2 != null">#{inspector2},</if>
+            <if test="mark != null">#{mark},</if>
+            <if test="profsId != null">#{profsId},</if>
+            <if test="opltTime != null">#{opltTime},</if>
+            <if test="doutTime != null">#{doutTime},</if>
+            <if test="fvId != null">#{fvId},</if>
+            <if test="fctDoorNm != null">#{fctDoorNm},</if>
+            <if test="aid != null">#{aid},</if>
+            <if test="insertTime != null">#{insertTime},</if>
+            <if test="isProcess != null">#{isProcess},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateInOutLogPvc" parameterType="InOutLogPvc">
+        update in_out_log_pvc
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="areaNo != null">area_no = #{areaNo},</if>
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="vhNo != null">vh_no = #{vhNo},</if>
+            <if test="egNo != null">eg_no = #{egNo},</if>
+            <if test="egName != null">eg_name = #{egName},</if>
+            <if test="oprEnvt != null">opr_envt = #{oprEnvt},</if>
+            <if test="idno != null">idno = #{idno},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="ipltLic != null">iplt_lic = #{ipltLic},</if>
+            <if test="pz != null">pz = #{pz},</if>
+            <if test="tkVnd != null">tk_vnd = #{tkVnd},</if>
+            <if test="beginTime != null">begin_time = #{beginTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="inTime != null">in_time = #{inTime},</if>
+            <if test="outTime != null">out_time = #{outTime},</if>
+            <if test="inspector != null">inspector = #{inspector},</if>
+            <if test="inspector2 != null">inspector2 = #{inspector2},</if>
+            <if test="mark != null">mark = #{mark},</if>
+            <if test="profsId != null">profs_id = #{profsId},</if>
+            <if test="opltTime != null">oplt_time = #{opltTime},</if>
+            <if test="doutTime != null">dout_time = #{doutTime},</if>
+            <if test="fvId != null">fv_id = #{fvId},</if>
+            <if test="fctDoorNm != null">fct_door_nm = #{fctDoorNm},</if>
+            <if test="aid != null">aid = #{aid},</if>
+            <if test="insertTime != null">insert_time = #{insertTime},</if>
+            <if test="isProcess != null">is_process = #{isProcess},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where work_time = #{workTime}
+    </update>
+
+    <delete id="deleteInOutLogPvcByWorkTime" parameterType="String">
+        delete from in_out_log_pvc where work_time = #{workTime}
+    </delete>
+
+    <delete id="deleteInOutLogPvcByWorkTimes" parameterType="String">
+        delete from in_out_log_pvc where work_time in
+        <foreach item="workTime" collection="array" open="(" separator="," close=")">
+            #{workTime}
+        </foreach>
+    </delete>
+
+    <select id="getInOutLogPvcByAid" resultMap="InOutLogPvcResult">
+        SELECT top 20 * FROM in_out_log_pvc WHERE work_time &lt;= #{nextDay} and work_time &gt; #{today} and is_process=0 order by aid asc
+    </select>
+</mapper>

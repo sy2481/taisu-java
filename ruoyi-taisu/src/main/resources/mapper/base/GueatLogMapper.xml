@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.GueatLogMapper">
+    
+    <resultMap type="GueatLog" id="GueatLogResult">
+        <result property="id"    column="id"    />
+        <result property="operationUser"    column="operation_user"    />
+        <result property="operationInfo"    column="operation_info"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="cardId"    column="card_id"    />
+    </resultMap>
+
+    <sql id="selectGueatLogVo">
+        select id, operation_user, operation_info, del_flag, create_by,card_id, create_time, update_by, update_time, remark from base_gueat_log
+    </sql>
+
+    <select id="selectGueatLogList" parameterType="GueatLog" resultMap="GueatLogResult">
+        <include refid="selectGueatLogVo"/>
+        <where>  
+            <if test="operationUser != null  and operationUser != ''"> and operation_user = #{operationUser}</if>
+            <if test="operationUser != null "> and card_id = #{cardId}</if>
+            <if test="operationInfo != null  and operationInfo != ''"> and operation_info = #{operationInfo}</if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+    
+    <select id="selectGueatLogById" parameterType="Long" resultMap="GueatLogResult">
+        <include refid="selectGueatLogVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertGueatLog" parameterType="GueatLog">
+        insert into base_gueat_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="operationUser != null">operation_user,</if>
+            <if test="operationInfo != null">operation_info,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="cardId != null">card_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="operationUser != null">#{operationUser},</if>
+            <if test="operationInfo != null">#{operationInfo},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="cardId != null">#{cardId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGueatLog" parameterType="GueatLog">
+        update base_gueat_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="operationUser != null">operation_user = #{operationUser},</if>
+            <if test="operationInfo != null">operation_info = #{operationInfo},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="cardId != null">card_id = #{cardId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGueatLogById" parameterType="Long">
+        delete from base_gueat_log where id = #{id}
+    </delete>
+
+    <delete id="deleteGueatLogByIds" parameterType="String">
+        delete from base_gueat_log where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

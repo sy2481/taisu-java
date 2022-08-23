@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.BaseDoorMapper">
+    
+    <resultMap type="BaseDoor" id="BaseDoorResult">
+        <result property="doorId"    column="door_id"    />
+        <result property="name"    column="name"    />
+        <result property="type"    column="type"    />
+        <result property="plantAreaId"    column="plant_area_id"    />
+        <result property="plantAreaName"    column="dept_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="creator"    column="creator"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="passagewayCount"    column="passageway_count"    />
+    </resultMap>
+
+    <sql id="selectBaseDoorVo">
+        select base_door.door_id, name, type, plant_area_id, base_door.create_time, creator, base_door.update_time,sys_dept.dept_name,
+        (case when p.passageway_count is null then 0 else p.passageway_count END) as passageway_count from base_door
+        join sys_dept on plant_area_id=sys_dept.dept_id
+        left join (select door_id,count(passageway_id) as passageway_count from base_passageway group by door_id) as p
+        on base_door.door_id=p.door_id
+    </sql>
+
+    <select id="selectBaseDoorList" parameterType="BaseDoor" resultMap="BaseDoorResult">
+        <include refid="selectBaseDoorVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="plantAreaId != null  and plantAreaId != ''"> and plant_area_id = #{plantAreaId}</if>
+            <if test="plantAreaName != null  and plantAreaName != ''"> and dept_name like concat('%', #{plantAreaName}, '%')</if>
+            <if test="creator != null  and creator != ''"> and creator = #{creator}</if>
+        </where>
+        order by plant_area_id,type
+    </select>
+    
+    <select id="selectBaseDoorById" parameterType="Long" resultMap="BaseDoorResult">
+        <include refid="selectBaseDoorVo"/>
+        where base_door.door_id = #{doorId}
+    </select>
+        
+    <insert id="insertBaseDoor" parameterType="BaseDoor">
+        insert into base_door
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="doorId != null">door_id,</if>
+            <if test="name != null">name,</if>
+            <if test="type != null">type,</if>
+            <if test="plantAreaId != null">plant_area_id,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="creator != null">creator,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="doorId != null">#{doorId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="type != null">#{type},</if>
+            <if test="plantAreaId != null">#{plantAreaId},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="creator != null">#{creator},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBaseDoor" parameterType="BaseDoor">
+        update base_door
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="plantAreaId != null">plant_area_id = #{plantAreaId},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="creator != null">creator = #{creator},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where door_id = #{doorId}
+    </update>
+
+    <delete id="deleteBaseDoorById" parameterType="Long">
+        delete from base_door where door_id = #{doorId}
+    </delete>
+
+    <delete id="deleteBaseDoorByIds" parameterType="String">
+        delete from base_door where door_id in
+        <foreach item="doorId" collection="array" open="(" separator="," close=")">
+            #{doorId}
+        </foreach>
+    </delete>
+</mapper>

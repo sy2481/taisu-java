@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.EquipmentLogMapper">
+
+    <resultMap type="EquipmentLog" id="EquipmentLogResult">
+        <result property="id"    column="id"    />
+        <result property="ip"    column="ip"    />
+        <result property="upDownType"    column="up_down_type"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="equipment"    column="equipment"    />
+        <result property="equipmentName"    column="equipment_name"    />
+        <result property="deptName"    column="dept_name"    />
+    </resultMap>
+
+    <sql id="selectEquipmentLogVo">
+        select id, ip, up_down_type, create_time, dept_id, equipment,equipment_name ,dept_name from equipment_log
+    </sql>
+
+    <select id="selectEquipmentLogList" parameterType="EquipmentLog" resultMap="EquipmentLogResult">
+        <include refid="selectEquipmentLogVo"/>
+        <where>
+            <if test="factoryId != null  "> and dept_id in
+                <foreach collection='factoryId' item='item' separator=',' open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="ip != null  and ip != ''"> and ip = #{ip}</if>
+            <if test="upDownType != null "> and up_down_type = #{upDownType}</if>
+
+            <if test="equipment != null  and equipment != ''">and equipment like concat('%', #{equipment}, '%')</if>
+            <if test="deptName != null  and deptName != ''"> and dept_name like concat('%', #{deptName}, '%')</if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectEquipmentLogById" parameterType="Long" resultMap="EquipmentLogResult">
+        <include refid="selectEquipmentLogVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertEquipmentLog" parameterType="EquipmentLog">
+        insert into equipment_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="ip != null">ip,</if>
+            <if test="upDownType != null">up_down_type,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="equipment != null">equipment,</if>
+            <if test="equipmentName != null">equipment_name,</if>
+            <if test="deptName != null">dept_name,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="ip != null">#{ip},</if>
+            <if test="upDownType != null">#{upDownType},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="equipment != null">#{equipment},</if>
+            <if test="equipmentName != null">#{equipmentName},</if>
+            <if test="deptName != null">#{deptName},</if>
+        </trim>
+    </insert>
+
+    <update id="updateEquipmentLog" parameterType="EquipmentLog">
+        update equipment_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="upDownType != null">up_down_type = #{upDownType},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="equipment != null">equipment = #{equipment},</if>
+            <if test="equipmentName != null">equipment_name = #{equipmentName},</if>
+            <if test="deptName != null">dept_name = #{deptName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEquipmentLogById" parameterType="Long">
+        delete from equipment_log where id = #{id}
+    </delete>
+
+    <delete id="deleteEquipmentLogByIds" parameterType="String">
+        delete from equipment_log where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

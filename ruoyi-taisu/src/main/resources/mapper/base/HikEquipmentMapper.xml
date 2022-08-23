@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.HikEquipmentMapper">
+    
+    <resultMap type="HikEquipment" id="HikEquipmentResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="ip"    column="ip"    />
+        <result property="sign"    column="sign"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="indexCode"    column="index_code"    />
+        <result property="frontIp"    column="front_ip"    />
+        <result property="deviceType"    column="device_type"    />
+        <result property="subtitleMachineIp"    column="subtitle_machine_ip"    />
+        <result property="equipmentUseType"    column="equipment_use_type"    />
+        <result property="ledCode" column="led_code"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+    <resultMap type="PlcHik" id="PlcHikResult">
+        <result property="id"    column="id"    />
+        <result property="plcId"    column="plc_id"    />
+        <result property="personDeviceId"    column="person_device_id"    />
+        <result property="carDeviceId"    column="car_device_id"    />
+        <result property="deviceType"    column="device_type"    />
+        <result property="plcCommand"    column="plc_command"    />
+        <result property="deviceName"    column="device_name"    />
+        <association property="carEquip"    column="car_device_id" javaType="HikEquipment" select="com.ruoyi.base.mapper.HikEquipmentMapper.selectHikEquipmentById" />
+        <association property="personEquip"    column="person_device_id" javaType="HikEquipment" select="com.ruoyi.base.mapper.HikEquipmentMapper.selectHikEquipmentById" />
+    </resultMap>
+
+    <sql id="selectHikEquipmentVo">
+        select id, name, ip, sign, create_time, update_time, index_code, front_ip, device_type, subtitle_machine_ip, equipment_use_type ,led_code,type from hik_equipment
+    </sql>
+
+    <sql id="selectHikEquipmentNotBind">
+        select * from hik_equipment
+    </sql>
+
+    <select id="selectHikEquipmentList" parameterType="HikEquipment" resultMap="HikEquipmentResult">
+        <include refid="selectHikEquipmentVo"/>
+        <where>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="ip != null  and ip != ''"> and ip like concat('%', #{ip}, '%')</if>
+            <if test="sign != null "> and sign = #{sign}</if>
+            <if test="indexCode != null  and indexCode != ''"> and index_code like concat('%', #{indexCode}, '%')</if>
+            <if test="frontIp != null  and frontIp != ''"> and front_ip like concat('%', #{frontIp}, '%')</if>
+            <if test="deviceType != null "> and device_type = #{deviceType}</if>
+            <if test="subtitleMachineIp != null  and subtitleMachineIp != ''"> and subtitle_machine_ip = #{subtitleMachineIp}</if>
+            <if test="equipmentUseType != null  and equipmentUseType != ''"> and equipment_use_type = #{equipmentUseType}</if>
+            <if test="ledCode != null  and ledCode != ''">and led_code like concat('%', #{ledCode}, '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectHikEquipmentById" parameterType="Long" resultMap="HikEquipmentResult">
+        <include refid="selectHikEquipmentVo"/>
+        where id = #{id}
+    </select>
+
+
+    <insert id="insertHikEquipment" parameterType="HikEquipment">
+        insert into hik_equipment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null and name != ''">name,</if>
+            <if test="ip != null and ip != ''">ip,</if>
+            <if test="sign != null">sign,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="indexCode != null and indexCode != ''">index_code,</if>
+            <if test="frontIp != null">front_ip,</if>
+            <if test="deviceType != null">device_type,</if>
+            <if test="subtitleMachineIp != null">subtitle_machine_ip,</if>
+            <if test="equipmentUseType != null">equipment_use_type,</if>
+            <if test="ledCode != null">led_code,</if>
+            <if test="type != null">type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="ip != null and ip != ''">#{ip},</if>
+            <if test="sign != null">#{sign},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="indexCode != null and indexCode != ''">#{indexCode},</if>
+            <if test="frontIp != null">#{frontIp},</if>
+            <if test="deviceType != null">#{deviceType},</if>
+            <if test="subtitleMachineIp != null">#{subtitleMachineIp},</if>
+            <if test="equipmentUseType != null">#{equipmentUseType},</if>
+            <if test="ledCode != null">#{ledCode},</if>
+            <if test="type != null">#{type},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHikEquipment" parameterType="HikEquipment">
+        update hik_equipment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="ip != null and ip != ''">ip = #{ip},</if>
+            <if test="sign != null">sign = #{sign},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="indexCode != null and indexCode != ''">index_code = #{indexCode},</if>
+            <if test="frontIp != null">front_ip = #{frontIp},</if>
+            <if test="deviceType != null">device_type = #{deviceType},</if>
+            <if test="subtitleMachineIp != null">subtitle_machine_ip = #{subtitleMachineIp},</if>
+            <if test="equipmentUseType != null">equipment_use_type = #{equipmentUseType},</if>
+            <if test="ledCode != null">led_code = #{ledCode},</if>
+            <if test="type != null">type = #{type},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHikEquipmentById" parameterType="Long">
+        delete from hik_equipment where id = #{id}
+    </delete>
+
+    <delete id="deleteHikEquipmentByIds" parameterType="String">
+        delete from hik_equipment where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateFrontIpById">
+        update hik_equipment set front_ip = #{frontIp} where id = #{id}
+    </update>
+
+    <!-- 。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。。 -->
+
+    <!-- 根據plcid，查詢中間表。 -->
+    <select id="listRelationEquip" resultMap="PlcHikResult">
+        select id, plc_id, person_device_id, car_device_id, device_type, plc_command, device_name, create_time
+        from plc_hik where plc_id = #{plcId}
+    </select>
+
+    <select id="getPlcHilRelation" resultMap="PlcHikResult">
+        select id, plc_id, person_device_id, car_device_id, device_type, plc_command, device_name, create_time
+        from plc_hik where id = #{id}
+    </select>
+
+    <delete id="deletePlcHikById" parameterType="Long">
+        delete from plc_hik where id = #{id}
+    </delete>
+
+    <insert id="insertPlcHik" parameterType="PlcHik">
+        insert into plc_hik
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="plcId != null">plc_id,</if>
+            <if test="personDeviceId != null">person_device_id,</if>
+            <if test="carDeviceId != null">car_device_id,</if>
+            <if test="deviceType != null">device_type,</if>
+            <if test="plcCommand != null">plc_command,</if>
+            <if test="deviceName != null">device_name,</if>
+            <if test="createTime != null">create_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="plcId != null">#{plcId},</if>
+            <if test="personDeviceId != null">#{personDeviceId},</if>
+            <if test="carDeviceId != null">#{carDeviceId},</if>
+            <if test="deviceType != null">#{deviceType},</if>
+            <if test="plcCommand != null">#{plcCommand},</if>
+            <if test="deviceName != null">#{deviceName},</if>
+            <if test="createTime != null">#{createTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePlcHik" parameterType="PlcHik">
+        update plc_hik
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="plcId != null">plc_id = #{plcId},</if>
+            <if test="personDeviceId != null">person_device_id = #{personDeviceId},</if>
+            <if test="carDeviceId != null">car_device_id = #{carDeviceId},</if>
+            <if test="deviceType != null">device_type = #{deviceType},</if>
+            <if test="plcCommand != null">plc_command = #{plcCommand},</if>
+            <if test="deviceName != null">device_name = #{deviceName},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+
+
+    <select id="findByIp" parameterType="string" resultMap="HikEquipmentResult">
+        <include refid="selectHikEquipmentVo"/>
+        where  ip = #{ip}
+    </select>
+
+    <select id="selectHikEquipmentNotBindList" parameterType="HikEquipment" resultMap="HikEquipmentResult">
+        <include refid="selectHikEquipmentNotBind"/>
+        where id not in (select hik_equipment_id from base_passageway_equipment where passageway_id!=#{passagewayId})
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="ip != null  and ip != ''"> and ip like concat('%', #{ip}, '%')</if>
+            <if test="sign != null "> and sign = #{sign}</if>
+            <if test="indexCode != null  and indexCode != ''"> and index_code like concat('%', #{indexCode}, '%')</if>
+            <if test="frontIp != null  and frontIp != ''"> and front_ip like concat('%', #{frontIp}, '%')</if>
+            <if test="deviceType != null "> and device_type = #{deviceType}</if>
+            <if test="subtitleMachineIp != null  and subtitleMachineIp != ''"> and subtitle_machine_ip = #{subtitleMachineIp}</if>
+            <if test="equipmentUseType != null  and equipmentUseType != ''"> and equipment_use_type = #{equipmentUseType}</if>
+    </select>
+
+</mapper>

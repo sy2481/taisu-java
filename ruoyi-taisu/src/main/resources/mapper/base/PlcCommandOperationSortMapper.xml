@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.PlcCommandOperationSortMapper">
+    
+    <resultMap type="PlcCommandOperationSort" id="PlcCommandOperationSortResult">
+        <result property="sortId"    column="sort_id"    />
+        <result property="operationId"    column="operation_id"    />
+        <result property="commandId"    column="command_id"    />
+        <result property="plcId"    column="plc_id"    />
+        <result property="plcName"    column="plc_name"    />
+        <result property="commandOpenCloseMode"    column="command_open_close_mode"    />
+        <result property="sort"    column="sort"    />
+    </resultMap>
+
+    <sql id="selectPlcCommandOperationSortVo">
+        select s.sort_id, s.operation_id, s.command_id, s.sort,c.open_close_mode as command_open_close_mode,c.plc_id,p.name as plc_name from plc_command_operation_sort s
+        inner join plc_command c
+        on s.command_id=c.command_id
+        inner join plc_equipment p
+        on c.plc_id=p.id
+    </sql>
+
+    <select id="selectPlcCommandOperationSortList" parameterType="PlcCommandOperationSort" resultMap="PlcCommandOperationSortResult">
+        <include refid="selectPlcCommandOperationSortVo"/>
+        <where>  
+            <if test="sort != null "> and s.sort = #{sort}</if>
+            <if test="operationId != null "> and s.operation_id = #{operationId}</if>
+            <if test="commandId != null "> and s.command_id = #{commandId}</if>
+        </where>
+        order by s.operation_id,s.sort
+    </select>
+    
+    <select id="selectPlcCommandOperationSortBySortId" parameterType="Long" resultMap="PlcCommandOperationSortResult">
+        <include refid="selectPlcCommandOperationSortVo"/>
+        where s.sort_id = #{sortId}
+    </select>
+        
+    <insert id="insertPlcCommandOperationSort" parameterType="PlcCommandOperationSort">
+        insert into plc_command_operation_sort
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sortId != null">sort_id,</if>
+            <if test="operationId != null">operation_id,</if>
+            <if test="commandId != null">command_id,</if>
+            <if test="sort != null">sort,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sortId != null">#{sortId},</if>
+            <if test="operationId != null">#{operationId},</if>
+            <if test="commandId != null">#{commandId},</if>
+            <if test="sort != null">#{sort},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePlcCommandOperationSort" parameterType="PlcCommandOperationSort">
+        update plc_command_operation_sort
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="operationId != null">operation_id = #{operationId},</if>
+            <if test="commandId != null">command_id = #{commandId},</if>
+            <if test="sort != null">sort = #{sort},</if>
+        </trim>
+        where sort_id = #{sortId}
+    </update>
+
+    <delete id="deletePlcCommandOperationSortBySortId" parameterType="Long">
+        delete from plc_command_operation_sort where sort_id = #{sortId}
+    </delete>
+
+    <delete id="deletePlcCommandOperationSortBySortIds" parameterType="String">
+        delete from plc_command_operation_sort where sort_id in 
+        <foreach item="sortId" collection="array" open="(" separator="," close=")">
+            #{sortId}
+        </foreach>
+    </delete>
+</mapper>

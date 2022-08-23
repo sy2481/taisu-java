@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.PlcEquipmentMapper">
+    
+    <resultMap type="PlcEquipment" id="PlcEquipmentResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="ip"    column="ip"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="port"    column="port"    />
+        <result property="plantAreaId"    column="plant_area_id"    />
+        <result property="hazardousChemicals"    column="hazardous_chemicals"    />
+        <result property="control"    column="control"    />
+        <result property="time1"    column="time1"    />
+        <result property="time2"    column="time2"    />
+        <result property="time3"    column="time3"    />
+        <result property="controlType"    column="control_type"    />
+    </resultMap>
+
+    <sql id="selectPlcEquipmentVo">
+        select id, name, ip, create_time, update_time, port, plant_area_id, time1,time2,time3,
+               hazardous_chemicals, control,  control_type from plc_equipment
+    </sql>
+
+    <select id="selectPlcEquipmentList" parameterType="PlcEquipment" resultMap="PlcEquipmentResult">
+        <include refid="selectPlcEquipmentVo"/>
+        <where>
+            <if test="deptIds != null  and deptIds != ''"> and plant_area_id in
+                <foreach collection='deptIds' item='item' separator=',' open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="ip != null  and ip != ''"> and ip like concat('%', #{ip}, '%')</if>
+            <if test="port != null "> and port = #{port}</if>
+            <if test="hazardousChemicals != null "> and hazardous_chemicals = #{hazardousChemicals}</if>
+        </where>
+    </select>
+    
+    <select id="selectPlcEquipmentById" parameterType="Long" resultMap="PlcEquipmentResult">
+        <include refid="selectPlcEquipmentVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="findByIp" parameterType="String" resultMap="PlcEquipmentResult">
+        <include refid="selectPlcEquipmentVo"/>
+        where ip = #{ip}
+    </select>
+
+    <insert id="insertPlcEquipment" parameterType="PlcEquipment">
+        insert into plc_equipment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="name != null">name,</if>
+            <if test="ip != null">ip,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="port != null">port,</if>
+            <if test="plantAreaId != null">plant_area_id,</if>
+            <if test="hazardousChemicals != null">hazardous_chemicals,</if>
+            <if test="control != null">control,</if>
+            <if test="time1 != null">time1,</if>
+            <if test="time2 != null">time2,</if>
+            <if test="time3 != null">time3,</if>
+            <if test="controlType != null">control_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="name != null">#{name},</if>
+            <if test="ip != null">#{ip},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="port != null">#{port},</if>
+            <if test="plantAreaId != null">#{plantAreaId},</if>
+            <if test="hazardousChemicals != null">#{hazardousChemicals},</if>
+            <if test="control != null">#{control},</if>
+            <if test="time1 != null">#{time1},</if>
+            <if test="time2 != null">#{time2},</if>
+            <if test="time3 != null">#{time3},</if>
+            <if test="controlType != null">#{controlType},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePlcEquipment" parameterType="PlcEquipment">
+        update plc_equipment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="port != null">port = #{port},</if>
+            <if test="plantAreaId != null">plant_area_id = #{plantAreaId},</if>
+            <if test="hazardousChemicals != null">hazardous_chemicals = #{hazardousChemicals},</if>
+            <if test="control != null">control = #{control},</if>
+            <if test="controlType != null">control_type = #{controlType},</if>
+            <if test="time1 != null">time1 = #{time1},</if>
+            <if test="time2 != null">time2 = #{time2},</if>
+            <if test="time3 != null">time3 = #{time3},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePlcEquipmentById" parameterType="Long">
+        delete from plc_equipment where id = #{id}
+    </delete>
+
+    <delete id="deletePlcEquipmentByIds" parameterType="String">
+        delete from plc_equipment where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getPlcEquipmentByDept" resultMap="PlcEquipmentResult">
+        <include refid="selectPlcEquipmentVo"/>
+        <where>
+            plant_area_id in
+            <foreach collection='factoryIdList' item='item' separator=',' open="(" close=")">
+                #{item}
+            </foreach>
+        </where>
+
+    </select>
+<!--根据ID查询（多个）-->
+    <select id="getPlcEquipmentById" resultMap="PlcEquipmentResult">
+        <include refid="selectPlcEquipmentVo"/>
+        <where>
+            id in
+            <foreach collection='factoryIdList' item='item' separator=',' open="(" close=")">
+                #{item}
+            </foreach>
+        </where>
+
+    </select>
+
+    <select id="getPlcEquipmentByDeptId" resultMap="PlcEquipmentResult">
+        <include refid="selectPlcEquipmentVo"/>
+        <where>
+            plant_area_id=#{plantAreaId} and hazardous_chemicals=1
+        </where>
+    </select>
+
+
+</mapper>

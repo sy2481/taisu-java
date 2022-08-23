@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.BasePassagewayOperationMapper">
+    
+    <resultMap type="BasePassagewayOperation" id="BasePassagewayOperationResult">
+        <result property="operationId"    column="operation_id"    />
+        <result property="passagewayId"    column="passageway_id"    />
+        <result property="name"    column="name"    />
+        <result property="type"    column="type"    />
+        <result property="enable"    column="enable"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="creator"    column="creator"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="passagewayName"    column="passageway_name"    />
+        <result property="doorId"    column="door_id"    />
+        <result property="doorName"    column="door_name"    />
+        <result property="plantAreaId"    column="plant_area_id"    />
+        <result property="plantAreaName"    column="plant_area_name"    />
+    </resultMap>
+
+    <sql id="selectBasePassagewayOperationVo">
+        select o.operation_id, o.passageway_id, o.name, o.type, o.enable, o.create_time, o.creator, o.update_time,p.name as passageway_name,d.name as door_name,d.door_id as door_id, dept.dept_id as plant_area_id, dept.dept_name as plant_area_name
+        from base_passageway_operation as o
+        inner join base_passageway as p
+        on o.passageway_id=p.passageway_id
+        inner join base_door as d
+        on p.door_id=d.door_id
+        inner join sys_dept as dept
+        on d.plant_area_id=dept.dept_id
+    </sql>
+
+    <select id="selectBasePassagewayOperationList" parameterType="BasePassagewayOperation" resultMap="BasePassagewayOperationResult">
+        <include refid="selectBasePassagewayOperationVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and o.name like concat('%', #{name}, '%')</if>
+            <if test="type != null  and type != ''"> and o.type = #{type}</if>
+            <if test="enable != null "> and o.enable = #{enable}</if>
+            <if test="creator != null  and creator != ''"> and o.creator = #{creator}</if>
+            <if test="plantAreaId != null  and plantAreaId != ''"> and dept.dept_id = #{plantAreaId}</if>
+            <if test="doorId != null  and doorId != ''"> and d.door_id = #{doorId}</if>
+            <if test="passagewayId != null  and passagewayId != ''"> and o.passageway_id = #{passagewayId}</if>
+        </where>
+        order by dept.dept_id,d.door_id,o.passageway_id
+    </select>
+    
+    <select id="selectBasePassagewayOperationByOperationId" parameterType="Long" resultMap="BasePassagewayOperationResult">
+        <include refid="selectBasePassagewayOperationVo"/>
+        where o.operation_id = #{operationId}
+    </select>
+        
+    <insert id="insertBasePassagewayOperation" parameterType="BasePassagewayOperation">
+        insert into base_passageway_operation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="operationId != null">operation_id,</if>
+            <if test="passagewayId != null">passageway_id,</if>
+            <if test="name != null">name,</if>
+            <if test="type != null">type,</if>
+            <if test="enable != null">enable,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="creator != null">creator,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="operationId != null">#{operationId},</if>
+            <if test="passagewayId != null">#{passagewayId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="type != null">#{type},</if>
+            <if test="enable != null">#{enable},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="creator != null">#{creator},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBasePassagewayOperation" parameterType="BasePassagewayOperation">
+        update base_passageway_operation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="passagewayId != null">passageway_id = #{passagewayId},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="type != null">type = #{type},</if>
+            <if test="enable != null">enable = #{enable},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="creator != null">creator = #{creator},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where operation_id = #{operationId}
+    </update>
+
+    <delete id="deleteBasePassagewayOperationByOperationId" parameterType="Long">
+        delete from base_passageway_operation where operation_id = #{operationId}
+    </delete>
+
+    <delete id="deleteBasePassagewayOperationByOperationIds" parameterType="String">
+        delete from base_passageway_operation where operation_id in 
+        <foreach item="operationId" collection="array" open="(" separator="," close=")">
+            #{operationId}
+        </foreach>
+    </delete>
+</mapper>

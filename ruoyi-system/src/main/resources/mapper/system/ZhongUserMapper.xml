@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ZhongUserMapper">
+
+    <resultMap type="com.ruoyi.system.domain.ZhongUser" id="ZhongUser">
+        <result property="id"    column="id"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="nickName"    column="nick_name"    />
+        <result property="empNo"    column="emp_no"    />
+        <result property="idCard"    column="id_card"    />
+    </resultMap>
+
+    <select id="findAll" resultMap="ZhongUser">
+        SELECT * FROM [users]
+    </select>
+
+</mapper>

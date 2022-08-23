@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.CardRecordMapper">
+    
+    <resultMap type="CardRecord" id="CardRecordResult">
+        <result property="cardRecordId"    column="card_record_id"    />
+        <result property="cardType"    column="card_type"    />
+        <result property="cardId"    column="card_id"    />
+        <result property="cardNo"    column="card_no"    />
+        <result property="cardRecordOperate"    column="card_record_operate"    />
+        <result property="cardRecordUse"    column="card_record_use"    />
+        <result property="cardRecordObject"    column="card_record_object"    />
+        <result property="cardRecordTime"    column="card_record_time"    />
+        <result property="cardRecordName"    column="card_record_name"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectCardRecordVo">
+        select card_record_id, card_type, card_id, card_no, card_record_operate, card_record_use, card_record_object, card_record_time, card_record_name, del_flag, create_by, create_time, update_by, update_time, remark from base_card_record
+    </sql>
+
+    <select id="selectCardRecordList" parameterType="CardRecord" resultMap="CardRecordResult">
+        <include refid="selectCardRecordVo"/>
+        <where>
+            and del_flag = '0'
+            <if test="cardType != null "> and card_type = #{cardType}</if>
+            <if test="cardId != null "> and card_id = #{cardId}</if>
+            <if test="cardNo != null  and cardNo != ''"> and card_no = #{cardNo}</if>
+            <if test="cardRecordOperate != null  and cardRecordOperate != ''"> and card_record_operate = #{cardRecordOperate}</if>
+            <if test="cardRecordUse != null  and cardRecordUse != ''"> and card_record_use = #{cardRecordUse}</if>
+            <if test="cardRecordObject != null  and cardRecordObject != ''"> and card_record_object = #{cardRecordObject}</if>
+            <if test="cardRecordTime != null "> and card_record_time = #{cardRecordTime}</if>
+            <if test="cardRecordName != null  and cardRecordName != ''"> and card_record_name like concat('%', #{cardRecordName}, '%')</if>
+        </where>
+        order by card_record_time desc
+    </select>
+    
+    <select id="selectCardRecordByCardRecordId" parameterType="Long" resultMap="CardRecordResult">
+        <include refid="selectCardRecordVo"/>
+        where card_record_id = #{cardRecordId}
+    </select>
+        
+    <insert id="insertCardRecord" parameterType="CardRecord">
+        insert into base_card_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cardRecordId != null">card_record_id,</if>
+            <if test="cardType != null">card_type,</if>
+            <if test="cardId != null">card_id,</if>
+            <if test="cardNo != null">card_no,</if>
+            <if test="cardRecordOperate != null">card_record_operate,</if>
+            <if test="cardRecordUse != null">card_record_use,</if>
+            <if test="cardRecordObject != null">card_record_object,</if>
+            <if test="cardRecordTime != null">card_record_time,</if>
+            <if test="cardRecordName != null">card_record_name,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cardRecordId != null">#{cardRecordId},</if>
+            <if test="cardType != null">#{cardType},</if>
+            <if test="cardId != null">#{cardId},</if>
+            <if test="cardNo != null">#{cardNo},</if>
+            <if test="cardRecordOperate != null">#{cardRecordOperate},</if>
+            <if test="cardRecordUse != null">#{cardRecordUse},</if>
+            <if test="cardRecordObject != null">#{cardRecordObject},</if>
+            <if test="cardRecordTime != null">#{cardRecordTime},</if>
+            <if test="cardRecordName != null">#{cardRecordName},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCardRecord" parameterType="CardRecord">
+        update base_card_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cardType != null">card_type = #{cardType},</if>
+            <if test="cardId != null">card_id = #{cardId},</if>
+            <if test="cardNo != null">card_no = #{cardNo},</if>
+            <if test="cardRecordOperate != null">card_record_operate = #{cardRecordOperate},</if>
+            <if test="cardRecordUse != null">card_record_use = #{cardRecordUse},</if>
+            <if test="cardRecordObject != null">card_record_object = #{cardRecordObject},</if>
+            <if test="cardRecordTime != null">card_record_time = #{cardRecordTime},</if>
+            <if test="cardRecordName != null">card_record_name = #{cardRecordName},</if>
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where card_record_id = #{cardRecordId}
+    </update>
+
+    <delete id="deleteCardRecordByCardRecordId" parameterType="Long">
+        update base_card_record set del_flag = '0' where card_record_id = #{cardRecordId}
+    </delete>
+
+    <delete id="deleteCardRecordByCardRecordIds" parameterType="String">
+        update base_card_record set del_flag = '0' where card_record_id in
+        <foreach item="cardRecordId" collection="array" open="(" separator="," close=")">
+            #{cardRecordId}
+        </foreach>
+    </delete>
+</mapper>

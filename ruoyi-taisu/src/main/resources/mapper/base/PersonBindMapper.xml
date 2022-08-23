@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.PersonBindMapper">
+
+    <resultMap type="com.ruoyi.base.domain.PersonBind" id="PersonBind">
+        <result property="id" column="id"/>
+        <result property="personType" column="person_type"/>
+        <result property="sn" column="sn"/>
+        <result property="idCard" column="id_card"/>
+        <result property="name" column="name"/>
+        <result property="mobile" column="mobile"/>
+        <result property="sex" column="sex"/>
+        <result property="face" column="face"/>
+        <result property="address" column="address"/>
+        <result property="plateNo" column="plate_no"/>
+        <result property="factoryArea" column="factory_area"/>
+        <result property="empNo" column="emp_no"/>
+        <result property="joinDate" column="join_date"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="workNo" column="work_no"/>
+        <result property="projectNo" column="project_no"/>
+        <result property="factoryName" column="factory_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="eventType" column="event_type"/>
+        <result property="userPost" column="user_post"/>
+    </resultMap>
+    <sql id="selectPerson">
+      SELECT * FROM person_bind
+    </sql>
+
+    <select id="selectByIdCard" resultMap="PersonBind" parameterType="string">
+        <include refid="selectPerson"/>
+        <where>
+            id_card=#{idCard} and person_type=#{personType}
+        </where>
+    </select>
+
+    <insert id="insertPersonBind" parameterType="com.ruoyi.base.domain.PersonBind">
+        insert into person_bind
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+
+            <if test="personType != null">person_type,</if>
+            <if test="sn != null">sn,</if>
+            <if test="idCard != null">id_card,</if>
+            <if test="name != null">name,</if>
+            <if test="mobile != null">mobile,</if>
+            <if test="sex != null">sex,</if>
+            <if test="face != null">face,</if>
+            <if test="address != null">address,</if>
+            <if test="plateNo != null">plate_no,</if>
+            <if test="factoryArea != null">factory_area,</if>
+            <if test="empNo != null">emp_no,</if>
+            <if test="joinDate != null">join_date,</if>
+            <if test="deptName != null">dept_name,</if>
+            <if test="workNo != null">work_no,</if>
+            <if test="projectNo != null">project_no,</if>
+            <if test="factoryName != null">factory_name,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="eventType != null">event_type,</if>
+            <if test="userPost != null">user_post,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+
+            <if test="personType != null">#{personType},</if>
+            <if test="sn != null">#{sn},</if>
+            <if test="idCard != null">#{idCard},</if>
+            <if test="name != null">#{name},</if>
+            <if test="mobile != null">#{mobile},</if>
+            <if test="sex != null">#{sex},</if>
+            <if test="face != null">#{face},</if>
+            <if test="address != null">#{address},</if>
+            <if test="plateNo != null">#{plateNo},</if>
+            <if test="factoryArea != null">#{factoryArea},</if>
+            <if test="empNo != null">#{empNo},</if>
+            <if test="joinDate != null">#{joinDate},</if>
+            <if test="deptName != null">#{deptName},</if>
+            <if test="workNo != null">#{workNo},</if>
+            <if test="projectNo != null">#{projectNo},</if>
+            <if test="factoryName != null">#{factoryName},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="eventType != null">#{eventType},</if>
+            <if test="userPost != null">#{userPost},</if>
+
+
+        </trim>
+    </insert>
+    <!--根据身份证修改-->
+    <update id="updateByIdCard">
+        update person_bind
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="personType != null">person_type=#{personType},</if>
+            <if test="sn != null">sn=#{sn},</if>
+            <if test="name != null">name=#{name},</if>
+            <if test="mobile != null">mobile=#{mobile},</if>
+            <if test="sex != null">sex=#{sex},</if>
+            <if test="face != null">face=#{face},</if>
+            <if test="address != null">address=#{address},</if>
+            <if test="plateNo != null">plate_no=#{plateNo},</if>
+            <if test="factoryArea != null">factory_area=#{factoryArea},</if>
+            <if test="empNo != null">emp_no=#{empNo},</if>
+            <if test="joinDate != null">join_date=#{joinDate},</if>
+            <if test="deptName != null">dept_name=#{deptName},</if>
+            <if test="workNo != null">work_no=#{workNo},</if>
+            <if test="projectNo != null">project_no=#{projectNo},</if>
+            <if test="factoryName != null">factory_name=#{factoryName},</if>
+            <if test="updateTime != null">update_time=#{updateTime},</if>
+            <if test="eventType != null">event_type=#{eventType},</if>
+            <if test="userPost != null">user_post=#{userPost},</if>
+
+        </trim>
+        WHERE   id_card=#{idCard}
+    </update>
+    <!--解绑()-->
+    <update id="relieveByIdCard">
+        UPDATE person_bind SET event_type = 1 ,sn=NULL WHERE id_card = #{IdCard}
+    </update>
+</mapper>

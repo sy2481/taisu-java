@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.InOutLogMapper">
+
+    <resultMap type="InOutLog" id="InOutLogResult">
+        <result property="id" column="id"/>
+        <result property="projectNo" column="project_no"/>
+        <result property="workNo" column="work_no"/>
+        <result property="ip" column="ip"/>
+        <result property="areaName" column="area_name"/>
+        <result property="projectName" column="project_name"/>
+        <result property="factoryName" column="factory_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="loadType" column="load_type"/>
+        <result property="name" column="name"/>
+        <result property="idCard" column="id_card"/>
+        <result property="userId" column="user_id"/>
+        <result property="factoryId" column="factory_id"/>
+        <result property="logType" column="log_type"/>
+        <result property="plateNo" column="plate_no"/>
+        <result property="personType" column="person_type"/>
+        <result property="locationCardNo" column="location_card_no"/>
+        <result property="userDeptName" column="user_dept_name"/>
+        <result property="userNo" column="user_no"/>
+        <result property="gate" column="gate"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="validType"    column="valid_type"    />
+        <result property="operationTime"    column="operation_time"    />
+        <result property="operationName"    column="operation_name"    />
+    </resultMap>
+
+    <sql id="selectInOutLogVo">
+        select id, project_no, work_no, ip, area_name, project_name, factory_name,
+               create_time, load_type, name, id_card, user_id, factory_id,
+               log_type, plate_no, person_type, location_card_no, user_dept_name,
+               valid_type,operation_time,operation_name user_no,gate,dept_id
+        from in_out_log
+    </sql>
+
+    <select id="selectInOutLogList" parameterType="InOutLog" resultMap="InOutLogResult">
+        <include refid="selectInOutLogVo"/>
+        <where>
+            <if test="workNo != null  and workNo != ''">and work_no like concat('%', #{workNo}, '%')</if>
+            <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
+            <if test="gate != null  and gate != ''">and gate like concat('%', #{gate}, '%')</if>
+            <if test="idCard != null  and idCard != ''">and id_card like concat('%', #{idCard}, '%')</if>
+            <if test="plateNo != null  and plateNo != ''">and plate_no like concat('%', #{plateNo}, '%')</if>
+            <if test="logType != null  and logType != ''">and log_type = #{logType}</if>
+            <if test="loadType != null  and loadType != ''">and load_type = #{loadType}</if>
+            <if test="personType != null  and personType != ''">and person_type = #{personType}</if>
+            <if test="locationCardNo != null  and locationCardNo != ''">and location_card_no = #{locationCardNo}</if>
+            <if test="userNo != null  and userNo != ''">and user_no like concat('%', #{userNo}, '%')</if>
+            <if test="areaName != null  and areaName != ''">and area_name like concat('%', #{areaName}, '%')</if>
+            <if test="validType != null "> and valid_type = #{validType}</if>
+            <if test="operationTime != null "> and operation_time = #{operationTime}</if>
+            <if test="operationName != null and operationName != ''"> and operation_name = #{operationName}</if>
+            <if test="startTime != null  and startTime != ''">
+                AND CONVERT(varchar(100), create_time, 120) &gt;= CONVERT(varchar(100), #{startTime}, 120)
+            </if>
+            <if test="endTime != null  and endTime != ''">
+                AND CONVERT(varchar(100), create_time, 120) &lt;= CONVERT(varchar(100), #{endTime}, 120)
+            </if>
+            <if test="factoryIdList != null  and factoryIdList != ''">and dept_id in
+                <foreach collection='factoryIdList' item='item' separator=',' open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectInOutLogById" parameterType="Long" resultMap="InOutLogResult">
+        <include refid="selectInOutLogVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertInOutLog" parameterType="InOutLog">
+        insert into in_out_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="projectNo != null">project_no,</if>
+            <if test="workNo != null">work_no,</if>
+            <if test="ip != null">ip,</if>
+            <if test="areaName != null">area_name,</if>
+            <if test="projectName != null">project_name,</if>
+            <if test="factoryName != null">factory_name,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="loadType != null">load_type,</if>
+            <if test="name != null">name,</if>
+            <if test="idCard != null">id_card,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="factoryId != null">factory_id,</if>
+            <if test="logType != null">log_type,</if>
+            <if test="plateNo != null">plate_no,</if>
+            <if test="personType != null">person_type,</if>
+            <if test="locationCardNo != null">location_card_no,</if>
+            <if test="userDeptName != null">user_dept_name,</if>
+            <if test="userNo != null">user_no,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="validType != null">valid_type,</if>
+            <if test="operationTime != null">operation_time,</if>
+            <if test="operationName != null">operation_name,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="projectNo != null">#{projectNo},</if>
+            <if test="workNo != null">#{workNo},</if>
+            <if test="ip != null">#{ip},</if>
+            <if test="areaName != null">#{areaName},</if>
+            <if test="projectName != null">#{projectName},</if>
+            <if test="factoryName != null">#{factoryName},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="loadType != null">#{loadType},</if>
+            <if test="name != null">#{name},</if>
+            <if test="idCard != null">#{idCard},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="factoryId != null">#{factoryId},</if>
+            <if test="logType != null">#{logType},</if>
+            <if test="plateNo != null">#{plateNo},</if>
+            <if test="personType != null">#{personType},</if>
+            <if test="locationCardNo != null">#{locationCardNo},</if>
+            <if test="userDeptName != null">#{userDeptName},</if>
+            <if test="userNo != null">#{userNo},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="validType != null">#{validType},</if>
+            <if test="operationTime != null">#{operationTime},</if>
+            <if test="operationName != null">#{operationName},</if>
+        </trim>
+    </insert>
+
+
+    <update id="updateInOutLog" parameterType="InOutLog">
+        update in_out_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectNo != null">project_no = #{projectNo},</if>
+            <if test="workNo != null">work_no = #{workNo},</if>
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="areaName != null">area_name = #{areaName},</if>
+            <if test="projectName != null">project_name = #{projectName},</if>
+            <if test="factoryName != null">factory_name = #{factoryName},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="loadType != null">load_type = #{loadType},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="factoryId != null">factory_id = #{factoryId},</if>
+            <if test="logType != null">log_type = #{logType},</if>
+            <if test="plateNo != null">plate_no = #{plateNo},</if>
+            <if test="personType != null">person_type = #{personType},</if>
+            <if test="locationCardNo != null">location_card_no = #{locationCardNo},</if>
+            <if test="userDeptName != null">user_dept_name = #{userDeptName},</if>
+            <if test="userNo != null">user_no = #{userNo},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="validType != null">valid_type = #{validType},</if>
+            <if test="operationTime != null">operation_time = #{operationTime},</if>
+            <if test="operationName != null">operation_name = #{operationName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteInOutLogById" parameterType="Long">
+        delete from in_out_log where id = #{id}
+    </delete>
+
+    <delete id="deleteInOutLogByIds" parameterType="String">
+        delete from in_out_log where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <select id="getInOutLogGuestByIdCard" resultMap="InOutLogResult">
+        SELECT  top 1 * FROM in_out_log where id_card = #{idCard}
+                                                and create_time >= DATEADD(HOUR,-#{time},GETDATE())
+                                                and  valid_type=0
+                                                and person_type=#{personType}
+                                                and dept_id=#{deptId}
+        ORDER BY create_time desc
+    </select>
+
+    <update id="removeLog">
+        UPDATE  in_out_log SET valid_type= 1 , operation_name=#{operationName},operation_time= GETDATE()  WHERE id=#{id}
+    </update>
+</mapper>

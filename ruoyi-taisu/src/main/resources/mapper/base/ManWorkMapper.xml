@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.ManWorkMapper">
+
+    <resultMap type="com.ruoyi.base.domain.ManWork" id="ManWorkResult">
+        <result property="workId" column="work_id"/>
+        <result property="projectNo" column="project_no"/>
+        <result property="workNo" column="work_no"/>
+        <result property="mngName" column="mng_name"/>
+        <result property="mngTime" column="mng_time"/>
+        <result property="workTime" column="work_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="carId" column="car_id"/>
+        <result property="projectName" column="project_name"/>
+        <result property="jobCategory" column="job_category"/>
+        <result property="inspector" column="inspector"/>
+        <result property="inspector2" column="inspector2"/>
+        <result property="carCard" column="car_card"/>
+        <result property="xtInNum" column="xt_in_num"/>
+        <result property="comInNum" column="com_in_num"/>
+        <result property="ip" column="ip"/>
+        <result property="factoryDoorName" column="factory_door_name"/>
+        <result property="workType" column="work_type"/>
+        <result property="workStatus" column="work_status"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="extendStartTime" column="extend_start_time"/>
+        <result property="extendEndTime" column="extend_end_time"/>
+    </resultMap>
+
+    <sql id="selectManWorkVo">
+        select work_id, project_no, work_no, mng_name, mng_time,
+               work_time, car_id, project_name, job_category, inspector, inspector2, car_card,
+               xt_in_num, com_in_num, del_flag, create_by, create_time, ip,factory_door_name, work_type, work_status,dept_id from man_work
+    </sql>
+
+    <select id="selectManWorkList" parameterType="com.ruoyi.base.domain.ManWork" resultMap="ManWorkResult">
+        <include refid="selectManWorkVo"/>
+        <where>
+            del_flag = '0'
+            <if test="factoryId != null  ">and dept_id in
+                <foreach collection='factoryId' item='item' separator=',' open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="projectNo != null  and projectNo != ''">and project_no like concat('%', #{projectNo}, '%')</if>
+            <if test="workNo != null  and workNo != ''">and work_no like concat('%', #{workNo}, '%')</if>
+            <if test="mngName != null  and mngName != ''">and mng_name like concat('%', #{mngName}, '%')</if>
+            <if test="mngTime != null  and mngTime != ''">and mng_time = #{mngTime}</if>
+            <if test="workTime != null  and workTime != ''">and work_time = #{workTime}</if>
+            <if test="carCard != null  and carCard != ''">and car_card = #{carCard}</if>
+            <if test="workType != null">and work_type = #{workType}</if>
+            <if test="workStatus != null">and work_status = #{workStatus}</if>
+            <if test="historyQuery == true">and CONVERT(varchar(100), work_time, 23) &lt; CONVERT(varchar(100),
+                getdate(), 23)
+            </if>
+            <if test="historyQuery == false">and CONVERT(varchar(100), work_time, 23) >= CONVERT(varchar(100),
+                getdate(), 23)
+            </if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                AND CONVERT(varchar(100), work_time, 112) &gt;= CONVERT(varchar(100), #{params.beginTime}, 112)
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                AND CONVERT(varchar(100), work_time, 112) &lt;= CONVERT(varchar(100), #{params.endTime}, 112)
+            </if>
+
+        </where>
+        order by work_time desc
+    </select>
+
+    <select id="selectManWorkByWorkId" parameterType="Long" resultMap="ManWorkResult">
+        <include refid="selectManWorkVo"/>
+        where work_id = #{workId}
+    </select>
+
+    <select id="selectManWorkByworkNo" parameterType="string" resultMap="ManWorkResult">
+        <include refid="selectManWorkVo"/>
+        where work_no = #{workNo} and del_flag = '0'
+    </select>
+    <select id="selectManWork" resultType="com.ruoyi.base.bo.workCarBo">
+         select
+               project_no AS projectNo,
+               work_no AS workNo,
+               work_time AS workTime,
+               car_id AS lcensePlate
+        from man_work
+        where  work_no like concat('%', #{workNo}, '%')
+        and CONVERT(varchar(100), work_time, 23) = #{date} and del_flag = '0'
+    </select>
+
+
+    <insert id="insertManWork" useGeneratedKeys="true" keyProperty="workId"
+            parameterType="com.ruoyi.base.domain.ManWork">
+        insert into man_work
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="workId != null">work_id,</if>
+            <if test="projectNo != null">project_no,</if>
+            <if test="workNo != null">work_no,</if>
+            <if test="mngName != null">mng_name,</if>
+            <if test="mngTime != null">mng_time,</if>
+            <if test="workTime != null">work_time,</if>
+            <if test="carId != null">car_id,</if>
+            <if test="projectName != null">project_name,</if>
+            <if test="jobCategory != null">job_category,</if>
+            <if test="inspector != null">inspector,</if>
+            <if test="inspector2 != null">inspector2,</if>
+            <if test="carCard != null">inspector2,</if>
+            <if test="xtInNum != null">xt_in_num,</if>
+            <if test="comInNum != null">com_in_num,</if>
+            <if test="ip != null">ip,</if>
+            <if test="factoryDoorName!=null">factory_door_name,</if>
+            <if test="workType != null">work_type,</if>
+            <if test="workStatus != null">work_status,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="startTime !=null">start_time,</if>
+            <if test="endTime !=null">end_time,</if>
+            <if test="extendStartTime!=null">extend_start_time,</if>
+            <if test="extendEndTime!=null">extend_end_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="workId != null">#{workId},</if>
+            <if test="projectNo != null">#{projectNo},</if>
+            <if test="workNo != null">#{workNo},</if>
+            <if test="mngName != null">#{mngName},</if>
+            <if test="mngTime != null">#{mngTime},</if>
+            <if test="workTime != null">#{workTime},</if>
+            <if test="carId != null">#{carId},</if>
+            <if test="projectName != null">#{projectName},</if>
+            <if test="jobCategory != null">#{jobCategory},</if>
+            <if test="inspector != null">#{inspector},</if>
+            <if test="inspector2 != null">#{inspector2},</if>
+            <if test="carCard != null">#{carCard},</if>
+            <if test="xtInNum != null">#{xtInNum},</if>
+            <if test="comInNum != null">#{comInNum},</if>
+            <if test="ip != null">#{ip},</if>
+            <if test="factoryDoorName!=null">#{factoryDoorName},</if>
+            <if test="workType != null">#{workType},</if>
+            <if test="workStatus != null">#{workStatus},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="startTime !=null">#{startTime},</if>
+            <if test="endTime !=null">#{endTime},</if>
+            <if test="extendStartTime!=null">#{extendStartTime},</if>
+            <if test="extendEndTime!=null">#{extendEndTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateManWork" parameterType="com.ruoyi.base.domain.ManWork">
+        update man_work
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="projectNo != null">project_no = #{projectNo},</if>
+            <if test="workNo != null">work_no = #{workNo},</if>
+            <if test="mngName != null">mng_name = #{mngName},</if>
+            <if test="mngTime != null">mng_time = #{mngTime},</if>
+            <if test="workTime != null">work_time = #{workTime},</if>
+            <if test="carId != null">car_id = #{carId},</if>
+            <if test="projectName != null">project_name = #{projectName},</if>
+            <if test="jobCategory != null">job_category = #{jobCategory},</if>
+            <if test="inspector != null">inspector = #{inspector},</if>
+            <if test="inspector2 != null">inspector2 = #{inspector2},</if>
+            <if test="carCard != null">car_card = #{carCard},</if>
+            <if test="xtInNum != null">xt_in_num = #{xtInNum},</if>
+            <if test="comInNum != null">com_in_num = #{comInNum},</if>
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="factoryDoorName !=null">factory_door_name = #{factoryDoorName},</if>
+            <if test="workStatus != null">work_status = #{workStatus},</if>
+            <if test="deptId != null">dept_id=#{deptId},</if>
+            <if test="startTime !=null">start_time = #{startTime},</if>
+            <if test="endTime !=null">end_time = #{endTime},</if>
+            <if test="extendStartTime!=null">extend_start_time=#{extendStartTime},</if>
+            <if test="extendEndTime!=null">extend_end_time=#{extendEndTime},</if>
+        </trim>
+        where work_id = #{workId}
+    </update>
+
+    <update id="deleteManWorkByWorkId" parameterType="Long">
+        update man_work set del_flag = '2' where work_id = #{workId}
+    </update>
+
+    <update id="deleteManWorkByWorkIds" parameterType="String">
+        update man_work set del_flag = '2' where work_id in
+        <foreach item="workId" collection="array" open="(" separator="," close=")">
+            #{workId}
+        </foreach>
+    </update>
+
+    <update id="xtOut" parameterType="String">
+        update man_work set xt_in_num = xt_in_num -1 WHERE work_no = #{workNo} and del_flag = '0'
+    </update>
+    <update id="xtIn" parameterType="String">
+        update man_work set xt_in_num = xt_in_num +1 WHERE work_no = #{workNo} and del_flag = '0'
+    </update>
+
+    <update id="comOut" parameterType="String">
+        update man_work set com_in_num = com_in_num -1 WHERE work_no = #{workNo} and del_flag = '0'
+    </update>
+    <update id="comIn" parameterType="String">
+        update man_work set com_in_num = com_in_num +1 WHERE work_no = #{workNo} and del_flag = '0'
+    </update>
+
+    <!-- 统计当日危险品车辆 -->
+    <select id="countDangerPlate" resultType="java.lang.Integer">
+        select count(1) from man_work
+        where work_type = 1 and  del_flag = '0'
+          AND CONVERT(varchar(100), work_time, 112) = CONVERT(varchar(100), #{date}, 112)
+          and car_id like concat('%', #{plateNo}, '%')
+    </select>
+</mapper>

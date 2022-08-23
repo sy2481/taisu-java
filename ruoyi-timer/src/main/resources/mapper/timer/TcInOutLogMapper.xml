@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.timer.mapper.TcInOutLogMapper">
+
+    <insert id="insertTcInOutLog" parameterType="com.ruoyi.timer.domain.TcInOutLog">
+        insert into TC_InOutLog (IP, DateTime, Type, Idno, Uploaded, FctDorNm)
+        values (#{ip}, #{dateTime}, #{type}, #{idNo}, #{uploaded}, #{fctDorNm})
+    </insert>
+</mapper>

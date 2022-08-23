@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.InOutLogPerilousMapper">
+
+    <resultMap type="InOutLogPerilous" id="InOutLogPerilousResult">
+        <result property="id"    column="id"    />
+        <result property="ip"    column="ip"    />
+        <result property="areaName"    column="area_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="idCard"    column="id_card"    />
+        <result property="carNo"    column="car_no"    />
+        <result property="logType"    column="log_type"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="checkType"    column="check_type"    />
+        <result property="deviceName"    column="device_name"    />
+        <result property="validType"    column="valid_type"    />
+        <result property="operationTime"    column="operation_time"    />
+        <result property="operationName"    column="operation_name"    />
+    </resultMap>
+
+    <sql id="selectInOutLogPerilousVo">
+        select id, ip, area_name, create_time, id_card, car_no, log_type, dept_id, check_type, device_name,valid_type,operation_time,operation_name from in_out_log_perilous
+    </sql>
+
+    <select id="selectInOutLogPerilousList" parameterType="InOutLogPerilous" resultMap="InOutLogPerilousResult">
+        <include refid="selectInOutLogPerilousVo"/>
+        <where>
+            <if test="factoryId != null  "> and dept_id in
+                <foreach collection='factoryId' item='item' separator=',' open="(" close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="ip != null  and ip != ''">and ip like concat('%', #{ip}, '%') </if>
+            <if test="areaName != null  and areaName != ''"> and area_name like concat('%', #{areaName}, '%')</if>
+            <if test="idCard != null  and idCard != ''"> and id_card like concat('%', #{idCard}, '%') </if>
+            <if test="carNo != null  and carNo != ''"> and car_no  like concat('%', #{carNo}, '%')</if>
+            <if test="logType != null "> and log_type = #{logType}</if>
+            <if test="checkType != null  and checkType != ''"> and check_type = #{checkType}</if>
+            <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
+            <if test="validType != null "> and valid_type = #{validType}</if>
+            <if test="operationTime != null "> and operation_time = #{operationTime}</if>
+            <if test="operationName != null and operationName != ''"> and operation_name = #{operationName}</if>
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectInOutLogPerilousById" parameterType="Long" resultMap="InOutLogPerilousResult">
+        <include refid="selectInOutLogPerilousVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertInOutLogPerilous" parameterType="InOutLogPerilous">
+        insert into in_out_log_perilous
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="ip != null">ip,</if>
+            <if test="areaName != null">area_name,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="idCard != null">id_card,</if>
+            <if test="carNo != null">car_no,</if>
+            <if test="logType != null">log_type,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="checkType != null">check_type,</if>
+            <if test="deviceName != null">device_name,</if>
+            <if test="validType != null">valid_type,</if>
+            <if test="operationTime != null">operation_time,</if>
+            <if test="operationName != null">operation_name,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="ip != null">#{ip},</if>
+            <if test="areaName != null">#{areaName},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="idCard != null">#{idCard},</if>
+            <if test="carNo != null">#{carNo},</if>
+            <if test="logType != null">#{logType},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="checkType != null">#{checkType},</if>
+            <if test="deviceName != null">#{deviceName},</if>
+            <if test="validType != null">#{validType},</if>
+            <if test="operationTime != null">#{operationTime},</if>
+            <if test="operationName != null">#{operationName},</if>
+        </trim>
+    </insert>
+
+    <update id="updateInOutLogPerilous" parameterType="InOutLogPerilous">
+        update in_out_log_perilous
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="areaName != null">area_name = #{areaName},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="carNo != null">car_no = #{carNo},</if>
+            <if test="logType != null">log_type = #{logType},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="checkType != null">check_type = #{checkType},</if>
+            <if test="deviceName != null">device_name = #{deviceName},</if>
+            <if test="validType != null">valid_type = #{validType},</if>
+            <if test="operationTime != null">operation_time = #{operationTime},</if>
+            <if test="operationName != null">operation_name = #{operationName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteInOutLogPerilousById" parameterType="Long">
+        delete from in_out_log_perilous where id = #{id}
+    </delete>
+
+    <delete id="deleteInOutLogPerilousByIds" parameterType="String">
+        delete from in_out_log_perilous where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getInOutLogGuestByIdCard" resultMap="InOutLogPerilousResult">
+        SELECT  top 1 * FROM in_out_log_perilous where id_card = #{idCard}
+                                          and create_time >= DATEADD(HOUR,-#{time},GETDATE())
+                                          and  valid_type=0
+                                          and dept_id=#{deptId}
+        ORDER BY create_time desc
+    </select>
+
+    <update id="removeLog" >
+        UPDATE  in_out_log_perilous SET valid_type= 1,operation_name=#{operationName},operation_time= GETDATE() WHERE id=#{id}
+    </update>
+</mapper>

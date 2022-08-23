@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.timer.mapper.TimInOutLogMapper">
+    <resultMap type="com.ruoyi.timer.domain.TimInOutLog" id="TimInOutLogResult">
+        <result property="datetime"    column="DateTime"    />
+        <result property="areano"    column="AreaNo"    />
+        <result property="ip"    column="IP"    />
+        <result property="vhno"    column="VhNo"    />
+        <result property="egno"    column="EGNO"    />
+        <result property="egnm"    column="EGNM"    />
+        <result property="oprenvt21"    column="OprEnvt_21"    />
+        <result property="idno"    column="Idno"    />
+        <result property="nm"    column="Nm"    />
+        <result property="ipltlic"    column="IpltLic"    />
+        <result property="pz"    column="Pz"    />
+        <result property="tkvnd"    column="TkVnd"    />
+        <result property="begtime"    column="BegTime"    />
+        <result property="endtime"    column="EndTime"    />
+        <result property="intime"    column="InTime"    />
+        <result property="outtime"    column="OutTime"    />
+        <result property="inspector"    column="Inspector"    />
+        <result property="inspector2"    column="Inspector2"    />
+        <result property="mk"    column="Mk"    />
+        <result property="profsid"    column="ProfsId"    />
+        <result property="opltdattm"    column="OPLTDatTm"    />
+        <result property="doutdattm"    column="DOUTDatTm"    />
+        <result property="fctdornm"    column="FctDorNm"    />
+        <result property="fvid"    column="FVID"    />
+        <result property="aid" column="AID"/>
+    </resultMap>
+    <resultMap type="com.ruoyi.timer.domain.DangerWork" id="DangerMsgResult">
+        <result property="vhno"    column="VHNO"    />
+        <result property="nm"    column="NM"    />
+        <result property="ipltlic"    column="IPLTLIC"    />
+        <result property="idno"    column="IDNO"    />
+        <result property="dpid"    column="DPID"    />
+        <result property="ipltcarno"    column="IPLTCARNO"    />
+        <result property="ipltwgt"    column="IPLTWGT"    />
+        <result property="opltwgt"    column="OPLTWGT"    />
+        <result property="iplttm"    column="IPLTTM"    />
+        <result property="oplttm"    column="OPLTTM"    />
+        <result property="kdnm"    column="KDNM"    />
+    </resultMap>
+
+    <select id="getInOutLog" resultMap="TimInOutLogResult" >
+        <!--当天的全部-->
+        SELECT * FROM InOutLog WHERE DateTime &lt;= #{nextDay} and DateTime &gt; #{today} and AID>#{maxAid} and FctDorNm=#{factoryCode}  order by AID
+    </select>
+
+    <select id="getInOutLogEVA" resultMap="TimInOutLogResult" >
+        <!--当天的全部-->
+        SELECT * FROM InOutLog WHERE DateTime &lt;= #{nextDay} and DateTime &gt; #{today} and AID>#{maxAid} and FctDorNm=#{factoryCode}  order by AID
+    </select>
+
+    <select id="getInOutLogExtend" resultMap="TimInOutLogResult" >
+        <!--当天的全部-->
+        SELECT * FROM InOutLog WHERE DateTime &lt;= #{nextDay} and DateTime &gt; #{today}
+            and AID &lt;=  #{maxAid} and FctDorNm=#{factoryCode} and OutTime is not null  order by AID
+    </select>
+
+    <select id="getInOutLogExtendEVA" resultMap="TimInOutLogResult" >
+        <!--当天的全部-->
+        SELECT * FROM InOutLog WHERE DateTime &lt;= #{nextDay} and DateTime &gt; #{today}
+        and AID &lt;=  #{maxAid} and FctDorNm=#{factoryCode} and OutTime is not null  order by AID
+    </select>
+
+
+    <select id="getInOutLogOrderByAid" resultMap="TimInOutLogResult" >
+        <!--当天的全部-->
+        SELECT * FROM InOutLog WHERE DateTime &lt;= #{nextDay} and DateTime &gt; #{today} order by AID desc
+    </select>
+    
+    
+    <select id="getDangerData" resultMap="DangerMsgResult">
+        SELECT * FROM V0NBRKX5 WHERE IPLTTM  &lt;= #{currentTime} and IPLTTM &gt; #{oldTime}
+    </select>
+</mapper>

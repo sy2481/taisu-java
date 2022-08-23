@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.InOutLogGuestMapper">
+
+    <resultMap type="com.ruoyi.base.domain.InOutLogGuest" id="InOutLogGuestResult">
+        <result property="id"    column="id"    />
+        <result property="ip"    column="ip"    />
+        <result property="areaName"    column="area_name"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="idCard"    column="id_card"    />
+        <result property="guestCard"    column="guest_card"    />
+        <result property="logType"    column="log_type"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="pass"    column="pass"    />
+        <result property="factoryName"    column="factory_name"    />
+        <result property="userName"    column="user_name"    />
+        <result property="validType"    column="valid_type"    />
+        <result property="operationTime"    column="operation_time"    />
+        <result property="operationName"    column="operation_name"    />
+    </resultMap>
+
+    <sql id="selectInOutLogGuestVo">
+        select id, ip, area_name, create_time, guest_card, id_card,log_type,
+        dept_id,pass,factory_name,user_name,valid_type,operation_time,operation_name
+
+               from in_out_log_guest
+    </sql>
+
+    <select id="selectInOutLogGuestList" parameterType="InOutLogGuest" resultMap="InOutLogGuestResult">
+        <include refid="selectInOutLogGuestVo"/>
+        <where>
+            <if test="ip != null  and ip != ''"> and ip like concat('%', #{ip}, '%') </if>
+            <if test="idCard != null  and idCard != ''"> and id_card like concat('%', #{idCard}, '%') </if>
+            <if test="areaName != null  and areaName != ''"> and area_name like concat('%', #{areaName}, '%')</if>
+            <if test="pass != null  and pass != ''"> and pass like concat('%', #{pass}, '%')</if>
+            <if test="factoryName != null  and factoryName != ''"> and factory_name like concat('%', #{factoryName}, '%')</if>
+            <if test="userName != null  and userName != ''"> and user_name like concat('%', #{userName}, '%')</if>
+            <if test="guestCard != null  and guestCard != ''">and guest_card like concat('%', #{guestCard}, '%')</if>
+            <if test="logType != null"> and log_type = #{logType}</if>
+            <if test="deptId != null "> and dept_id = #{deptId}</if>
+            <if test="validType != null "> and valid_type = #{validType}</if>
+            <if test="operationTime != null "> and operation_time = #{operationTime}</if>
+            <if test="operationName != null and operationName != ''"> and operation_name = #{operationName}</if>
+            <if test="createTime != null "> and CONVERT(varchar(100), create_time, 23) = #{createTime}</if>
+
+        </where>
+        ORDER BY create_time DESC
+    </select>
+
+    <select id="selectInOutLogGuestById" parameterType="Long" resultMap="InOutLogGuestResult">
+        <include refid="selectInOutLogGuestVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertInOutLogGuest" parameterType="InOutLogGuest">
+        insert into in_out_log_guest
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="ip != null">ip,</if>
+            <if test="areaName != null">area_name,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="idCard != null">id_card,</if>
+            <if test="guestCard != null">guest_card,</if>
+            <if test="logType != null">log_type,</if>
+            <if test="deptId != null">dept_id,</if>
+            <if test="pass != null">pass,</if>
+            <if test="factoryName !=null ">factory_name,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="validType != null">valid_type,</if>
+            <if test="operationTime != null">operation_time,</if>
+            <if test="operationName != null">operation_name,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="ip != null">#{ip},</if>
+            <if test="areaName != null">#{areaName},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="idCard != null">#{idCard},</if>
+            <if test="guestCard != null">#{guestCard},</if>
+            <if test="logType != null">#{logType},</if>
+            <if test="deptId != null">#{deptId},</if>
+            <if test="pass != null">#{pass},</if>
+            <if test="factoryName != null">#{factoryName},</if>
+            <if test="userName != null">#{userName},</if>
+            <if test="validType != null">#{validType},</if>
+            <if test="operationTime != null">#{operationTime},</if>
+            <if test="operationName != null">#{operationName},</if>
+        </trim>
+    </insert>
+
+    <update id="updateInOutLogGuest" parameterType="InOutLogGuest">
+        update in_out_log_guest
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="areaName != null">area_name = #{areaName},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="guestCard != null">guest_card = #{guestCard},</if>
+            <if test="logType != null">log_type = #{logType},</if>
+            <if test="deptId != null">dept_id = #{deptId},</if>
+            <if test="pass != null">pass = #{pass},</if>
+            <if test="factoryName != null">factory_name = #{factoryName},</if>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="validType != null">valid_type = #{validType},</if>
+            <if test="operationTime != null">operation_time = #{operationTime},</if>
+            <if test="operationName != null">operation_name = #{operationName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteInOutLogGuestById" parameterType="Long">
+        delete from in_out_log_guest where id = #{id}
+    </delete>
+
+    <delete id="deleteInOutLogGuestByIds" parameterType="String">
+        delete from in_out_log_guest where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="removeLog">
+        UPDATE  in_out_log_guest SET valid_type= 1, operation_name=#{operationName},operation_time= GETDATE() WHERE id=#{id}
+    </update>
+    <select id="getInOutLogGuestByIdCard" resultMap="InOutLogGuestResult">
+        SELECT  top 1 * FROM in_out_log_guest where id_card = #{idCard}
+                                                and create_time >= DATEADD(HOUR,-#{time},GETDATE())
+                                                and  valid_type=0
+                                                and dept_id=#{deptId}
+        ORDER BY create_time desc
+    </select>
+</mapper>

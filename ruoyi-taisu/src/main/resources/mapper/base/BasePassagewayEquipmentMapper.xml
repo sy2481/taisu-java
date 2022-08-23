@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.BasePassagewayEquipmentMapper">
+    
+    <resultMap type="BasePassagewayEquipment" id="BasePassagewayEquipmentResult">
+        <result property="passagewayId"    column="passageway_id"    />
+        <result property="hikEquipmentId"    column="hik_equipment_id"    />
+    </resultMap>
+
+    <sql id="selectBasePassagewayEquipmentVo">
+        select hik_equipment_id,passageway_id from base_passageway_equipment
+    </sql>
+
+    <select id="selectBasePassagewayEquipmentList" parameterType="BasePassagewayEquipment" resultMap="BasePassagewayEquipmentResult">
+        <include refid="selectBasePassagewayEquipmentVo"/>
+        <where>
+            <if test="hikEquipmentId != null  and hikEquipmentId != ''"> and hik_equipment_id = #{hikEquipmentId}</if>
+            <if test="passagewayId != null  and passagewayId != ''"> and passageway_id = #{passagewayId}</if>
+        </where>
+    </select>
+
+    <select id="selectBasePassagewayEquipmentByPassagewayId" parameterType="Long" resultMap="BasePassagewayEquipmentResult">
+        <include refid="selectBasePassagewayEquipmentVo"/>
+        where passageway_id = #{passagewayId}
+    </select>
+
+    <select id="selectBasePassagewayEquipmentByHikEquipmentId" parameterType="Long" resultMap="BasePassagewayEquipmentResult">
+        <include refid="selectBasePassagewayEquipmentVo"/>
+        where hik_equipment_id = #{HikEquipmentId}
+    </select>
+        
+    <insert id="insertBasePassagewayEquipment" parameterType="BasePassagewayEquipment">
+        insert into base_passageway_equipment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="passagewayId != null">passageway_id,</if>
+            <if test="hikEquipmentId != null">hik_equipment_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="passagewayId != null">#{passagewayId},</if>
+            <if test="hikEquipmentId != null">#{hikEquipmentId},</if>
+         </trim>
+    </insert>
+
+    <insert id="batchInsertBasePassagewayEquipment">
+        insert into base_passageway_equipment(hik_equipment_id, passageway_id) values
+        <foreach item="item" index="index" collection="list" separator=",">
+            (#{item.hikEquipmentId},#{item.passagewayId})
+        </foreach>
+    </insert>
+
+    <update id="updateBasePassagewayEquipment" parameterType="BasePassagewayEquipment">
+        update base_passageway_equipment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="passagewayId != null">passageway_id = #{passagewayId},</if>
+            <if test="hikEquipmentId != null">hik_equipment_id = #{hikEquipmentId},</if>
+        </trim>
+        where passageway_id = #{passagewayId}
+    </update>
+
+    <delete id="deleteBasePassagewayEquipmentById" parameterType="Long">
+        delete from base_passageway_equipment where passageway_id = #{passagewayId}
+    </delete>
+
+    <delete id="deleteBasePassagewayEquipmentByIds" parameterType="String">
+        delete from base_passageway_equipment where passageway_id in
+        <foreach item="passagewayId" collection="array" open="(" separator="," close=")">
+            #{passagewayId}
+        </foreach>
+    </delete>
+</mapper>

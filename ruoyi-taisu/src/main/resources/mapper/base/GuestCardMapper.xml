@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.GuestCardMapper">
+
+    <resultMap type="GuestCard" id="GuestCardResult">
+        <result property="id" column="id"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+        <result property="no" column="no"/>
+        <result property="expirationDate" column="expiration_date"/>
+        <result property="factoryName" column="factory_name"/>
+        <result property="userName" column="user_name"/>
+        <result property="borrowDate" column="borrow_date"/>
+        <result property="phone" column="phone"/>
+        <result property="idCard" column="id_card"/>
+        <result property="area" column="area"/>
+        <result property="pass" column="pass"/>
+        <result property="validTime" column="valid_time"/>
+    </resultMap>
+
+    <sql id="selectGuestCardVo">
+        select id, del_flag, create_by, create_time, update_by,
+         update_time, remark, no, expiration_date,factory_name,
+         user_name,borrow_date,phone,id_card,area,pass,valid_time
+        from base_guest_card
+    </sql>
+
+    <select id="selectGuestCardList" parameterType="GuestCard" resultMap="GuestCardResult">
+        <include refid="selectGuestCardVo"/>
+        <where>
+            <if test="no != null  and no != ''">and no like concat('%', #{no}, '%')</if>
+            <if test="params.beginExpirationDate != null and params.beginExpirationDate != '' and params.endExpirationDate != null and params.endExpirationDate != ''">
+                and expiration_date between #{params.beginExpirationDate} and #{params.endExpirationDate}
+            </if>
+            and del_flag = '0'
+        </where>
+    </select>
+
+    <select id="selectGuestCardById" parameterType="Long" resultMap="GuestCardResult">
+        <include refid="selectGuestCardVo"/>
+        where id = #{id}
+    </select>
+    <select id="listByCardNo" resultMap="GuestCardResult">
+        <include refid="selectGuestCardVo"/>
+        <where>
+            no = #{no} and del_flag = '0'
+            <if test="type==1">and valid_time >=GETDATE()</if>
+        </where>
+    </select>
+
+    <insert id="insertGuestCard" parameterType="GuestCard">
+        insert into base_guest_card
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+            <if test="no != null">no,</if>
+            <if test="expirationDate != null">expiration_date,</if>
+            <if test="factoryName != null">factory_name,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="borrowDate != null">borrow_date,</if>
+            <if test="phone != null">phone,</if>
+            <if test="idCard != null">id_card,</if>
+            <if test="area != null">area,</if>
+            <if test="pass != null">pass,</if>
+            <if test="validTime != null">valid_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+            <if test="no != null">#{no},</if>
+            <if test="expirationDate != null">#{expirationDate},</if>
+            <if test="factoryName != null">#{factoryName},</if>
+            <if test="userName != null">#{userName},</if>
+            <if test="borrowDate != null">#{borrowDate},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="idCard != null">#{id_card},</if>
+            <if test="area != null">#{area},</if>
+            <if test="pass != null">#{pass},</if>
+            <if test="validTime != null">#{validTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateGuestCard" parameterType="GuestCard">
+        update base_guest_card
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="no != null">no = #{no},</if>
+            <if test="expirationDate != null">expiration_date = #{expirationDate},</if>
+            <if test="factoryName != null">factory_name = #{factoryName},</if>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="borrowDate != null">borrow_date = #{borrowDate},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="area != null">area = #{area},</if>
+            <if test="pass != null">pass = #{pass},</if>
+            <if test="validTime != null">valid_time = #{validTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteGuestCardById" parameterType="Long">
+        update base_guest_card
+        set del_flag = '2'
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteGuestCardByIds" parameterType="String">
+        update base_guest_card set del_flag = '2' where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="cardReturn" parameterType="long">
+        update base_guest_card SET
+         factory_name =NULL ,
+         user_name =NULL ,
+         borrow_date =NULL ,
+         phone =NULL ,
+         id_card =NULL ,
+         area =NULL ,
+         pass =NULL ,
+         valid_time =NULL
+         where  id=#{id}
+    </update>
+</mapper>
