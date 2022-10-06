@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.CarCardBindMapper">
+
+    <resultMap id="BaseResultMap" type="com.ruoyi.base.domain.BaseCarCardBind">
+        <result property="cardCarNo" column="card_car_no" jdbcType="VARCHAR"/>
+        <result property="cardCarBind" column="card_car_bind" jdbcType="VARCHAR"/>
+        <result property="leadTime" column="lead_time" jdbcType="TIMESTAMP"/>
+        <result property="cardType" column="card_type" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        select card_car_no, card_car_bind, lead_time
+        from base_car_card_bind
+    </sql>
+
+    <insert id="addCarCardBind" parameterType="baseCarCardBind">
+        insert into base_car_card_bind (card_car_no, card_car_bind, lead_time,card_type)
+        values (#{cardCarNo}, #{cardCarBind}, #{leadTime},#{cardType});
+    </insert>
+
+    <select id="getByPrimarykey" resultType="baseCarCardBind">
+        select card_car_no, card_car_bind, lead_time,card_type
+        from base_car_card_bind
+        where card_car_no = #{carCarNo}
+          and card_car_bind = #{workNo}
+    </select>
+
+    <select id="getCountByCarCardNo" resultType="int">
+        select count(*)
+        from base_car_card_bind
+        where card_car_no = #{carCarNo}
+    </select>
+
+    <delete id="deleteByPrimarykey">
+        delete
+        from base_car_card_bind
+        where card_car_no = #{carCarNo}
+          and card_car_bind = #{workNo}
+    </delete>
+
+    <delete id="cardBindClear">
+        delete
+        from base_car_card_bind where card_type = "2"
+    </delete>
+</mapper>

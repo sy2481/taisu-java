@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.timer.mapper.SafetymanMapper">
+
+    <resultMap id="BaseResultMap" type="com.ruoyi.timer.domain.Safetyman">
+            <id property="vhno" column="VhNo" jdbcType="VARCHAR"/>
+            <id property="egno" column="EGNO" jdbcType="VARCHAR"/>
+            <id property="idno" column="Idno" jdbcType="VARCHAR"/>
+            <id property="smmk" column="SMMk" jdbcType="VARCHAR"/>
+            <result property="nm" column="Nm" jdbcType="VARCHAR"/>
+            <result property="ipltlic" column="IpltLic" jdbcType="VARCHAR"/>
+            <result property="pz" column="Pz" jdbcType="VARCHAR"/>
+            <result property="vndabr" column="VndABR" jdbcType="VARCHAR"/>
+            <result property="mngnm" column="MngNm" jdbcType="VARCHAR"/>
+            <result property="mngtm" column="MngTm" jdbcType="VARCHAR"/>
+            <result property="fvid" column="FVID" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        select VhNo,EGNO,Idno,SMMk,Nm,IpltLic,Pz,VndABR,MngNm,MngTm,FVID from SafetyMan
+    </sql>
+
+    <select id="getCarList"   parameterType="Safetyman" resultMap="BaseResultMap">
+        <include refid="Base_Column_List"/>
+        <where>
+            egno = ''
+        </where>
+    </select>
+</mapper>

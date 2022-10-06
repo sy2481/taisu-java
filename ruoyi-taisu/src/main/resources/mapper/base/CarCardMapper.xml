@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.base.mapper.CarCardMapper">
-    
     <resultMap type="CarCard" id="CarCardResult">
         <result property="cardCarId"    column="card_car_id"    />
         <result property="cardCarNo"    column="card_car_no"    />
@@ -20,12 +19,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updateBy"    column="update_by"    />
         <result property="updateTime"    column="update_time"    />
         <result property="remark"    column="remark"    />
+        <result property="cardType"    column="card_type"    />
     </resultMap>
 
     <sql id="selectCarCardVo">
-        select card_car_id, card_car_no, card_car_status, card_car_use, bind_plate_no, lead_name, lead_time, return_name, return_time, del_flag, create_by, create_time, update_by, update_time, remark from base_car_card
+        select card_car_id, card_car_no, card_car_status, card_car_use, bind_plate_no, lead_name, lead_time, return_name, return_time, del_flag, create_by, create_time, update_by, update_time, remark ,card_type from base_car_card
     </sql>
 
+    <!--    wang 修改 1-->
     <select id="selectCarCardList" parameterType="CarCard" resultMap="CarCardResult">
         <include refid="selectCarCardVo"/>
         <where>
@@ -38,9 +39,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="leadTime != null "> and lead_time = #{leadTime}</if>
             <if test="returnName != null  and returnName != ''"> and return_name like concat('%', #{returnName}, '%')</if>
             <if test="returnTime != null "> and return_time = #{returnTime}</if>
+            <if test="cardType != null "> and card_type = #{cardType}</if>
         </where>
     </select>
-    
+
     <select id="selectCarCardByCardCarId" parameterType="Long" resultMap="CarCardResult">
         <include refid="selectCarCardVo"/>
         where card_car_id = #{cardCarId}
@@ -50,7 +52,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <include refid="selectCarCardVo"/>
         where card_car_no = #{cardCarNo}  and del_flag = '0'
     </select>
-        
+
     <insert id="insertCarCard" parameterType="CarCard">
         insert into base_car_card
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -69,7 +71,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">update_by,</if>
             <if test="updateTime != null">update_time,</if>
             <if test="remark != null">remark,</if>
-         </trim>
+            <if test="cardType != null">card_type,</if>
+        </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="cardCarId != null">#{cardCarId},</if>
             <if test="cardCarNo != null">#{cardCarNo},</if>
@@ -86,7 +89,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">#{updateBy},</if>
             <if test="updateTime != null">#{updateTime},</if>
             <if test="remark != null">#{remark},</if>
-         </trim>
+            <if test="cardType != null">#{cardType},</if>
+        </trim>
     </insert>
 
     <update id="updateCarCard" parameterType="CarCard">
@@ -117,7 +121,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="cardCarStatus != null">card_car_status = #{cardCarStatus},</if>
             <if test="cardCarUse != null">card_car_use = #{cardCarUse},</if>
             bind_plate_no = #{bindPlateNo},
-           lead_name = #{leadName},
+            lead_name = #{leadName},
             lead_time = #{leadTime},
             return_name = #{returnName},
             return_time = #{returnTime},
@@ -127,6 +131,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="updateBy != null">update_by = #{updateBy},</if>
             <if test="updateTime != null">update_time = #{updateTime},</if>
             <if test="remark != null">remark = #{remark},</if>
+            <if test="cardType != null">card_type = #{cardType},</if>
         </trim>
         where card_car_no = #{cardCarNo} AND del_flag = '0'
     </update>

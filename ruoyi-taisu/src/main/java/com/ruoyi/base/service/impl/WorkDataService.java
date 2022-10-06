@@ -153,6 +153,7 @@ public class WorkDataService {
                     manFactory.setFactoryId(factory.getFactoryId());
                     manFactory.setSended(factory.getSended());
                     manFactory.setEntered(factory.getEntered());
+                    manFactory.setFactoryName(factoryBo.getFactoryName());
                     manFactoryMapper.updateManFactory(manFactory);
                     log.info("3s，厂商人员：{}, 对应厂区id:{}", manFactory.getIdCard(), manFactory.getDeptId());
                 } else {
@@ -266,10 +267,10 @@ public class WorkDataService {
                 manWork.setEndTime(DateUtils.parseDate(workBo.getEndtime(), "yyyyMMddHHmmss"));
             }
             if (!StringUtils.isEmpty(workBo.getIntime())) {
-                manWork.setExtendStartTime(DateUtils.parseDate(workBo.getIntime(), "yyyyMMddHHmmss"));
+                manWork.setExtendStartTime(DateUtils.parseDate(workBo.getIntime(), "yyyy/MM/dd HH:mm:ss"));
             }
             if (!StringUtils.isEmpty(workBo.getOuttime())) {
-                manWork.setExtendEndTime(DateUtils.parseDate(workBo.getOuttime(), "yyyyMMddHHmmss"));
+                manWork.setExtendEndTime(DateUtils.parseDate(workBo.getOuttime(), "yyyy/MM/dd HH:mm:ss"));
             }
         } catch (ParseException e) {
             e.printStackTrace();

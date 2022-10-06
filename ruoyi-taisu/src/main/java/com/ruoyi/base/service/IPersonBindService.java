@@ -29,4 +29,6 @@ public interface IPersonBindService {
      * 解绑
      */
     int relieveByIdCard( String IdCard);
+
+    void deleteByIdCard(String IdCard);
 }

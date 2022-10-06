@@ -223,7 +223,9 @@ public class ManWorkController extends BaseController {
         //已绑定车卡列表
         resultObj.put("bind", carCardArray);
         CarCard carCard = new CarCard();
-        carCard.setCardCarStatus("0");
+//        carCard.setCardCarStatus("0");
+//        carCard.setCardType("1");
+        carCard.setCardType("2");
         //未绑定车卡列表
         List<CarCard> list = carCardService.selectCarCardList(carCard);
         resultObj.put("noBind", list);
@@ -237,7 +239,8 @@ public class ManWorkController extends BaseController {
     public Response delCarCard(@RequestBody String requestObj) {
         try {
             JSONObject jsonObject = JSON.parseObject(requestObj);
-            manWorkService.delCard(jsonObject);
+//            manWorkService.delCard(jsonObject);
+            manWorkService.delCardOneToMany(jsonObject);
             return Response.success("删除成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -252,7 +255,11 @@ public class ManWorkController extends BaseController {
     public Response addCarCard(@RequestBody String requestObj) {
         try {
             JSONObject jsonObject = JSON.parseObject(requestObj);
-            manWorkService.addCarCard(jsonObject);
+//           manWorkService.addCarCard(jsonObject);
+            int result = manWorkService.addCarCardOneToMany(jsonObject);
+            if (-1 == result){
+                return Response.error("该卡片不为厂商车卡");
+            }
             return Response.success("添加成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -377,4 +384,5 @@ public class ManWorkController extends BaseController {
             return Response.error("删除失败");
         }
     }
+
 }

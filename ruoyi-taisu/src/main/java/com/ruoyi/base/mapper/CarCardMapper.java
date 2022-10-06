@@ -1,6 +1,7 @@
 package com.ruoyi.base.mapper;
 
 import com.ruoyi.base.domain.CarCard;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -30,7 +31,7 @@ public interface CarCardMapper
      */
     public CarCard selectCarCardByCardCarNo(String cardCarNo);
 
-
+    public CarCard selectCarCardByCardCarNoAndCardType(@Param("cardCarNo")String cardCarNo, @Param("cardType")String cardType);
     /**
      * 查询車卡列表
      *

@@ -32,5 +32,7 @@ public interface PersonBindMapper {
     /**
      * 解绑
      */
-    int relieveByIdCard(@Param("IdCard") String IdCard);
+    int relieveByIdCard(@Param("idCard") String idCard);
+
+    void deleteByIdCard(@Param("idCard") String idCard);
 }

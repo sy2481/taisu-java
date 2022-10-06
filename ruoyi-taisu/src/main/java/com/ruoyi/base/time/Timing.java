@@ -1,5 +1,6 @@
 package com.ruoyi.base.time;
 
+import com.ruoyi.base.mapper.CarCardBindMapper;
 import com.ruoyi.base.mapper.CarCardMapper;
 import com.ruoyi.base.service.ILocateCardService;
 import com.ruoyi.base.service.IManFactoryService;
@@ -25,7 +26,7 @@ import java.util.List;
 @Configuration
 @EnableScheduling
 @Slf4j
-public class Timing {
+public class   Timing {
 
     @Autowired
     private IManFactoryService manFactoryService;
@@ -41,6 +42,9 @@ public class Timing {
     private ILocateCardService locateCardService;
     @Autowired
     private SysJobLogMapper sysJobLogMapper;
+
+    @Autowired
+    private CarCardBindMapper carCardBindMapper;
     /**
      * 每天00：00执行
      * 定时去清理工单，厂商的车卡和车牌号
@@ -51,6 +55,7 @@ public class Timing {
             log.info(new Date() + "定时开始");
             manFactoryService.updateCar();
             carCardMapper.dailyClear();
+            carCardBindMapper.cardBindClear();
         } catch (Exception e) {
             e.printStackTrace();
             log.info("异常：", e);
@@ -94,5 +99,7 @@ public class Timing {
         sysJobLogMapper.selectSysJobLogList(sysJobLog);
         System.out.println("鏈接成功");
     }
+
+
 
 }

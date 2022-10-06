@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.SafetycarMapper">
+
+    <resultMap id="BaseResultMap" type="com.ruoyi.base.domain.BaseSafetycar">
+            <id property="idno" column="idno" jdbcType="VARCHAR"/>
+            <result property="workName" column="work_name" jdbcType="VARCHAR"/>
+            <result property="ipLtLic" column="ip_lt_lic" jdbcType="VARCHAR"/>
+            <result property="pz" column="pz" jdbcType="VARCHAR"/>
+        <result property="decimalCode" column="decimal_code" jdbcType="VARCHAR"/>
+
+    </resultMap>
+
+    <sql id="Base_Column_List">
+
+    </sql>
+
+    <insert id="insertCarlist">
+        insert into base_safetyCar (idno,work_name,ip_lt_lic,pz) values(#{idno},#{workName},#{ipLtLic},#{pz});
+    </insert>
+
+    <select id="isExist" resultMap="BaseResultMap">
+        select * from base_safetyCar where ip_lt_lic = #{ipLtLic};
+    </select>
+
+    <select id="getSafetycarByCarno" resultMap="BaseResultMap">
+        select * from base_safetyCar where idno like concat('%', #{carParam}, '%') or decimal_code = #{carParam};
+    </select>
+</mapper>

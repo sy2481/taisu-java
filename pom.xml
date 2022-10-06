@@ -205,6 +205,17 @@
                 <artifactId>ruoyi-timer</artifactId>
                 <version>${ruoyi.version}</version>
             </dependency>
+<!--            <dependency>-->
+<!--                <groupId>com.ruoyi</groupId>-->
+<!--                <artifactId>ruoyi-hik</artifactId>-->
+<!--                <version>${ruoyi.version}</version>-->
+<!--            </dependency>-->
+            <dependency>
+                <groupId>com.hikvision.ga</groupId>
+                <artifactId>artemis-http-client</artifactId>
+                <version>1.1.3</version>
+            </dependency>
+
 
 
         </dependencies>
@@ -218,6 +229,7 @@
         <module>ruoyi-common</module>
         <module>ruoyi-taisu</module>
         <module>ruoyi-timer</module>
+        <module>ruoyi-hik</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -359,6 +371,18 @@
             <id>taisu-pz</id>
             <properties>
                 <env>taisu-pz</env>
+            </properties>
+        </profile>
+        <profile>
+            <id>taisu-pp</id>
+            <properties>
+                <env>taisu-pp</env>
+            </properties>
+        </profile>
+        <profile>
+            <id>taisu-ma</id>
+            <properties>
+                <env>taisu-ma</env>
             </properties>
         </profile>
     </profiles>
