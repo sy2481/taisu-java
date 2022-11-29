@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.SafetycarMapper">
+
+    <resultMap id="BaseResultMap" type="com.ruoyi.base.domain.BaseSafetycar">
+            <id property="idno" column="idno" jdbcType="VARCHAR"/>
+            <result property="workName" column="work_name" jdbcType="VARCHAR"/>
+            <result property="ipLtLic" column="ip_lt_lic" jdbcType="VARCHAR"/>
+            <result property="pz" column="pz" jdbcType="VARCHAR"/>
+        <result property="decimalCode" column="decimal_code" jdbcType="VARCHAR"/>
+
+    </resultMap>
+
+    <sql id="Base_Column_List">
+
+    </sql>
+
+    <insert id="insertCarlist">
+        insert into base_safetyCar (idno,work_name,ip_lt_lic,pz) values(#{idno},#{workName},#{ipLtLic},#{pz});
+    </insert>
+
+    <select id="isExist" resultMap="BaseResultMap">
+        select * from base_safetyCar where ip_lt_lic = #{ipLtLic};
+    </select>
+
+    <select id="getSafetycarByCarno" resultMap="BaseResultMap">
+        select * from base_safetyCar where idno like concat('%', #{carParam}, '%') or decimal_code = #{carParam};
+    </select>
+
+
+
+    <sql id="selectBaseSafetycarVo">
+        select idno, work_name, ip_lt_lic, pz, decimal_code from base_safetyCar
+    </sql>
+
+
+    <select id="selectSafetyCarList" resultMap="BaseResultMap">
+        select * from base_safetyCar
+        <where>
+            <if test="idno != null  and idno != ''">and idno like concat('%', #{idno}, '%')</if>
+            <if test="workName != null  and workName != ''">and work_name like concat('%', #{workName}, '%')</if>
+            <if test="decimalCode != null  and decimalCode != ''">and decimal_code like concat('%', #{decimalCode}, '%')</if>
+        </where>
+    </select>
+
+    <update id="updateSafetyCar" parameterType="baseSafetycar">
+        update base_safetyCar
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="decimalCode != null">decimal_code = #{decimalCode},</if>
+        </trim>
+        where ip_lt_lic = #{ipLtLic}
+    </update>
+
+    <select id="selectBaseSafetycarList" parameterType="BaseSafetycar" resultMap="BaseResultMap">
+        <include refid="selectBaseSafetycarVo"/>
+        <where>
+            <if test="workName != null  and workName != ''"> and work_name like concat('%', #{workName}, '%')</if>
+            <if test="ipLtLic != null  and ipLtLic != ''"> and ip_lt_lic = #{ipLtLic}</if>
+            <if test="pz != null  and pz != ''"> and pz = #{pz}</if>
+            <if test="decimalCode != null  and decimalCode != ''"> and decimal_code = #{decimalCode}</if>
+        </where>
+    </select>
+
+    <select id="selectBaseSafetycarByIdno" parameterType="String" resultMap="BaseResultMap">
+        <include refid="selectBaseSafetycarVo"/>
+        where idno = #{idno}
+    </select>
+
+    <insert id="insertBaseSafetycar" parameterType="BaseSafetycar">
+        insert into base_safetyCar
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="idno != null">idno,</if>
+            <if test="workName != null">work_name,</if>
+            <if test="ipLtLic != null">ip_lt_lic,</if>
+            <if test="pz != null">pz,</if>
+            <if test="decimalCode != null">decimal_code,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="idno != null">#{idno},</if>
+            <if test="workName != null">#{workName},</if>
+            <if test="ipLtLic != null">#{ipLtLic},</if>
+            <if test="pz != null">#{pz},</if>
+            <if test="decimalCode != null">#{decimalCode},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBaseSafetycar" parameterType="BaseSafetycar">
+        update base_safetyCar
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="workName != null and workName != ''">work_name = #{workName},</if>
+            <if test="pz != null and pz != ''">pz = #{pz},</if>
+            <if test="decimalCode != null and decimalCode != ''">decimal_code = #{decimalCode},</if>
+        </trim>
+        where ip_lt_lic = #{ipLtLic}
+    </update>
+
+    <delete id="deleteBaseSafetycarByIdno" parameterType="String">
+        delete from base_safetyCar where idno = #{idno}
+    </delete>
+
+    <delete id="deleteBaseSafetycarByIdnos" parameterType="String">
+        delete from base_safetyCar where ip_lt_lic in
+        <foreach item="ipLtLic" collection="array" open="(" separator="," close=")">
+            #{ipLtLic}
+        </foreach>
+    </delete>
+
+
+</mapper>

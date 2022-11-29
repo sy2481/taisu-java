@@ -1,29 +1,33 @@
 package com.ruoyi.web.controller.timer;
 
-import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.base.bo.FactoryWorkBO;
 import com.ruoyi.base.bo.WorkBo;
+import com.ruoyi.base.domain.BaseSafetycar;
 import com.ruoyi.base.domain.OaMaxInfo;
 import com.ruoyi.base.interact.PlateSendService;
 import com.ruoyi.base.service.IManFactoryService;
 import com.ruoyi.base.service.IOaMaxInfoService;
 import com.ruoyi.base.service.impl.ApiService;
 import com.ruoyi.base.service.impl.WorkDataService;
-import com.ruoyi.base.utils.HttpUtils;
 import com.ruoyi.common.constant.TsConstant;
 import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.config.ThreadPoolConfig;
+import com.ruoyi.timer.domain.Safetyman;
 import com.ruoyi.timer.service.IDangerWorkService;
 import com.ruoyi.timer.service.ITimInOutLogService;
+import com.ruoyi.base.service.SafetycarService;
+import com.ruoyi.timer.service.SafetymanService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
-import java.util.HashMap;
+import org.springframework.util.CollectionUtils;
+
+
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +58,12 @@ public class TimingTwo {
     private IDangerWorkService dangerWorkService;
     @Autowired
     private IOaMaxInfoService oaMaxInfoService;
+
+    @Autowired
+    private SafetymanService safetymanService;
+
+    @Autowired
+    private SafetycarService safetycarService;
 
     @Value("${scheduling.getFactoryMsgEnabled}")
     private boolean getFactoryMsgEnabled;
@@ -175,5 +185,37 @@ public class TimingTwo {
         }
     }
 
+
+    /**
+     * 定时拉取核卡车辆
+     * */
+//    @Scheduled(cron = "0 0/5 * * * ? ")
+    @Scheduled(cron = "0 0/5 * * * ? ")
+    public void getSaftCar(){
+        //获取核卡数据
+        List<Safetyman> list = safetymanService.getCarList();
+        System.out.println("list = " + list);
+        //查询不为空,存入list,保存数据
+        if (!CollectionUtils.isEmpty(list)){
+            /*
+             * 将获取到的车辆信息截取部分信息存入
+             * 存入之前判断是否存在
+             * */
+            BaseSafetycar baseSafetycar;
+            for (Safetyman safetyman : list) {
+                BaseSafetycar exist = safetycarService.isExist(safetyman.getIpltlic());
+                if (exist == null){
+                    baseSafetycar = new BaseSafetycar();
+                    baseSafetycar.setIdno(safetyman.getIdno());
+                    baseSafetycar.setWorkName(safetyman.getNm());
+                    baseSafetycar.setIpLtLic(safetyman.getIpltlic());
+                    baseSafetycar.setPz(safetyman.getPz());
+                    safetycarService.insertCarlist(baseSafetycar);
+                }
+            }
+//            safetycarService.insertCarlist(list);
+        }
+
+    }
 
 }
