@@ -2,20 +2,20 @@
 ruoyi:
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
   profile: C:\Users\Administrator\Desktop\taisu\upload
-  machine: PP
+  machine: test
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为8080
-  port: 36660
+  port: 36700
 
 plchlk:
-  host: http://192.168.10.44:11160
+  host: http://192.168.10.45:11210
 dingyue:
-  host: http://192.168.10.44:80/prod-api/api/warn/addWarnInfo
+  host: http://192.168.10.45:80/prod-api/api/warn/addWarnInfo
 cent:
   host: http://127.0.0.1:8090/ruoyi-center
-# 厂区编号 PP
-factoryCode: PPCP101
+# 厂区编号 三井
+factoryCode: PPC2A01
 #定时器开关
 scheduling:
   getFactoryMsgEnabled: true
@@ -29,7 +29,7 @@ spring:
     host: 127.0.0.1
     port: 36652
     password:
-    database: 6
+    database: 7
     # 连接超时时间
     timeout: 30s
     lettuce:
@@ -50,7 +50,7 @@ spring:
     druid:
       # 主库数据源
       master:
-        url: jdbc:sqlserver://192.168.10.15:1433;DatabaseName=taisu-pp
+        url: jdbc:sqlserver://192.168.10.15:1433;DatabaseName=taisu-branch-test
         username: sa
         password: '*A23A1C66AABC5165074F3EDFEF866BC67FAD047F'
         # 从库数据源
@@ -63,7 +63,7 @@ spring:
       # 定时器数据源
       iemdg:
         enabled: true
-        url: jdbc:sqlserver://10.217.181.33:1433;DatabaseName=IEMDG
+        url: jdbc:sqlserver://192.168.70.249:1433;DatabaseName=IEMDG
         username: faceid
         password: faceid
       # 初始连接数
@@ -109,8 +109,8 @@ spring:
 # 日志配置
 logging:
   level:
-    com.ruoyi: error
-    org.springframework: warn
+    com.ruoyi: debug
+    org.springframework: debug
 
 
 # Swagger配置

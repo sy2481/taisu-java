@@ -14,7 +14,7 @@ dingyue:
   host: http://192.168.10.44:80/prod-api/api/warn/addWarnInfo
 cent:
   host: http://127.0.0.1:8090/ruoyi-center
-# 厂区编号 三井
+# 厂区编号 港务
 factoryCode: PMA1001
 #定时器开关
 scheduling:

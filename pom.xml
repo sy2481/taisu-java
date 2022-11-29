@@ -385,6 +385,24 @@
                 <env>taisu-ma</env>
             </properties>
         </profile>
+        <profile>
+            <id>taisu-branch-test</id>
+            <properties>
+                <env>taisu-branch-test</env>
+            </properties>
+        </profile>
+        <profile>
+            <id>taisu-pp</id>
+            <properties>
+                <env>taisu-pp</env>
+            </properties>
+        </profile>
+        <profile>
+            <id>taisu-ma</id>
+            <properties>
+                <env>taisu-ma</env>
+            </properties>
+        </profile>
     </profiles>
 
 </project>
