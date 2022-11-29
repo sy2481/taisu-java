@@ -21,6 +21,8 @@
         values (#{cardCarNo}, #{cardCarBind}, #{leadTime},#{cardType});
     </insert>
 
+
+
     <select id="getByPrimarykey" resultType="baseCarCardBind">
         select card_car_no, card_car_bind, lead_time,card_type
         from base_car_card_bind
@@ -41,8 +43,9 @@
           and card_car_bind = #{workNo}
     </delete>
 
+
     <delete id="cardBindClear">
         delete
-        from base_car_card_bind where card_type = "2"
+        from base_car_card_bind where card_type = '2'
     </delete>
 </mapper>

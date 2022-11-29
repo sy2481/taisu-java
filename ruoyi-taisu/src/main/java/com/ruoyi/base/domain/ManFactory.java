@@ -150,7 +150,7 @@ public class ManFactory extends BaseEntity {
     @Excel(name = "人员类型，0=厂商,1=危化品")
     private Integer dangerType;
 
-    //sended
+    //sended 9下发失败 1 下发成功 0
     private Integer sended;
 
     private Date picInsertTime;

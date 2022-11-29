@@ -258,7 +258,7 @@
     </update>
 
     <update id="deleteFaceByFactoryId">
-        update man_factory set face = null, sended = 0 where factory_id = #{factoryId}
+        update man_factory set face = null, sended = 8 where factory_id = #{factoryId}
     </update>
 
     <update id="sendBackStatus">

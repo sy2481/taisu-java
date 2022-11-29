@@ -2,6 +2,7 @@ package com.ruoyi.base.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.base.bo.FactoryWorkBO;
+import com.ruoyi.base.bo.IdCardBO;
 import com.ruoyi.base.bo.workCarBo;
 import com.ruoyi.base.domain.ManFactory;
 import com.ruoyi.base.domain.ManWork;
@@ -11,6 +12,7 @@ import com.ruoyi.base.mapper.ManFactoryMapper;
 import com.ruoyi.base.mapper.ManWorkFactoryMapper;
 import com.ruoyi.base.mapper.ManWorkMapper;
 import com.ruoyi.base.service.IManFactoryService;
+import com.ruoyi.base.utils.HttpUtils;
 import com.ruoyi.base.utils.UserUtils;
 import com.ruoyi.common.exception.ServiceException;
 import com.ruoyi.common.utils.StringUtils;
@@ -19,6 +21,7 @@ import com.ruoyi.common.utils.bean.BeanValidators;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +53,12 @@ public class ManFactoryServiceImpl implements IManFactoryService {
     private ApiService apiService;
     @Autowired
     private PersonSendService personSendService;
+    /**
+     * 中心库地址
+     */
+    @Value("${cent.host}")
+    private String centHost;
+
 
     /**
      * 查询厂商
@@ -239,12 +248,21 @@ public class ManFactoryServiceImpl implements IManFactoryService {
     @Override
     public int deleteFaceByFactoryId(Long factoryId) {
         //修改状态
-        manFactoryMapper.sendBackStatus(factoryId, 0);
+        //manFactoryMapper.sendBackStatus(factoryId, 0);
         ManFactory factory = manFactoryMapper.selectManFactoryByFactoryId(factoryId);
         //发送请求
         if (StringUtils.isNotBlank(factory.getIdCard())) {
-            personSendService.downSendDeletePerson(factory.getIdCard());
+            personSendService.downSendDeletePersonOnlyFace(factory.getIdCard());
         }
+//        数据中心厂商人员图片会同步 需要删除
+        IdCardBO idCardBO=new IdCardBO();
+        idCardBO.setIdCard(factory.getIdCard());
+//        JSONObject json = new JSONObject();
+//        json.put("idCard", factory.getIdCard());
+
+        String json = JSONObject.toJSONString(idCardBO);
+        HttpUtils.sendJsonPost(centHost+"/api/wechat/faceData/deleteFaceCenter",json);
+
         return manFactoryMapper.deleteFaceByFactoryId(factoryId);
     }
 
@@ -346,6 +364,17 @@ public class ManFactoryServiceImpl implements IManFactoryService {
             }
         }
         return map;
+    }
+
+
+    public static void main(String[] args) {
+        IdCardBO idCardBO=new IdCardBO();
+        idCardBO.setIdCard("330203198903010617");
+//        JSONObject json = new JSONObject();
+//        json.put("idCard", factory.getIdCard());
+
+        String json = JSONObject.toJSONString(idCardBO);
+        HttpUtils.sendJsonPost("http://192.168.10.45:8090/ruoyi-center"+"/api/wechat/faceData/deleteFaceCenter",json);
     }
 
 }

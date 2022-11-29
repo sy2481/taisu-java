@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface PersonBindMapper {
 
-    /**
+    /** UPDATE person_bind SET event_type = 1 ,
      * 新增
      */
     int insertPersonBind(PersonBind personBind);

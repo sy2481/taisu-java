@@ -121,6 +121,6 @@
     </update>
 
     <delete id="deleteByIdCard">
-        delete from person_bind where idCard = #{idCard}
+        delete from person_bind where id_card = #{idCard}
     </delete>
 </mapper>

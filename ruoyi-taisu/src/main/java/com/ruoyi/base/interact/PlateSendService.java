@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -133,10 +134,22 @@ public class PlateSendService {
             return;
         }
         //然后才是有差异的，需要对比的
-        List<String> newPlateNoArray = Arrays.asList(newPlateNos.split(","));
-        List<String> oldPlateNoArray = Arrays.asList(oldPlateNos.split(","));
+        //List<String> newPlateNoArray = Arrays.asList(newPlateNos.split(","));
+       // List<String> oldPlateNoArray = Arrays.asList(oldPlateNos.split(","));
+        //获得需要移除的,oldPlateNoArray
+        //oldPlateNoArray.removeAll(newPlateNoArray);
+
+
+
+        List<String> oldPlateNoArray =  new ArrayList<>();
+        Collections.addAll(oldPlateNoArray,oldPlateNos.split(","));
+        List<String> newPlateNoArray = new ArrayList<>();
+        Collections.addAll(newPlateNoArray,newPlateNos.split(","));
         //获得需要移除的,oldPlateNoArray
         oldPlateNoArray.removeAll(newPlateNoArray);
+
+
+
         //循环接可以了
         for (String plateNo : oldPlateNoArray) {
             downSendUnbindPlateNo(plateNo);

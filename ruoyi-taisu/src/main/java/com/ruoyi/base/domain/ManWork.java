@@ -107,6 +107,9 @@ public class ManWork extends BaseEntity {
     private Date extendStartTime;
     private Date extendEndTime;
 
+    //區域
+    private String areaNo;
+
 
     public Date getStartTime() {
         return startTime;
@@ -341,6 +344,14 @@ public class ManWork extends BaseEntity {
         this.factoryDoorName = factoryDoorName;
     }
 
+
+    public String getAreaNo() {
+        return areaNo;
+    }
+
+    public void setAreaNo(String areaNo) {
+        this.areaNo = areaNo;
+    }
 
     @Override
     public String toString() {

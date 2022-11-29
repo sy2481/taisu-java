@@ -33,12 +33,13 @@
         <result property="endTime" column="end_time"/>
         <result property="extendStartTime" column="extend_start_time"/>
         <result property="extendEndTime" column="extend_end_time"/>
+        <result property="areaNo" column="area_no"/>
     </resultMap>
 
     <sql id="selectManWorkVo">
         select work_id, project_no, work_no, mng_name, mng_time,
                work_time, car_id, project_name, job_category, inspector, inspector2, car_card,
-               xt_in_num, com_in_num, del_flag, create_by, create_time, ip,factory_door_name, work_type, work_status,dept_id from man_work
+               xt_in_num, com_in_num, del_flag, create_by, create_time, ip,factory_door_name, work_type, work_status,dept_id,area_no from man_work
     </sql>
 
     <select id="selectManWorkList" parameterType="com.ruoyi.base.domain.ManWork" resultMap="ManWorkResult">
@@ -123,6 +124,7 @@
             <if test="endTime !=null">end_time,</if>
             <if test="extendStartTime!=null">extend_start_time,</if>
             <if test="extendEndTime!=null">extend_end_time,</if>
+            <if test="areaNo!=null">area_no,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="workId != null">#{workId},</if>
@@ -148,6 +150,7 @@
             <if test="endTime !=null">#{endTime},</if>
             <if test="extendStartTime!=null">#{extendStartTime},</if>
             <if test="extendEndTime!=null">#{extendEndTime},</if>
+            <if test="areaNo!=null">#{areaNo},</if>
         </trim>
     </insert>
 
@@ -175,6 +178,7 @@
             <if test="endTime !=null">end_time = #{endTime},</if>
             <if test="extendStartTime!=null">extend_start_time=#{extendStartTime},</if>
             <if test="extendEndTime!=null">extend_end_time=#{extendEndTime},</if>
+            <if test="areaNo!=null">area_no=#{areaNo},</if>
         </trim>
         where work_id = #{workId}
     </update>

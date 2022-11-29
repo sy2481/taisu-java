@@ -129,6 +129,7 @@ public interface SysUserMapper {
      */
     public SysUser checkPhoneUnique(String phonenumber);
 
+
     /**
      * 校验email是否唯一
      *

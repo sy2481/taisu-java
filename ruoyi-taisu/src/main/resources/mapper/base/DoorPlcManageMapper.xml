@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.DoorPlcManageMapper">
+
+    <resultMap type="DoorPlcManage" id="DoorPlcManageResult">
+        <result property="doorId"    column="door_id"    />
+        <result property="doorName"    column="door_name"    />
+        <result property="commandType"    column="command_type"    />
+        <result property="plcIp"    column="plc_ip"    />
+        <result property="plcPort"    column="plc_port"    />
+        <result property="command"    column="command"    />
+    </resultMap>
+
+    <sql id="selectDoorPlcManageVo">
+        select door_id, door_name, command_type, plc_ip, plc_port, command from door_plc_manage
+    </sql>
+
+
+    <select id="selectDoorPlcManageByDoorId" parameterType="Long" resultMap="DoorPlcManageResult">
+        <include refid="selectDoorPlcManageVo"/>
+        where door_id = #{doorId}
+    </select>
+
+    <insert id="insertDoorPlcManage" parameterType="DoorPlcManage">
+        insert into door_plc_manage
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="doorId != null">door_id,</if>
+            <if test="doorName != null">door_name,</if>
+            <if test="commandType != null">command_type,</if>
+            <if test="plcIp != null">plc_ip,</if>
+            <if test="plcPort != null">plc_port,</if>
+            <if test="command != null">command,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="doorId != null">#{doorId},</if>
+            <if test="doorName != null">#{doorName},</if>
+            <if test="commandType != null">#{commandType},</if>
+            <if test="plcIp != null">#{plcIp},</if>
+            <if test="plcPort != null">#{plcPort},</if>
+            <if test="command != null">#{command},</if>
+        </trim>
+    </insert>
+
+    <update id="updateDoorPlcManage" parameterType="DoorPlcManage">
+        update door_plc_manage
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="doorName != null">door_name = #{doorName},</if>
+            <if test="commandType != null">command_type = #{commandType},</if>
+            <if test="plcIp != null">plc_ip = #{plcIp},</if>
+            <if test="plcPort != null">plc_port = #{plcPort},</if>
+            <if test="command != null">command = #{command},</if>
+        </trim>
+        where door_id = #{doorId}
+    </update>
+
+    <delete id="deleteDoorPlcManageByDoorId" parameterType="Long">
+        delete from door_plc_manage where door_id = #{doorId}
+    </delete>
+
+    <delete id="deleteDoorPlcManageByDoorIds" parameterType="String">
+        delete from door_plc_manage where door_id in
+        <foreach item="doorId" collection="array" open="(" separator="," close=")">
+            #{doorId}
+        </foreach>
+    </delete>
+</mapper>

@@ -166,12 +166,13 @@ public class ManFactoryController extends BaseController {
     public AjaxResult deleteFace(Long factoryId) {
         try {
             manFactoryService.deleteFaceByFactoryId(factoryId);
-
             return AjaxResult.success();
         } catch (Exception e) {
             e.printStackTrace();
             return AjaxResult.error("操作失敗，請稍後再試。");
         }
     }
+
+
 
 }

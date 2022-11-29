@@ -19,7 +19,8 @@ import java.util.List;
  *
  * @author ruoyi
  */
-public class SysUser extends BaseEntity
+public class
+SysUser extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
@@ -129,6 +130,28 @@ public class SysUser extends BaseEntity
     //是否已经下发到设备
     private Long sended;
 
+    /************smallbeans -- 同步所需字段 *************/
+    /** 是否隐藏 0 代表显示 2 代表隐藏*/
+    private String displayStatus;
+
+//    /** AE厂同步状态 0 代表同步 2 代表未同步*/
+//    private String aeSync;
+
+    public String getDisplayStatus() {
+        return displayStatus;
+    }
+
+    public void setDisplayStatus(String displayStatus) {
+        this.displayStatus = displayStatus;
+    }
+
+//    public String getAeSync() {
+//        return aeSync;
+//    }
+//
+//    public void setAeSync(String aeSync) {
+//        this.aeSync = aeSync;
+//    }
 /************根据原台塑原DB增加的字段*************/
 
     public Long getSended() {

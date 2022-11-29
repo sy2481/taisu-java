@@ -13,7 +13,6 @@ import java.util.List;
 */
 public interface CarCardBindMapper {
 
-
     void addCarCardBind(BaseCarCardBind baseCarCardBind);
 
     List<BaseCarCardBind> getByPrimarykey(@Param("carCarNo") String carCarNo,@Param("workNo")  String workNo);

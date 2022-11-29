@@ -62,7 +62,7 @@ public class ApiInOutCheckController {
      */
     @ResponseBody
     @GetMapping("/verification")
-    public Response verification(String idCard, String inOutType,String ip) {
+    public Response verification(String idCard, String inOutType, String ip) {
         //是内部员工,直接放行
         List<SysUser> userList = userMapper.getByCommonParams(idCard, null, null, null);
         if (userList.size() > 0) {
@@ -80,11 +80,13 @@ public class ApiInOutCheckController {
             return Response.success("内部員工,放行");
         }
 
-        //内部员工没有，继续查询厂商人员
+
         List<ManFactory> factoryList = manFactoryMapper.getByCommonParams(idCard, null, null, null);
         if (factoryList.size() == 0) {
             return Response.error("查無此人");
         }
+
+
         Integer integer = inOutUser(inOutType, idCard, ip, "1");
 
         if (integer != -1) {
@@ -102,10 +104,34 @@ public class ApiInOutCheckController {
         String workNo = manFactory.getWorkNo();
         //工单信息
         ManWork manWork = workMapper.selectManWorkByworkNo(workNo);
+
+        //TODO 此功能需要
+        //入场判断工单时间 是否能进场 出场不需要管制
+        Long loadType = 0L;
+        List<HikEquipment> hikEquipmentList = hikEquipmentService.findByIp(ip);
+        if (hikEquipmentList.size() > 0) {
+            loadType = hikEquipmentList.get(0).getSign();
+        }
+        if (loadType.compareTo(0L) == 0) {
+            //判断工单是否结束
+            Date now = new Date();
+            if ((now.after(manWork.getStartTime()) && now.before(manWork.getEndTime())) || (now.after(manWork.getExtendStartTime()) && now.before(manWork.getExtendEndTime()))) {
+                log.info("工单时间可以进入");
+            } else {
+               log.info("工单时间不可以进入");
+            }
+        }
+
+
+
+
         //判断是否是临时单，不需要判断直接放行
         if (StringUtils.isNotBlank(manWork.getProjectNo()) && manWork.getProjectNo().startsWith("1")) {
             return Response.success("放行");
         }
+
+
+
 
         //这里的两个判断是：门开了但是人没走，重复刷脸的问题
         //进来的，而且这个人不受直接放行
@@ -211,7 +237,6 @@ public class ApiInOutCheckController {
     }
 
 
-
     /**
      * 一进一出
      * -1:没有开启
@@ -220,14 +245,14 @@ public class ApiInOutCheckController {
      * 2：不能出
      * 3：无法再次出
      */
-    private Integer inOutUser(String inOutType, String idCard, String ip,String personType) {
+    private Integer inOutUser(String inOutType, String idCard, String ip, String personType) {
 
         PlcEquipment equipment = null;
         //根据来宾卡绑定的身份证查看进出记录
         equipment = plcEquipmentService.findByIp(ip);
         if (StringUtils.isNull(equipment)) {
             List<HikEquipment> hikEquipmentList = hikEquipmentService.findByIp(ip);
-            if (hikEquipmentList.size()>0){
+            if (hikEquipmentList.size() > 0) {
                 equipment = plcEquipmentService.findByIp(hikEquipmentList.get(0).getFrontIp());
             }
         }
@@ -238,39 +263,39 @@ public class ApiInOutCheckController {
             if (sysDept.getPassSwitch() != null) {
                 //开启一进一出
                 if (sysDept.getPassSwitch() == 0) {
-                    InOutLog inOutLog = inOutLogService.getInOutLogGuestByIdCard(idCard, sysDept.getTime(),personType,sysDept.getDeptId());
+                    InOutLog inOutLog = inOutLogService.getInOutLogGuestByIdCard(idCard, sysDept.getTime(), personType, sysDept.getDeptId());
                     //进
-                    if (inOutType.equals(ENTER)){
-                        if (StringUtils.isNull(inOutLog)){
+                    if (inOutType.equals(ENTER)) {
+                        if (StringUtils.isNull(inOutLog)) {
                             log.info("没有进出记录，可以进入");
                             return 0;
-                        }else {
-                            if (StringUtils.isNotBlank(inOutLog.getLogType())){
+                        } else {
+                            if (StringUtils.isNotBlank(inOutLog.getLogType())) {
                                 String type = inOutLog.getLogType().substring(0, 1);
                                 //进
-                                if ("0".equals(type)){
+                                if ("0".equals(type)) {
                                     log.info("已经进入，不可重复进入");
                                     return 1;
-                                }else {
+                                } else {
                                     log.info("已经出来，可以再次进入");
                                     return 0;
                                 }
                             }
                         }
 
-                    }else {
+                    } else {
 
                         if (StringUtils.isNull(inOutLog)) {
                             log.info("没有进的记录，出去需要去补录");
                             return 2;
                         } else {
-                            if (StringUtils.isNotBlank(inOutLog.getLogType())){
+                            if (StringUtils.isNotBlank(inOutLog.getLogType())) {
                                 String type = inOutLog.getLogType().substring(0, 1);
 
-                                if ("0".equals(type)){
+                                if ("0".equals(type)) {
                                     log.info("存在进入记录，可以出来");
                                     return 0;
-                                }else {
+                                } else {
                                     log.info("最近一条记录为出去记录，无法再次出厂");
                                     return 3;
                                 }

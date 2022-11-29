@@ -41,6 +41,19 @@ public class PersonSendService {
     }
 
     /**
+     * 根据身份证号，更新人脸
+     */
+    public Integer updateUserOnlyFace(String inCard, String face) {
+        JSONObject json = new JSONObject();
+        json.put("personId", inCard);
+        json.put("face", face);
+        String str = json.toJSONString();
+        String resultStr = HttpUtils.sendJsonPost(host + "/hik/person/issue/faceUpdate", str);
+        JSONObject downSednResultObj = JSONObject.parseObject(resultStr);
+        return (Integer) downSednResultObj.get("code");
+    }
+
+    /**
      * 下发人员信息请求
      * 必要条件：定位卡、人脸照片、身份证号
      * 触发环境：员工绑定定位卡时
@@ -56,11 +69,23 @@ public class PersonSendService {
     }
 
 
+    public Integer downSendPersonInfoRequestForManFactory(PersonVO personVo) {
+        String json = JSONObject.toJSONString(personVo);
+        String resultStr = HttpUtils.sendJsonPost(host + "/hik/person/manfactory", json);
+        JSONObject downSednResultObj = JSONObject.parseObject(resultStr);
+        return (Integer) downSednResultObj.get("code");
+    }
+
+
     /**
      * 删除人员信息，
      */
     public void downSendDeletePerson(String idCard) {
         HttpUtils.sendPost(host + "/hik/person/delete/" + idCard, null);
+    }
+
+    public void downSendDeletePersonOnlyFace(String idCard) {
+        HttpUtils.sendPost(host + "/hik/person/deleteFace/" + idCard, null);
     }
 
     /**

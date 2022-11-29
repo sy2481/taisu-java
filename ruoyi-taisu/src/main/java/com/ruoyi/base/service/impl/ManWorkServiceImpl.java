@@ -472,6 +472,7 @@ public class ManWorkServiceImpl implements IManWorkService {
         pool.threadPoolTaskExecutor().execute(() -> carCardSendService.downSendUnbindCarCard(carCarNo));
     }
 
+
     @Override
     public void delCardOneToMany(JSONObject jsonObject) {
         //获取要删除的车卡
@@ -538,7 +539,7 @@ public class ManWorkServiceImpl implements IManWorkService {
         // 工单解绑车卡
         CarCardVO carCardVO = new CarCardVO();
         carCardVO.setCardNumber(carCarNo);
-        carCardVO.setCardNo(String.valueOf(workInfo.getWorkId()));
+        carCardVO.setCardNo(String.valueOf(workInfo.getWorkNo()));
         carCardVO.setCardType(2);
         pool.threadPoolTaskExecutor().execute(() -> carCardSendService.downSendUnbindCarCard(carCardVO));
     }
@@ -584,6 +585,7 @@ public class ManWorkServiceImpl implements IManWorkService {
     public void resetLongTimeWork() {
         //先全部重置
         manWorkMapper.resetLongTimeWork(new Date());
+        manWorkMapper.resetWorkCarcard();
         List<Long> ids = manWorkMapper.listLongTimeWork();
         for (Long id : ids) {
             //刪除中間表

@@ -96,6 +96,9 @@ public class WorkDataService {
             oldWork.setExtendStartTime(manWork.getExtendStartTime());
             oldWork.setExtendEndTime(manWork.getExtendEndTime());
             oldWork.setFactoryDoorName(manWork.getFactoryDoorName());
+            if(StringUtils.isEmpty(oldWork.getAreaNo())) {
+                oldWork.setAreaNo(manWork.getAreaNo());
+            }
             updateWorkIp(workBo, oldWork);
             updateWorkCar(workBo, oldWork);
         } else {
@@ -229,6 +232,7 @@ public class WorkDataService {
         ManWork manWork = new ManWork();
         manWork.setXtInNum(0);
         manWork.setComInNum(0);
+        manWork.setAreaNo(ZJFConverter.SimToTra(workBo.getAreaNo()));
         //车牌号
         manWork.setCarId(ZJFConverter.TraToSim(workBo.getCarId()));
         //工程编号
@@ -400,6 +404,7 @@ public class WorkDataService {
         manWork.setCarId(workBo.getCarId());
         //工单号
         manWork.setWorkNo(workBo.getWorkNumber());
+        manWork.setAreaNo("");
         //工单有效期限
         Date date;
         try {

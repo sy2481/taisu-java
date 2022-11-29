@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.DeviceMapper">
+
+    <resultMap type="Device" id="DeviceResult">
+        <result property="id"    column="id"    />
+        <result property="type"    column="type"    />
+        <result property="ip"    column="ip"    />
+        <result property="port"    column="port"    />
+        <result property="iscDeviceCode"    column="isc_device_code"    />
+        <result property="status"    column="status"    />
+        <result property="plcCode"    column="plc_code"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectDeviceVo">
+        select id, type, ip, port, isc_device_code, status, plc_code, update_time from device
+    </sql>
+
+    <select id="selectDeviceAllList" resultMap="DeviceResult">
+        select id, type, ip, port, isc_device_code, status, plc_code, update_time from device
+    </select>
+
+
+    <select id="selectDeviceList" parameterType="Device" resultMap="DeviceResult">
+        <include refid="selectDeviceVo"/>
+        <where>
+            <if test="type != null "> and type = #{type}</if>
+            <if test="ip != null  and ip != ''"> and ip = #{ip}</if>
+            <if test="port != null  and port != ''"> and port = #{port}</if>
+            <if test="iscDeviceCode != null  and iscDeviceCode != ''"> and isc_device_code = #{iscDeviceCode}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="plcCode != null  and plcCode != ''"> and plc_code = #{plcCode}</if>
+        </where>
+    </select>
+
+    <select id="selectDeviceById" parameterType="Long" resultMap="DeviceResult">
+        <include refid="selectDeviceVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertDevice" parameterType="Device">
+        insert into device
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="type != null">type,</if>
+            <if test="ip != null">ip,</if>
+            <if test="port != null">port,</if>
+            <if test="iscDeviceCode != null">isc_device_code,</if>
+            <if test="status != null">status,</if>
+            <if test="plcCode != null">plc_code,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="type != null">#{type},</if>
+            <if test="ip != null">#{ip},</if>
+            <if test="port != null">#{port},</if>
+            <if test="iscDeviceCode != null">#{iscDeviceCode},</if>
+            <if test="status != null">#{status},</if>
+            <if test="plcCode != null">#{plcCode},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateDevice" parameterType="Device">
+        update device
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="type != null">type = #{type},</if>
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="port != null">port = #{port},</if>
+            <if test="iscDeviceCode != null">isc_device_code = #{iscDeviceCode},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="plcCode != null">plc_code = #{plcCode},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateDeviceByIp" parameterType="Device">
+        update device
+            set status = #{status},
+           update_time = #{updateTime}
+        where ip = #{ip}
+    </update>
+
+    <delete id="deleteDeviceById" parameterType="Long">
+        delete from device where id = #{id}
+    </delete>
+
+    <delete id="deleteDeviceByIds" parameterType="String">
+        delete from device where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

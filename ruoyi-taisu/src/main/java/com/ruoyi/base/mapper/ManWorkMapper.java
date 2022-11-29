@@ -102,8 +102,11 @@ public interface ManWorkMapper
      */
     public int comIn(String workNo);
 
-    @Update("UPDATE man_work SET work_time = #{date}, car_id=null, ip=null, xt_in_num=0, com_in_num=0 WHERE len(work_no) <= 8 ")
+    @Update("UPDATE man_work SET work_time = #{date}, car_id=null, ip=null, xt_in_num=0, com_in_num=0,car_card=null WHERE len(work_no) <= 8 ")
     void resetLongTimeWork(Date date);
+
+    @Update("UPDATE man_work SET car_card=null WHERE len(work_no) > 8 ")
+    void resetWorkCarcard();
 
     @Select("SELECT work_id FROM man_work WHERE len(work_no) <= 8")
     List<Long> listLongTimeWork();

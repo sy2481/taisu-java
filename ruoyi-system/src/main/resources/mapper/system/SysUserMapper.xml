@@ -1,347 +1,452 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ruoyi.system.mapper.SysUserMapper">
 
-	<resultMap type="SysUser" id="SysUserResult">
-		<id     property="userId"       column="user_id"      />
-		<result property="deptId"       column="dept_id"      />
-		<result property="userName"     column="user_name"    />
-		<result property="nickName"     column="nick_name"    />
-		<result property="email"        column="email"        />
-		<result property="phonenumber"  column="phonenumber"  />
-		<result property="sex"          column="sex"          />
-		<result property="idCard"      column="id_card"       />
-		<result property="carId"      column="car_id"       />
-		<result property="carCard"      column="car_card"       />
-		<result property="avatar"       column="avatar"       />
-		<result property="password"     column="password"     />
-		<result property="status"       column="status"       />
-		<result property="delFlag"      column="del_flag"     />
-		<result property="loginIp"      column="login_ip"     />
-		<result property="loginDate"    column="login_date"   />
-		<result property="createBy"     column="create_by"    />
-		<result property="createTime"   column="create_time"  />
-		<result property="updateBy"     column="update_by"    />
-		<result property="updateTime"   column="update_time"  />
-		<result property="companyId"       column="company_id"       />
-		<result property="familyAddress"       column="family_address"       />
-		<result property="birthday"       column="birthday"       />
-		<result property="positionCardNo"       column="position_card_no"       />
-		<result property="snNum"       column="sn_num"       />
-		<result property="joinDate"       column="join_date"       />
-		<result property="hikCard"       column="hik_card"       />
-		<result property="title"       column="title"       />
-		<result property="mngMk"       column="mng_mk"       />
-		<result property="fctDorNm"       column="fct_dor_nm"       />
-		<result property="fvid"       column="fvid"       />
-		<result property="peisonId"       column="peison_id"       />
-		<result property="factoryId"       column="factory_id"       />
-		<result property="age"       column="age"       />
-		<result property="face"       column="face"       />
-		<result property="faceId"       column="face_id"       />
-		<result property="empNo"       column="emp_no"       />
-		<result property="plc"       column="plc"       />
-		<result property="sended"       column="sended"       />
-		<association property="dept"    column="dept_id" javaType="SysDept" resultMap="deptResult" />
-		<!--<association property="factory"    column="factory_id" javaType="SysDept" select="com.ruoyi.system.mapper.SysDeptMapper.selectDeptById" />-->
-		<collection  property="roles"   javaType="java.util.List"        resultMap="RoleResult" />
-	</resultMap>
+    <resultMap type="SysUser" id="SysUserResult">
+        <id property="userId" column="user_id"/>
+        <result property="deptId" column="dept_id"/>
+        <result property="userName" column="user_name"/>
+        <result property="nickName" column="nick_name"/>
+        <result property="email" column="email"/>
+        <result property="phonenumber" column="phonenumber"/>
+        <result property="sex" column="sex"/>
+        <result property="idCard" column="id_card"/>
+        <result property="carId" column="car_id"/>
+        <result property="carCard" column="car_card"/>
+        <result property="avatar" column="avatar"/>
+        <result property="password" column="password"/>
+        <result property="status" column="status"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="loginIp" column="login_ip"/>
+        <result property="loginDate" column="login_date"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="companyId" column="company_id"/>
+        <result property="familyAddress" column="family_address"/>
+        <result property="birthday" column="birthday"/>
+        <result property="positionCardNo" column="position_card_no"/>
+        <result property="snNum" column="sn_num"/>
+        <result property="joinDate" column="join_date"/>
+        <result property="hikCard" column="hik_card"/>
+        <result property="title" column="title"/>
+        <result property="mngMk" column="mng_mk"/>
+        <result property="fctDorNm" column="fct_dor_nm"/>
+        <result property="fvid" column="fvid"/>
+        <result property="peisonId" column="peison_id"/>
+        <result property="factoryId" column="factory_id"/>
+        <result property="age" column="age"/>
+        <result property="face" column="face"/>
+        <result property="faceId" column="face_id"/>
+        <result property="empNo" column="emp_no"/>
+        <result property="plc" column="plc"/>
+        <result property="sended" column="sended"/>
+        <result property="displayStatus" column="display_status"/>
 
-	<resultMap id="deptResult" type="SysDept">
-		<id     property="deptId"   column="dept_id"     />
-		<result property="parentId" column="parent_id"   />
-		<result property="deptName" column="dept_name"   />
-		<result property="orderNum" column="order_num"   />
-		<result property="leader"   column="leader"      />
-		<result property="status"   column="dept_status" />
-	</resultMap>
+        <association property="dept" column="dept_id" javaType="SysDept" resultMap="deptResult"/>
+        <!--<association property="factory"    column="factory_id" javaType="SysDept" select="com.ruoyi.system.mapper.SysDeptMapper.selectDeptById" />-->
+        <collection property="roles" javaType="java.util.List" resultMap="RoleResult"/>
+    </resultMap>
 
-	<resultMap id="RoleResult" type="SysRole">
-		<id     property="roleId"       column="role_id"        />
-		<result property="roleName"     column="role_name"      />
-		<result property="roleKey"      column="role_key"       />
-		<result property="roleSort"     column="role_sort"      />
-		<result property="dataScope"     column="data_scope"    />
-		<result property="status"       column="role_status"    />
-	</resultMap>
+    <resultMap id="deptResult" type="SysDept">
+        <id property="deptId" column="dept_id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="deptName" column="dept_name"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="leader" column="leader"/>
+        <result property="status" column="dept_status"/>
+    </resultMap>
 
-	<sql id="selectUserVo">
-		select u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.status,u.plc, u.del_flag, u.login_ip, u.login_date, u.create_by, u.create_time, u.remark,
-			   u.company_id, u.id_card, u.family_address,u.car_card, u.birthday, u.position_card_no, u.join_date, u.hik_card, u.factory_id, u.title, u.mng_mk, u.fct_dor_nm, u.fvid,u.peison_id, u.age, u.face, u.face_id,
-			   u.emp_no,u.car_id, u.sended,u.sn_num,
-		       d.dept_id, d.parent_id, d.dept_name, d.order_num, d.leader, d.status as dept_status, r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status as role_status
-		from sys_user u
-				 left join sys_dept d on u.dept_id = d.dept_id
-				 left join sys_user_role ur on u.user_id = ur.user_id
-				 left join sys_role r on r.role_id = ur.role_id
-	</sql>
+    <resultMap id="RoleResult" type="SysRole">
+        <id property="roleId" column="role_id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="roleKey" column="role_key"/>
+        <result property="roleSort" column="role_sort"/>
+        <result property="dataScope" column="data_scope"/>
+        <result property="status" column="role_status"/>
+    </resultMap>
+
+    <sql id="selectUserVo">
+        select u.user_id,
+               u.dept_id,
+               u.user_name,
+               u.nick_name,
+               u.email,
+               u.avatar,
+               u.phonenumber,
+               u.password,
+               u.sex,
+               u.status,
+               u.plc,
+               u.del_flag,
+               u.login_ip,
+               u.login_date,
+               u.create_by,
+               u.create_time,
+               u.remark,
+               u.company_id,
+               u.id_card,
+               u.family_address,
+               u.car_card,
+               u.birthday,
+               u.position_card_no,
+               u.join_date,
+               u.hik_card,
+               u.factory_id,
+               u.title,
+               u.mng_mk,
+               u.fct_dor_nm,
+               u.fvid,
+               u.peison_id,
+               u.age,
+               u.face,
+               u.face_id,
+               u.emp_no,
+               u.car_id,
+               u.sended,
+               u.sn_num,
+               u.display_status,
+               d.dept_id,
+               d.parent_id,
+               d.dept_name,
+               d.order_num,
+               d.leader,
+               d.status as dept_status,
+               r.role_id,
+               r.role_name,
+               r.role_key,
+               r.role_sort,
+               r.data_scope,
+               r.status as role_status
+        from sys_user u
+                 left join sys_dept d on u.dept_id = d.dept_id
+                 left join sys_user_role ur on u.user_id = ur.user_id
+                 left join sys_role r on r.role_id = ur.role_id
+    </sql>
 
     <select id="selectUserList" parameterType="SysUser" resultMap="SysUserResult">
-		select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.password, u.sex, u.plc,u.status, u.del_flag, u.login_ip, u.login_date,
-		       u.create_by, u.create_time, u.remark, d.dept_name, d.leader,u.company_id, u.id_card, u.sn_num,u.family_address,
-		       u.birthday, u.position_card_no, u.join_date, u.hik_card, u.factory_id, u.title, u.mng_mk, u.fct_dor_nm, u.fvid,
-		       u.peison_id, u.age, u.face, u.face_id, u.emp_no,u.car_id, u.car_card, u.sended from sys_user u
-		left join sys_dept d on u.dept_id = d.dept_id
+        select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.password, u.sex,
+        u.plc,u.status, u.del_flag, u.login_ip, u.login_date,
+        u.create_by, u.create_time, u.remark, d.dept_name, d.leader,u.company_id, u.id_card, u.sn_num,u.family_address,
+        u.birthday, u.position_card_no, u.join_date, u.hik_card, u.factory_id, u.title, u.mng_mk, u.fct_dor_nm, u.fvid,
+        u.peison_id, u.age, u.face, u.face_id, u.emp_no,u.car_id, u.car_card, u.sended ,d1.dept_name as factory_name
+        from sys_user u
+        left join sys_dept d on u.dept_id = d.dept_id
 
-		LEFT JOIN sys_user_role r ON u.user_id=r.user_id
-		LEFT JOIN sys_role e ON r.role_id=e.role_id
-		where u.del_flag = '0'
-		<if test="roleId!= null ">
-			AND e.role_id= #{roleId}
-		</if>
-			<if test="sended!= null ">
-			AND u.sended= #{sended}
-		</if>
-		<if test="phonenumber != null and phonenumber != ''">
-			AND u.phonenumber like concat('%', #{phonenumber}, '%')
-		</if>
-		<if test="idCard != null and idCard != ''">
-			AND u.id_card like concat('%', #{idCard}, '%')
-		</if>
-		<if test="factoryId!= null and factoryId != ''">
-			AND u.factory_id = #{factoryId}
-		</if>
-		<if test="empNo!= null and empNo != ''">
-			AND u.emp_no like concat('%', #{empNo}, '%')
-		</if>
-		<if test="snNum!= null and snNum != ''">
-			AND u.sn_num like concat('%', #{snNum}, '%')
-		</if>
-		<if test="nickName != null and nickName != ''">
-			AND u.nick_name like concat('%', #{nickName}, '%')
-		</if>
-		<if test="existenceFace ==0">and (face !='' OR face IS NOT NULL)</if>
-		<if test="existenceFace ==1">and (face ='' OR face IS  NULL)</if>
-		<if test="deptId != null and deptId != 0">
-			AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE CHARINDEX(cast(#{deptId} as nvarchar),ancestors)>0))
-		</if>
-		<!-- 数据范围过滤 -->
-		${params.dataScope}
-	</select>
+        LEFT JOIN sys_user_role r ON u.user_id=r.user_id
+        LEFT JOIN sys_role e ON r.role_id=e.role_id
+        LEFT JOIN sys_dept d1 ON u.factory_id = CAST ( d1.dept_id AS VARCHAR )
+        where u.del_flag = '0'
+        <if test="roleId!= null ">
+            AND e.role_id= #{roleId}
+        </if>
+        <if test="sended!= null ">
+            AND u.sended= #{sended}
+        </if>
+        <if test="phonenumber != null and phonenumber != ''">
+            AND u.phonenumber like concat('%', #{phonenumber}, '%')
+        </if>
+        <if test="idCard != null and idCard != ''">
+            AND u.id_card like concat('%', #{idCard}, '%')
+        </if>
+        <if test="factoryId!= null and factoryId != ''">
+            AND u.factory_id = #{factoryId}
+        </if>
+        <if test="empNo!= null and empNo != ''">
+            AND u.emp_no like concat('%', #{empNo}, '%')
+        </if>
+        <if test="snNum!= null and snNum != ''">
+            AND u.sn_num like concat('%', #{snNum}, '%')
+        </if>
+        <if test="nickName != null and nickName != ''">
+            AND u.nick_name like concat('%', #{nickName}, '%')
+        </if>
+        <if test="factoryStr != null and factoryStr != ''">
+            AND d1.dept_name like concat('%', #{factoryStr}, '%')
+        </if>
+        <if test="existenceFace ==0">and (face !='' OR face IS NOT NULL)</if>
+        <if test="existenceFace ==1">and (face ='' OR face IS NULL)</if>
+        <if test="deptId != null and deptId != 0">
+            AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE CHARINDEX(cast(#{deptId}
+            as nvarchar),ancestors)>0))
+        </if>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+    </select>
 
-	<select id="selectAllocatedList" parameterType="SysUser" resultMap="SysUserResult">
-	    select distinct u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.phonenumber,u.sn_num, u.status, u.create_time,u.plc
-	    from sys_user u
-			 left join sys_dept d on u.dept_id = d.dept_id
-			 left join sys_user_role ur on u.user_id = ur.user_id
-			 left join sys_role r on r.role_id = ur.role_id
-	    where u.del_flag = '0' and r.role_id = #{roleId}
-	    <if test="userName != null and userName != ''">
-			AND u.user_name like concat('%', #{userName}, '%')
-		</if>
-		<if test="phonenumber != null and phonenumber != ''">
-			AND u.phonenumber like concat('%', #{phonenumber}, '%')
-		</if>
-		<!-- 数据范围过滤 -->
-		${params.dataScope}
-	</select>
+    <select id="selectAllocatedList" parameterType="SysUser" resultMap="SysUserResult">
+        select distinct u.user_id, u.dept_id, u.user_name, u.nick_name, u.email, u.phonenumber,u.sn_num, u.status,
+        u.create_time,u.plc
+        from sys_user u
+        left join sys_dept d on u.dept_id = d.dept_id
+        left join sys_user_role ur on u.user_id = ur.user_id
+        left join sys_role r on r.role_id = ur.role_id
+        where u.del_flag = '0' and r.role_id = #{roleId}
+        <if test="userName != null and userName != ''">
+            AND u.user_name like concat('%', #{userName}, '%')
+        </if>
+        <if test="phonenumber != null and phonenumber != ''">
+            AND u.phonenumber like concat('%', #{phonenumber}, '%')
+        </if>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+    </select>
 
-	<select id="selectUnallocatedList" parameterType="SysUser" resultMap="SysUserResult">
-	    select distinct u.user_id, u.dept_id, u.user_name, u.nick_name, u.email,u.sn_num, u.phonenumber, u.status, u.create_time,u.plc
-	    from sys_user u
-			 left join sys_dept d on u.dept_id = d.dept_id
-			 left join sys_user_role ur on u.user_id = ur.user_id
-			 left join sys_role r on r.role_id = ur.role_id
-	    where u.del_flag = '0' and (r.role_id != #{roleId} or r.role_id IS NULL)
-	    and u.user_id not in (select u.user_id from sys_user u inner join sys_user_role ur on u.user_id = ur.user_id and ur.role_id = #{roleId})
-	    <if test="userName != null and userName != ''">
-			AND u.user_name like concat('%', #{userName}, '%')
-		</if>
-		<if test="phonenumber != null and phonenumber != ''">
-			AND u.phonenumber like concat('%', #{phonenumber}, '%')
-		</if>
-		<!-- 数据范围过滤 -->
-		${params.dataScope}
-	</select>
+    <select id="selectUnallocatedList" parameterType="SysUser" resultMap="SysUserResult">
+        select distinct u.user_id, u.dept_id, u.user_name, u.nick_name, u.email,u.sn_num, u.phonenumber, u.status,
+        u.create_time,u.plc
+        from sys_user u
+        left join sys_dept d on u.dept_id = d.dept_id
+        left join sys_user_role ur on u.user_id = ur.user_id
+        left join sys_role r on r.role_id = ur.role_id
+        where u.del_flag = '0' and (r.role_id != #{roleId} or r.role_id IS NULL)
+        and u.user_id not in (select u.user_id from sys_user u inner join sys_user_role ur on u.user_id = ur.user_id and
+        ur.role_id = #{roleId})
+        <if test="userName != null and userName != ''">
+            AND u.user_name like concat('%', #{userName}, '%')
+        </if>
+        <if test="phonenumber != null and phonenumber != ''">
+            AND u.phonenumber like concat('%', #{phonenumber}, '%')
+        </if>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+    </select>
 
-	<select id="selectUserByUserName" parameterType="String" resultMap="SysUserResult">
-	    <include refid="selectUserVo"/>
-		where u.user_name = #{userName}
-	</select>
+    <select id="selectUserByUserName" parameterType="String" resultMap="SysUserResult">
+        <include refid="selectUserVo"/>
+        where u.user_name = #{userName}
+    </select>
 
-	<select id="selectUserByIdCard" parameterType="String" resultMap="SysUserResult">
-		<include refid="selectUserVo"/>
-		where u.id_card = #{idCard} AND u.del_flag = '0'
-	</select>
+    <select id="selectUserByIdCard" parameterType="String" resultMap="SysUserResult">
+        <include refid="selectUserVo"/>
+        where u.id_card = #{idCard} AND u.del_flag = '0'
+    </select>
 
-	<select id="selectUserById" parameterType="Long" resultMap="SysUserResult">
-		<include refid="selectUserVo"/>
-		where u.user_id = #{userId}
-	</select>
+    <select id="selectUserById" parameterType="Long" resultMap="SysUserResult">
+        <include refid="selectUserVo"/>
+        where u.user_id = #{userId}
+    </select>
 
-	<select id="checkUserNameUnique" parameterType="String" resultType="int">
-		select count(1) from sys_user where user_name = #{userName}
-	</select>
+    <select id="checkUserNameUnique" parameterType="String" resultType="int">
+        select count(1)
+        from sys_user
+        where user_name = #{userName}
+               AND del_flag = '0'
+    </select>
 
-	<select id="checkPhoneUnique" parameterType="String" resultMap="SysUserResult">
-		select TOP 1 user_id, phonenumber from sys_user where phonenumber = #{phonenumber}
-	</select>
+    <select id="checkPhoneUnique" parameterType="String" resultMap="SysUserResult">
+        select TOP 1 user_id, phonenumber
+        from sys_user
+        where phonenumber = #{phonenumber}
+    </select>
 
-	<select id="checkEmailUnique" parameterType="String" resultMap="SysUserResult">
-		select TOP 1 user_id, email from sys_user where email = #{email}
-	</select>
+    <select id="checkEmailUnique" parameterType="String" resultMap="SysUserResult">
+        select TOP 1 user_id, email
+        from sys_user
+        where email = #{email}
+    </select>
 
-	<select id="getByUserNo" parameterType="String" resultMap="SysUserResult">
-		select * from sys_user where emp_no = #{no} AND del_flag = '0'
-	</select>
+    <select id="getByUserNo" parameterType="String" resultMap="SysUserResult">
+        select *
+        from sys_user
+        where emp_no = #{no}
+          AND del_flag = '0'
+    </select>
     <select id="getByCommonParams" resultMap="SysUserResult">
-		select * from sys_user u
-		<where>
-			<if test="idCard != null and idCard != ''">
-				AND u.id_card = #{idCard}
-			</if>
-			<if test="locationCardNo != null and locationCardNo != ''">
-				AND u.position_card_no = #{locationCardNo}
-			</if>
-			<if test="carCardNo != null and carCardNo != ''">
-				AND u.car_card like concat('%', #{carCardNo}, '%')
-			</if>
-			<if test="plateNo != null and plateNo != ''">
-				AND u.car_id like concat('%', #{plateNo}, '%')
-			</if>
-			AND u.del_flag = '0'
-		</where>
-	</select>
+        select * from sys_user u
+        <where>
+            <if test="idCard != null and idCard != ''">
+                AND u.id_card = #{idCard}
+            </if>
+            <if test="locationCardNo != null and locationCardNo != ''">
+                AND u.position_card_no = #{locationCardNo}
+            </if>
+            <if test="carCardNo != null and carCardNo != ''">
+                AND u.car_card like concat('%', #{carCardNo}, '%')
+            </if>
+            <if test="plateNo != null and plateNo != ''">
+                AND u.car_id like concat('%', #{plateNo}, '%')
+            </if>
+            AND u.del_flag = '0'
+        </where>
+    </select>
     <insert id="insertUser" parameterType="SysUser" useGeneratedKeys="true" keyProperty="userId">
- 		insert into sys_user(
- 			<if test="userId != null and userId != 0">user_id,</if>
- 			<if test="deptId != null and deptId != 0">dept_id,</if>
- 			<if test="factoryId != null and factoryId != ''">factory_id,</if>
- 			<if test="userName != null and userName != ''">user_name,</if>
- 			<if test="nickName != null and nickName != ''">nick_name,</if>
- 			<if test="email != null and email != ''">email,</if>
- 			<if test="avatar != null and avatar != ''">avatar,</if>
- 			<if test="phonenumber != null and phonenumber != ''">phonenumber,</if>
- 			<if test="sex != null and sex != ''">sex,</if>
- 			<if test="password != null and password != ''">password,</if>
- 			<if test="status != null and status != ''">status,</if>
- 			<if test="createBy != null and createBy != ''">create_by,</if>
- 			<if test="remark != null and remark != ''">remark,</if>
- 			<if test="birthday != null and birthday != ''">birthday,</if>
- 			<if test="idCard != null and idCard != ''">id_card,</if>
- 			<if test="familyAddress != null and familyAddress != ''">family_address,</if>
- 			<if test="carId != null and carId != ''">car_id,</if>
- 			<if test="carCard != null and carCard != ''">car_card,</if>
- 			<if test="face != null and face != ''">face,</if>
- 			<if test="empNo != null and empNo != ''">emp_no,</if>
- 			<if test="positionCardNo != null and positionCardNo != ''">position_card_no,</if>
- 			<if test="snNum != null and snNum != ''">sn_num,,</if>
- 			<if test="joinDate != null and joinDate != ''">join_date,</if>
- 			<if test="sended != null and sended != ''">sended,</if>
- 			<if test="plc != null and plc != ''">plc,</if>
- 			create_time
- 		)values(
- 			<if test="userId != null and userId != ''">#{userId},</if>
- 			<if test="deptId != null and deptId != ''">#{deptId},</if>
-			<if test="factoryId != null and factoryId != ''">#{factoryId},</if>
- 			<if test="userName != null and userName != ''">#{userName},</if>
- 			<if test="nickName != null and nickName != ''">#{nickName},</if>
- 			<if test="email != null and email != ''">#{email},</if>
- 			<if test="avatar != null and avatar != ''">#{avatar},</if>
- 			<if test="phonenumber != null and phonenumber != ''">#{phonenumber},</if>
- 			<if test="sex != null and sex != ''">#{sex},</if>
- 			<if test="password != null and password != ''">#{password},</if>
- 			<if test="status != null and status != ''">#{status},</if>
- 			<if test="createBy != null and createBy != ''">#{createBy},</if>
- 			<if test="remark != null and remark != ''">#{remark},</if>
-			<if test="birthday != null and birthday != ''">#{birthday},</if>
-			<if test="idCard != null and idCard != ''">#{idCard},</if>
-			<if test="familyAddress != null and familyAddress != ''">#{familyAddress},</if>
-			<if test="carId != null and carId != ''">#{carId},</if>
-			<if test="carCard != null and carCard != ''">#{carCard},</if>
-			<if test="face != null and face != ''">#{face},</if>
-			<if test="empNo != null and empNo != ''">#{empNo},</if>
-			<if test="positionCardNo != null and positionCardNo != ''">#{positionCardNo},</if>
-			<if test="snNum != null and snNum != ''">#{snNum},</if>
-			<if test="joinDate != null and joinDate != ''">#{joinDate},</if>
-			<if test="sended != null and sended != ''">#{sended},</if>
-			<if test="plc != null and plc != ''">#{plc},</if>
- 			getdate()
- 		)
-	</insert>
+        insert into sys_user(
+        <if test="userId != null and userId != 0">user_id,</if>
+        <if test="deptId != null and deptId != 0">dept_id,</if>
+        <if test="factoryId != null and factoryId != ''">factory_id,</if>
+        <if test="userName != null and userName != ''">user_name,</if>
+        <if test="nickName != null and nickName != ''">nick_name,</if>
+        <if test="email != null and email != ''">email,</if>
+        <if test="avatar != null and avatar != ''">avatar,</if>
+        <if test="phonenumber != null and phonenumber != ''">phonenumber,</if>
+        <if test="sex != null and sex != ''">sex,</if>
+        <if test="password != null and password != ''">password,</if>
+        <if test="status != null and status != ''">status,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        <if test="remark != null and remark != ''">remark,</if>
+        <if test="birthday != null and birthday != ''">birthday,</if>
+        <if test="idCard != null and idCard != ''">id_card,</if>
+        <if test="familyAddress != null and familyAddress != ''">family_address,</if>
+        <if test="carId != null and carId != ''">car_id,</if>
+        <if test="carCard != null and carCard != ''">car_card,</if>
+        <if test="face != null and face != ''">face,</if>
+        <if test="empNo != null and empNo != ''">emp_no,</if>
+        <if test="positionCardNo != null and positionCardNo != ''">position_card_no,</if>
+        <if test="snNum != null and snNum != ''">sn_num,,</if>
+        <if test="joinDate != null and joinDate != ''">join_date,</if>
+        <if test="sended != null and sended != ''">sended,</if>
+        <if test="plc != null and plc != ''">plc,</if>
+        <if test="displayStatus != null and displayStatus != ''">display_tatus,</if>
+        create_time
+        )values(
+        <if test="userId != null and userId != ''">#{userId},</if>
+        <if test="deptId != null and deptId != ''">#{deptId},</if>
+        <if test="factoryId != null and factoryId != ''">#{factoryId},</if>
+        <if test="userName != null and userName != ''">#{userName},</if>
+        <if test="nickName != null and nickName != ''">#{nickName},</if>
+        <if test="email != null and email != ''">#{email},</if>
+        <if test="avatar != null and avatar != ''">#{avatar},</if>
+        <if test="phonenumber != null and phonenumber != ''">#{phonenumber},</if>
+        <if test="sex != null and sex != ''">#{sex},</if>
+        <if test="password != null and password != ''">#{password},</if>
+        <if test="status != null and status != ''">#{status},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        <if test="remark != null and remark != ''">#{remark},</if>
+        <if test="birthday != null and birthday != ''">#{birthday},</if>
+        <if test="idCard != null and idCard != ''">#{idCard},</if>
+        <if test="familyAddress != null and familyAddress != ''">#{familyAddress},</if>
+        <if test="carId != null and carId != ''">#{carId},</if>
+        <if test="carCard != null and carCard != ''">#{carCard},</if>
+        <if test="face != null and face != ''">#{face},</if>
+        <if test="empNo != null and empNo != ''">#{empNo},</if>
+        <if test="positionCardNo != null and positionCardNo != ''">#{positionCardNo},</if>
+        <if test="snNum != null and snNum != ''">#{snNum},</if>
+        <if test="joinDate != null and joinDate != ''">#{joinDate},</if>
+        <if test="sended != null and sended != ''">#{sended},</if>
+        <if test="plc != null and plc != ''">#{plc},</if>
+        <if test="displayStatus != null and displayStatus != ''">#{displayStatus},</if>
+        getdate()
+        )
+    </insert>
 
-	<update id="updateUser" parameterType="SysUser">
- 		update sys_user
- 		<set>
- 			<if test="deptId != null and deptId != 0">dept_id = #{deptId},</if>
-			factory_id = #{factoryId},
- 			<if test="userName != null and userName != ''">user_name = #{userName},</if>
- 			<if test="nickName != null and nickName != ''">nick_name = #{nickName},</if>
- 			<if test="email != null ">email = #{email},</if>
- 			<if test="phonenumber != null ">phonenumber = #{phonenumber},</if>
- 			<if test="sex != null and sex != ''">sex = #{sex},</if>
- 			<if test="avatar != null and avatar != ''">avatar = #{avatar},</if>
- 			<if test="password != null and password != ''">password = #{password},</if>
- 			<if test="status != null and status != ''">status = #{status},</if>
- 			<if test="loginIp != null and loginIp != ''">login_ip = #{loginIp},</if>
- 			<if test="loginDate != null">login_date = #{loginDate},</if>
- 			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
- 			<if test="remark != null">remark = #{remark},</if>
-			<if test="birthday != null and birthday != ''">birthday = #{birthday},</if>
-			<if test="idCard != null and idCard != ''">id_card = #{idCard},</if>
-			<if test="familyAddress != null and familyAddress != ''">family_address = #{familyAddress},</if>
-			<if test="carId != null">car_id = #{carId},</if>
-			<if test="carCard != null">car_card = #{carCard},</if>
-			<if test="face != null and face != ''">face = #{face},</if>
-			<if test="empNo != null and empNo != ''">emp_no = #{empNo},</if>
-			<if test="positionCardNo != null">position_card_no = #{positionCardNo},</if>
-			<if test="snNum != null">sn_num = #{snNum},</if>
-			<if test="joinDate != null and joinDate != ''">join_date = #{joinDate},</if>
-			<if test="sended != null and sended != ''">sended = #{sended},</if>
-			plc = #{plc},
- 			update_time = getdate()
- 		</set>
- 		where user_id = #{userId}
-	</update>
+    <update id="updateUser" parameterType="com.ruoyi.common.core.domain.entity.SysUser">
+        update sys_user
+        <set>
+            <if test="deptId != null and deptId != 0">dept_id = #{deptId},</if>
+            factory_id = #{factoryId},
+            <if test="userName != null and userName != ''">user_name = #{userName},</if>
+            <if test="nickName != null and nickName != ''">nick_name = #{nickName},</if>
+            <if test="email != null ">email = #{email},</if>
+            <if test="phonenumber != null ">phonenumber = #{phonenumber},</if>
+            <if test="sex != null and sex != ''">sex = #{sex},</if>
+            <if test="avatar != null and avatar != ''">avatar = #{avatar},</if>
+            <if test="password != null and password != ''">password = #{password},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="loginIp != null and loginIp != ''">login_ip = #{loginIp},</if>
+            <if test="loginDate != null">login_date = #{loginDate},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="remark != null">remark = #{remark},</if>
+            <if test="birthday != null and birthday != ''">birthday = #{birthday},</if>
+            <if test="idCard != null and idCard != ''">id_card = #{idCard},</if>
+            <if test="familyAddress != null and familyAddress != ''">family_address = #{familyAddress},</if>
+            <if test="carId != null">car_id = #{carId},</if>
+            <if test="carCard != null">car_card = #{carCard},</if>
+            <if test="face != null and face != ''">face = #{face},</if>
+            <if test="empNo != null and empNo != ''">emp_no = #{empNo},</if>
+            <if test="positionCardNo != null">position_card_no = #{positionCardNo},</if>
+            <if test="snNum != null">sn_num = #{snNum},</if>
+            <if test="joinDate != null and joinDate != ''">join_date = #{joinDate},</if>
+            <if test="sended != null and sended != ''">sended = #{sended},</if>
+            plc = #{plc},
+            update_time = getdate()
+        </set>
+        where user_id = #{userId}
+    </update>
 
-	<update id="updateUserStatus" parameterType="SysUser">
- 		update sys_user set status = #{status} where user_id = #{userId}
-	</update>
+    <update id="updateUserCarCard" parameterType="SysUser">
+        update sys_user
+        <set>
+            <if test="carCard != null">car_card = #{carCard},</if>
+        </set>
+        where user_id = #{userId}
+    </update>
 
-	<update id="updateUserAvatar" parameterType="SysUser">
- 		update sys_user set avatar = #{avatar} where user_name = #{userName}
-	</update>
+    <update id="updateUserStatus" parameterType="SysUser">
+        update sys_user
+        set status = #{status}
+        where user_id = #{userId}
+    </update>
 
-	<update id="resetUserPwd" parameterType="SysUser">
- 		update sys_user set password = #{password} where user_name = #{userName}
-	</update>
-	<update id="sendBackStatus">
-		update sys_user set sended = #{sendedStatus} where user_id = #{userId}
-	</update>
+    <update id="updateUserAvatar" parameterType="SysUser">
+        update sys_user
+        set avatar = #{avatar}
+        where user_name = #{userName}
+    </update>
 
-	<update id="deleteUserById" parameterType="Long">
-		update sys_user set del_flag = '2', face_id = user_name, user_name = newId() where user_id = #{userId}
- 	</update>
+    <update id="resetUserPwd" parameterType="SysUser">
+        update sys_user
+        set password = #{password}
+        where user_name = #{userName}
+    </update>
+    <update id="sendBackStatus">
+        update sys_user
+        set sended = #{sendedStatus}
+        where user_id = #{userId}
+    </update>
 
- 	<update id="deleteUserByIds" parameterType="Long">
- 		update sys_user set del_flag = '2', face_id = user_name, user_name = newId() where user_id in
- 		<foreach collection="array" item="userId" open="(" separator="," close=")">
- 			#{userId}
+    <update id="deleteUserById" parameterType="Long">
+        update sys_user
+        set del_flag  = '2',
+            face_id   = user_name,
+            user_name = newId()
+        where user_id = #{userId}
+    </update>
+
+    <update id="deleteUserByIds" parameterType="Long">
+        update sys_user set del_flag = '2', face_id = user_name, user_name = newId() where user_id in
+        <foreach collection="array" item="userId" open="(" separator="," close=")">
+            #{userId}
         </foreach>
- 	</update>
+    </update>
+    <update id="updateUserByDept" parameterType="SysUser">
+        update sys_user
+        set factory_id = #{factoryId},
+            plc        = #{plc}
+        where dept_id = #{deptId}
+    </update>
 
     <delete id="deleteFaceByUserId">
-		update sys_user set face = null, sended = 0 where user_id = #{userId}
-	</delete>
+        update sys_user
+        set face   = null,
+            sended = 0
+        where user_id = #{userId}
+    </delete>
 
-	<select id="selectByEmpNo" parameterType="java.lang.String" resultType="com.ruoyi.common.core.domain.entity.SysUser">
+    <select id="selectByEmpNo" parameterType="java.lang.String"
+            resultType="com.ruoyi.common.core.domain.entity.SysUser">
 
-		SELECT * FROM sys_user WHERE emp_no=#{empNo} and del_flag = '0'
-	</select>
+        SELECT *
+        FROM sys_user
+        WHERE emp_no = #{empNo}
+          and del_flag = '0'
+    </select>
 
-	<select id="selectListFaceByIdCards" parameterType="java.util.List" resultMap="SysUserResult">
-		<include refid="selectUserVo"/>
-		where u.del_flag = '0' and u.face is not null and u.id_card in
-		<foreach collection="idCards" index="index" item="item" open="(" separator="," close=")">
-			#{item}
-		</foreach>
-	</select>
+    <select id="selectListFaceByIdCards" parameterType="java.util.List" resultMap="SysUserResult">
+        <include refid="selectUserVo"/>
+        where u.del_flag = '0' and u.face is not null and u.id_card in
+        <foreach collection="idCards" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
 
-	<update id="updateFaceByIdCard">
-		update sys_user set face = #{face} where id_card = #{idCard}
-	</update>
+    <update id="updateFaceByIdCard">
+        update sys_user set face = #{face} where id_card = #{idCard}
+    </update>
+
 
 	<update id="updateUserCarCard" parameterType="SysUser">
 		update sys_user set car_card = #{carCard} where user_id = #{userId}

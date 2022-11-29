@@ -6,9 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Slf4j
+
 public class CrcUtils {
-    private final static Logger logger = LoggerFactory.getLogger(plcClientUtils.class);
+    private final static Logger logger = LoggerFactory.getLogger(CrcUtils.class);
     public static String CRC_16(byte[] bytes) {
         int i, j, lsb;
         int h = 0xffff;

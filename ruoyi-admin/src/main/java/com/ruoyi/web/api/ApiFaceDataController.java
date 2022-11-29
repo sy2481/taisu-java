@@ -180,6 +180,38 @@ public class ApiFaceDataController {
         }
     }
 
+    // 根据员工 id,設置人臉照片
+    @ResponseBody
+    @GetMapping("/facePicForEmployeeSubFactory")
+    public Response facePicForEmployeeSubFactory(Long id, String facePicUrl, String idCard) {
+        try {
+            if (id == null || StringUtils.isBlank(facePicUrl)) {
+                return Response.error("資料不全，請稍後再試。");
+            }
+            SysUser sysUser = sysUserMapper.selectUserById(id);
+            if (sysUser == null) {
+                return Response.error("用戶不存在，請稍後再試！");
+            }
+            // 設置人臉照片，重新保存
+            IDcard.checkIdCard(idCard);
+            //身份证校验通过，塞进去
+            sysUser.setIdCard(idCard);
+            IDcard.competeUserByIdcard(sysUser);
+            sysUser.setFace(facePicUrl);
+            sysUserMapper.updateUser(sysUser);
+
+            //同时更新中心库-修改by-sunlj
+            HttpUtils.sendJsonPost(centHost+"/api/wechat/faceDataCent/saveFaceForEmployee", JSONObject.toJSONString(sysUser));
+
+            //保存照片
+            pool.threadPoolTaskExecutor().execute(() -> apiService.userBindHlkSubUser(sysUserMapper.selectUserById(sysUser.getUserId())));
+            return Response.builder().code(0).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.error(e.getMessage());
+        }
+    }
+
     // 根据工单号，查询厂商人员列表，如果
     // 0-普通工单，1-危化品工单
     @ResponseBody
@@ -258,7 +290,7 @@ public class ApiFaceDataController {
             //最后调用下厂商人脸下发的方法
             pool.threadPoolTaskExecutor().execute(() -> {
                 Long[] ids = new Long[]{manFactory.getFactoryId()};
-                apiService.sendFactoryMsgList(ids);
+                apiService.sendFactoryMsgListForManFactory(ids);
             });
             return Response.builder().code(0).build();
         } catch (Exception e) {
