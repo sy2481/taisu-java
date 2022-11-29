@@ -62,4 +62,9 @@ public class CarCard extends BaseEntity
     /** 虛擬字段（0=領用，1=歸還） */
     private String type;
 
+    /**
+     * 車卡類型 （1-員工 2-廠商）
+     */
+    private String cardType;
+
 }

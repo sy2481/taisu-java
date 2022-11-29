@@ -3,6 +3,7 @@ package com.ruoyi.web.controller.system;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.base.domain.BaseCarCardBind;
 import com.ruoyi.base.domain.CarCard;
 import com.ruoyi.base.domain.CardRecord;
 import com.ruoyi.base.interact.CarCardSendService;
@@ -10,8 +11,11 @@ import com.ruoyi.base.interact.PersonSendService;
 import com.ruoyi.base.interact.PlateSendService;
 import com.ruoyi.base.mapper.CarCardMapper;
 import com.ruoyi.base.mapper.CardRecordMapper;
+import com.ruoyi.base.service.CarCardBindService;
+import com.ruoyi.base.service.IPersonBindService;
 import com.ruoyi.base.service.impl.ApiService;
 import com.ruoyi.base.utils.IDcard;
+import com.ruoyi.base.vo.CarCardVO;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.constant.UserConstants;
 import com.ruoyi.common.core.controller.BaseController;
@@ -21,6 +25,7 @@ import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
@@ -80,6 +85,11 @@ public class SysUserController extends BaseController {
     private PersonSendService personSendService;
     @Autowired
     private PlateSendService plateSendService;
+
+    @Autowired
+    private IPersonBindService personBindService;
+    @Autowired
+    private CarCardBindService carCardBindService;
 
     /**
      * 获取用户列表
@@ -407,6 +417,9 @@ public class SysUserController extends BaseController {
         for (int i = 0; i < userIds.length; i++) {
             //还需要同时解绑车牌
             SysUser sysUser = userService.selectUserById(userIds[i]);
+            String idCard=sysUser.getIdCard();
+            personBindService.deleteByIdCard(idCard);
+
             String oldPlateNo = sysUser.getCarId();
             sysUser.setCarId(null);
             plateSendService.userPlateDiffSend(sysUser, oldPlateNo);
@@ -502,6 +515,70 @@ public class SysUserController extends BaseController {
      * 删除车卡
      */
     @PostMapping("/delCarCard")
+//    public Response delCarCard(@RequestBody String requestObj) {
+//        try {
+//            JSONObject jsonObject = JSON.parseObject(requestObj);
+//            //获取要删除的车卡
+//            String carCarNo = (String) jsonObject.get("carCardNo");
+//            //删除车卡的员工
+//            SysUser empNo = sysUserMapper.getByUserNo((String) jsonObject.get("empNo"));
+//            String[] split = empNo.getCarCard().split(",");
+//            List<String> list = Arrays.asList(split);
+//            int carCardIndex = getCarCardIndex(list, carCarNo);
+//            List<String> list1 = new ArrayList<>(list);
+//            //删除车卡
+//            list1.remove(carCardIndex);
+//            String carCardlongStr = "";
+//            //删除后重新拼接员工车卡
+//            for (int i = 0; i < list1.size(); i++) {
+//                String cardNo = list1.get(i);
+//                if (i == 0) {
+//                    carCardlongStr = cardNo;
+//                } else {
+//                    carCardlongStr = carCardlongStr + ("," + cardNo);
+//                }
+//            }
+//            //更新员工绑定车卡信息
+//            SysUser sysUser = new SysUser();
+//            sysUser.setCarCard(carCardlongStr);
+//            sysUser.setUserId(empNo.getUserId());
+//            //sysUserMapper.updateUser(sysUser);
+//            sysUserMapper.updateUserCarCard(sysUser);
+//            //修改车卡状态为未绑定
+//            CarCard carCard = new CarCard();
+//            carCard.setCardCarNo(carCarNo);
+//            carCard.setCardCarStatus("0");
+//            carCard.setBindPlateNo(null);
+//            carCard.setCardCarUse("");
+//            carCard.setReturnName(empNo.getNickName());
+//            carCard.setReturnTime(new Date());
+//            carCardMapper.updateCarCardByNo(carCard);
+//            //插入卡片记录
+//            //根据删除的车卡编号拿到车卡信息插入到历史记录
+//            CarCard carCardInfo = carCardMapper.selectCarCardByCardCarNo(carCarNo);
+//            CardRecord cardRecord = new CardRecord();
+//            cardRecord.setCardType("0");
+//            cardRecord.setCardId(carCardInfo.getCardCarId());
+//            cardRecord.setCardNo(carCarNo);
+//            cardRecord.setCardRecordOperate("1");//归还操作记录
+//            cardRecord.setCardRecordObject(empNo.getNickName());
+//            cardRecord.setCardRecordTime(new Date());
+//            cardRecord.setCardRecordName(getUsername());
+//            cardRecordMapper.insertCardRecord(cardRecord);
+//            // 用户解绑车卡
+//            CarCardVO carCardVO = new CarCardVO();
+//            carCardVO.setCardNumber(carCarNo);
+//            carCardVO.setCardNo(empNo.getIdCard());
+//            carCardVO.setCardType(1);
+//            pool.threadPoolTaskExecutor().execute(() -> carCardSendService.downSendUnbindCarCard(carCardVO));
+//            //pool.threadPoolTaskExecutor().execute(() -> carCardSendService.downSendUnbindCarCard(carCarNo));
+//            return Response.success("删除成功");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return Response.error("删除失败");
+//        }
+//    }
+
     public Response delCarCard(@RequestBody String requestObj) {
         try {
             JSONObject jsonObject = JSON.parseObject(requestObj);
@@ -529,11 +606,16 @@ public class SysUserController extends BaseController {
             SysUser sysUser = new SysUser();
             sysUser.setCarCard(carCardlongStr);
             sysUser.setUserId(empNo.getUserId());
-            sysUserMapper.updateUser(sysUser);
+            sysUserMapper.updateUserCarCard(sysUser);
+            //删除车卡绑定人员信息
+            carCardBindService.deleteByPrimarykey(carCarNo,empNo.getIdCard());
             //修改车卡状态为未绑定
             CarCard carCard = new CarCard();
             carCard.setCardCarNo(carCarNo);
-            carCard.setCardCarStatus("0");
+            int carCardCount =  carCardBindService.getCountByCarCardNo(carCarNo);
+            if (carCardCount == 0){
+                carCard.setCardCarStatus("0");
+            }
             carCard.setBindPlateNo(null);
             carCard.setCardCarUse("");
             carCard.setReturnName(empNo.getNickName());
@@ -552,7 +634,13 @@ public class SysUserController extends BaseController {
             cardRecord.setCardRecordName(getUsername());
             cardRecordMapper.insertCardRecord(cardRecord);
             // 用户解绑车卡
-            pool.threadPoolTaskExecutor().execute(() -> carCardSendService.downSendUnbindCarCard(carCarNo));
+
+            CarCardVO carCardVO = new CarCardVO();
+            carCardVO.setCardNumber(carCarNo);
+            carCardVO.setCardNo(empNo.getIdCard());
+            carCardVO.setCardType(1);
+
+            pool.threadPoolTaskExecutor().execute(() -> carCardSendService.downSendUnbindCarCard(carCardVO));
             return Response.success("删除成功");
         } catch (Exception e) {
             e.printStackTrace();
@@ -563,12 +651,96 @@ public class SysUserController extends BaseController {
     /**
      * 添加车卡
      */
+//    @PostMapping("/addCarCard")
+//    public Response addCarCard(@RequestBody String requestObj) {
+//        try {
+//            JSONObject jsonObject = JSON.parseObject(requestObj);
+//            //获取要添加的车卡
+//            String carCarNo = (String) jsonObject.get("carCardNo");
+//            //要添加车卡的员工信息
+//            SysUser empNo = sysUserMapper.getByUserNo((String) jsonObject.get("empNo"));
+//            String[] split;
+//            List<String> list;
+//            List<String> list1;
+//            if (!StringUtils.isEmpty(empNo.getCarCard())) {
+//                split = empNo.getCarCard().split(",");
+//                list = Arrays.asList(split);
+//                list1 = new ArrayList<>(list);
+//                list1.add(carCarNo);
+//            } else {
+//                //添加车卡
+//                list1 = new ArrayList<>();
+//                list1.add(carCarNo);
+//            }
+//            String carCardlongStr = "";
+//            //删除后重新拼接员工车卡
+//            for (int i = 0; i < list1.size(); i++) {
+//                String cardNo = list1.get(i);
+//                if (i == 0) {
+//                    carCardlongStr = cardNo;
+//                } else {
+//                    carCardlongStr = carCardlongStr + ("," + cardNo);
+//                }
+//            }
+//            //更新员工绑定车卡信息
+//            SysUser sysUser = new SysUser();
+//            sysUser.setCarCard(carCardlongStr);
+//            sysUser.setUserId(empNo.getUserId());
+////            sysUserMapper.updateUser(sysUser);
+//            sysUserMapper.updateUserCarCard(sysUser);
+//            //修改车卡状态为已绑定
+//            CarCard carCard = new CarCard();
+//            carCard.setCardCarNo(carCarNo);
+//            carCard.setCardCarStatus("1");
+//            carCard.setCardCarUse("1");
+//            carCard.setBindPlateNo(null);
+//            carCard.setLeadName(empNo.getNickName());
+//            carCard.setLeadTime(new Date());
+//            carCardMapper.updateCarCardByNo(carCard);
+//            //插入卡片记录
+//            //根据T添加的的车卡编号拿到车卡信息
+//            CarCard carCardInfo = carCardMapper.selectCarCardByCardCarNo(carCarNo);
+//            CardRecord cardRecord = new CardRecord();
+//            cardRecord.setCardType("0");
+//            cardRecord.setCardId(carCardInfo.getCardCarId());
+//            cardRecord.setCardNo(carCarNo);
+//            cardRecord.setCardRecordOperate("0");//归还操作记录
+//            cardRecord.setCardRecordObject(empNo.getNickName());
+//            cardRecord.setCardRecordTime(new Date());
+//            cardRecord.setCardRecordName(getUsername());
+//            cardRecordMapper.insertCardRecord(cardRecord);
+//            //最后发送车牌权限
+//            pool.threadPoolTaskExecutor().execute(() -> carCardSendService.userCarCardDownSend(sysUserMapper.selectUserById(sysUser.getUserId())));
+//            return Response.success("添加成功");
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return Response.error("添加失败");
+//        }
+//    }
+
     @PostMapping("/addCarCard")
     public Response addCarCard(@RequestBody String requestObj) {
         try {
             JSONObject jsonObject = JSON.parseObject(requestObj);
+            System.out.println("jsonObject = " + jsonObject);
             //获取要添加的车卡
             String carCarNo = (String) jsonObject.get("carCardNo");
+            CarCard car = carCardMapper.selectCarCardByCardCarNo(carCarNo);
+            //TODO  9月5号 修改员工车卡添加与绑定逻辑
+            if (car == null) {
+                CarCard carCard = new CarCard();
+                carCard.setCardCarNo(carCarNo);
+                carCard.setCardCarStatus("0");
+                carCard.setCardCarUse("1");
+                carCard.setCardType("1");
+                carCard.setCreateBy(getUsername());
+                carCard.setCreateTime(DateUtils.getNowDate());
+                System.out.println("carCard = " + carCard);
+                carCardMapper.insertCarCard(carCard);
+            }
+            if (car != null && !"1".equals(car.getCardType())) {
+                return Response.error("该卡片不为员工车卡");
+            }
             //要添加车卡的员工信息
             SysUser empNo = sysUserMapper.getByUserNo((String) jsonObject.get("empNo"));
             String[] split;
@@ -598,16 +770,24 @@ public class SysUserController extends BaseController {
             SysUser sysUser = new SysUser();
             sysUser.setCarCard(carCardlongStr);
             sysUser.setUserId(empNo.getUserId());
-            sysUserMapper.updateUser(sysUser);
+            sysUserMapper.updateUserCarCard(sysUser);
             //修改车卡状态为已绑定
             CarCard carCard = new CarCard();
             carCard.setCardCarNo(carCarNo);
             carCard.setCardCarStatus("1");
-            carCard.setCardCarUse("1");
-            carCard.setBindPlateNo(null);
-            carCard.setLeadName(empNo.getNickName());
-            carCard.setLeadTime(new Date());
+//            carCard.setCardCarUse("1");
+//            carCard.setBindPlateNo(null);
+//            carCard.setLeadName(empNo.getNickName());
+//            carCard.setLeadTime(new Date());
             carCardMapper.updateCarCardByNo(carCard);
+            //插入车卡绑定表
+            BaseCarCardBind carCardBind = new BaseCarCardBind();
+            carCardBind.setCardCarNo(carCarNo);
+            carCardBind.setCardCarBind(empNo.getIdCard());
+            carCardBind.setCardType("1");
+            carCardBind.setLeadTime(new Date());
+            System.out.println("carCardBind = " + carCardBind);
+            carCardBindService.addCarCardBind(carCardBind);
             //插入卡片记录
             //根据T添加的的车卡编号拿到车卡信息
             CarCard carCardInfo = carCardMapper.selectCarCardByCardCarNo(carCarNo);

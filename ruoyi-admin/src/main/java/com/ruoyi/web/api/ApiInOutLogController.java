@@ -35,7 +35,7 @@ public class ApiInOutLogController {
     @GetMapping("/inOutLogInsert")
     public Response inOutLogInsert(String idCardNo, String locationCardNo, String equipmentIp, String logType, String carParam) {
         try {
-            apiService.inOutLogInsert(idCardNo, locationCardNo, equipmentIp, logType, carParam);
+            apiService.inOutLogInsertCar(idCardNo, locationCardNo, equipmentIp, logType, carParam);
             return Response.builder().code(0).build();
         } catch (Exception e) {
             e.printStackTrace();

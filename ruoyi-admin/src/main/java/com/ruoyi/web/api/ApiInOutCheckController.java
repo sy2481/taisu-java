@@ -146,7 +146,6 @@ public class ApiInOutCheckController {
                 //普通厂商人员进请求
                 if (checkEmployeeIn(manWork, workNo, manFactory)) {
 
-
                     return Response.success("放行");
                 } else {
                     return Response.error("工安應先入");

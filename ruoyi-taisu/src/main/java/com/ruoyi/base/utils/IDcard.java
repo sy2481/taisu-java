@@ -23,9 +23,9 @@ public class IDcard {
         if (StringUtils.isBlank(idCard)) {
             throw new RuntimeException("身份证/台胞证号为空");
         }
-        if (idCard.length() != 8 && idCard.length() != 10 && idCard.length() != 18) {
-            throw new RuntimeException("身份证/台胞证号输入有误");
-        }
+//        if (idCard.length() != 8 && idCard.length() != 10 && idCard.length() != 18 && idCard.length()!=9) {
+//            throw new RuntimeException("身份证/台胞证号输入有误");
+//        }
         if (idCard.length() == 18) {
             //18位，需要判断格式
             if (!IdcardUtils.validateCard(idCard)) {

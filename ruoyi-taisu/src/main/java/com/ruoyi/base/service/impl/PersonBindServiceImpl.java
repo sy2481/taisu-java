@@ -49,7 +49,13 @@ public class PersonBindServiceImpl implements IPersonBindService {
     @DataSource(value = DataSourceType.SLAVE)
     @Transactional(propagation = Propagation.REQUIRES_NEW ,readOnly = false)
     @Override
-    public int relieveByIdCard(String IdCard) {
-        return personBindMapper.relieveByIdCard(IdCard);
+    public int relieveByIdCard(String idCard) {
+        return personBindMapper.relieveByIdCard(idCard);
+    }
+
+    @DataSource(value = DataSourceType.SLAVE)
+    @Override
+    public void deleteByIdCard(String idCard){
+         personBindMapper.deleteByIdCard(idCard);
     }
 }

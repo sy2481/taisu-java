@@ -8,10 +8,8 @@ import com.ruoyi.base.interact.LocationCardSendService;
 import com.ruoyi.base.interact.PersonSendService;
 import com.ruoyi.base.interact.UserJurisdiction;
 import com.ruoyi.base.mapper.*;
-import com.ruoyi.base.service.ILocateCardService;
+import com.ruoyi.base.service.*;
 import com.ruoyi.base.service.IPersonBindService;
-import com.ruoyi.base.service.IPersonBindService;
-import com.ruoyi.base.service.IPlcEquipmentService;
 import com.ruoyi.base.utils.HttpUtils;
 import com.ruoyi.base.utils.OldIpMap;
 import com.ruoyi.base.utils.PlcRedisUtils;
@@ -35,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.yaml.snakeyaml.events.Event;
 
 import java.util.ArrayList;
@@ -92,6 +91,9 @@ public class ApiService {
     private PlcEquipmentMapper plcEquipmentMapper;
     @Autowired
     private SysDeptMapper sysDeptMapper;
+
+    @Autowired
+    private SafetycarService safetycarService;
 
     /* 人员查询相关方法 *********************************************************************************************************************/
 
@@ -538,7 +540,7 @@ public class ApiService {
             //获取海康设备
             HikEquipment equipment = equipmentMapper.findByIp(equipmentIp);
             //根据ip获取设备
-            if(equipment.getFrontIp()!=null) {
+            if (equipment.getFrontIp() != null) {
                 PlcEquipment plcEquipment = plcRedisUtils.getPlcEquipment(equipment.getFrontIp());
                 //根据设备获取厂区编号
                 if (plcEquipment != null) {
@@ -548,9 +550,9 @@ public class ApiService {
             }
 
             //然后还要往旧数据库插入数据；
-            TcInOutLog tcInOutLog = getTcInOutLog(equipmentIp, logType + secType, idNo,factoryCode);
+            TcInOutLog tcInOutLog = getTcInOutLog(equipmentIp, logType + secType, idNo, factoryCode);
 
-            switch (factoryCode){
+            switch (factoryCode) {
                 case "PPC2A01"://AE廠
                     HttpUtils.sendJsonPost("http://127.0.0.1:36670/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
                     break;
@@ -567,10 +569,10 @@ public class ApiService {
                     //HttpUtils.sendJsonPost("http://127.0.0.1:36660/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
                     break;
                 case "PMA1001"://港務公司
-                    //HttpUtils.sendJsonPost("http://127.0.0.1:36661/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
+                    HttpUtils.sendJsonPost("http://127.0.0.1:36700/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
                     break;
-                case "PP71101"://台塑三井
-                    //HttpUtils.sendJsonPost("http://127.0.0.1:36662/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
+                case "PPZ1101"://台塑三井
+                    HttpUtils.sendJsonPost("http://127.0.0.1:36710/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
                     break;
             }
 
@@ -580,8 +582,139 @@ public class ApiService {
         }
     }
 
+    /**
+     * @param logType        0-入场，1-离场
+     * @param idCardNo       身份证号
+     * @param locationCardNo 定位卡编号
+     * @param equipmentIp    设备IP
+     * @param carParam       車牌號或車卡
+     */
+    @Transactional(readOnly = false)
+    public void inOutLogInsertCar(String idCardNo, String locationCardNo, String equipmentIp, String logType, String carParam) {
+        //预备拿一下回写数据库的编号
+        String idNo = "";
+        InOutLog log = new InOutLog();
+        log.setLocationCardNo(locationCardNo);
+        log.setIp(equipmentIp);
+        log.setPlateNo(carParam);
+        //道路類型
+        log.setLoadType(carParam == null ? "0" : "1");
+
+        //1.查到人 ：工程、工单、名称、人员信息
+        //2.查到对应设备 ：厂区、人/车道、
+        List<SysUser> userList = userMapper.getByCommonParams(idCardNo, null, null, null);
+        if (userList.size() > 0) {
+            // 员工进入
+            competeLogFromUser(log, userList.get(0));
+            idNo = userList.get(0).getEmpNo();
+        } else {
+            List<ManFactory> factoryList = factoryMapper.getByCommonParams(idCardNo, null, null, null);
+            if (factoryList.size() == 0) {
+                return;
+            }
+            //厂商人员进入
+            competeLogFromFactory(log, factoryList.get(0));
+            idNo = factoryList.get(0).getIpLtLic();
+        }
+        competeLogFromEquipment(log, equipmentIp);
+        // 第一位，出入，0-入场，1-离场
+        // 第二位，0-員工、1-廠商、2-車輛
+        // 先判斷是不是車輛
+        String secType = StringUtils.isBlank(carParam) ? "" : "2";
+        //不是車輛的話，就拿人員類型
+        secType = StringUtils.isBlank(secType) ? log.getPersonType() : secType;
+        //最後再拼成兩位字符串
+        log.setLogType(logType + secType);
+        inOutLogMapper.insertInOutLog(log);
+
+        try {
+            //获取厂区
+            String fctDorNm = "";//厂区编号
+            //获取海康设备
+            HikEquipment equipment = equipmentMapper.findByIp(equipmentIp);
+            //根据ip获取设备
+            if (equipment.getFrontIp() != null) {
+                PlcEquipment plcEquipment = plcRedisUtils.getPlcEquipment(equipment.getFrontIp());
+                //根据设备获取厂区编号
+                if (plcEquipment != null) {
+                    SysDept dept = sysDeptMapper.selectDeptById(plcEquipment.getPlantAreaId());
+                    fctDorNm = dept != null ? dept.getDeptNo() : "";
+                }
+            }
+
+            //TODO  回显信息修改
+            //然后还要往旧数据库插入数据；
+            //车道信息补全
+            TcInOutLog tcInOutLogCar = null;
+            System.out.println("logType : " + logType);
+            if (carParam != null) {
+                //获取到车辆信息
+                List<BaseSafetycar> safetycarlist = safetycarService.getSafetycarByCarno(carParam);
+                if (!CollectionUtils.isEmpty(safetycarlist)) {
+                    BaseSafetycar baseSafetycar = safetycarlist.get(0);
+                    String CarIdNo = baseSafetycar.getIpLtLic() + baseSafetycar.getPz();
+                    tcInOutLogCar = getTcInOutLog(equipmentIp, logType + secType, CarIdNo, factoryCode);
+                }
+            }
+
+            //然后还要往旧数据库插入数据； factoryCode:模拟字段
+            String personSecType = log.getPersonType();
+            System.out.println("logType + personSecType = " + logType + personSecType);
+            TcInOutLog tcInOutLog = getTcInOutLog(equipmentIp, logType + personSecType, idNo, factoryCode);
+            System.out.println("tcInOutLog = " + tcInOutLog);
+
+
+            switch (factoryCode) {
+                case "PPC2A01"://AE廠
+                    if (tcInOutLogCar != null) {
+                        HttpUtils.sendJsonPost("http://127.0.0.1:36670/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLogCar));
+                    }
+                    HttpUtils.sendJsonPost("http://127.0.0.1:36670/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
+                    break;
+                case "PPF2A01"://SAP厰
+                    if (tcInOutLogCar != null) {
+                        HttpUtils.sendJsonPost("http://127.0.0.1:36680/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLogCar));
+                    }
+                    HttpUtils.sendJsonPost("http://127.0.0.1:36680/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
+                    break;
+                case "PPC1A01"://PVC廠
+                    if (tcInOutLogCar != null) {
+                        HttpUtils.sendJsonPost("http://127.0.0.1:36650/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLogCar));
+                    }
+                    HttpUtils.sendJsonPost("http://127.0.0.1:36650/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
+                    break;
+                case "PPC8601"://EVA廠
+                    if (tcInOutLogCar != null) {
+                        HttpUtils.sendJsonPost("http://127.0.0.1:36690/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLogCar));
+                    }
+                    HttpUtils.sendJsonPost("http://127.0.0.1:36690/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
+                    break;
+                case "PPCP101"://PP廠
+                    //HttpUtils.sendJsonPost("http://127.0.0.1:36660/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
+                    break;
+                case "PMA1001"://港務公司
+                    if (tcInOutLogCar != null) {
+                        HttpUtils.sendJsonPost("http://127.0.0.1:36700/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLogCar));
+                    }
+                    HttpUtils.sendJsonPost("http://127.0.0.1:36700/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
+                    break;
+                case "PPZ1101"://台塑三井
+                    if (tcInOutLogCar != null) {
+                        HttpUtils.sendJsonPost("http://127.0.0.1:36710/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLogCar));
+                    }
+                    HttpUtils.sendJsonPost("http://127.0.0.1:36710/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
+                    break;
+            }
+            //HttpUtils.sendJsonPost("http://127.0.0.1:8080/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
+        } catch (
+                Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     //车出去的时候，需要发两条
-    private TcInOutLog getTcInOutLog(String ip, String type, String no,String fctDorNm) {
+    private TcInOutLog getTcInOutLog(String ip, String type, String no, String fctDorNm) {
         TcInOutLog result = new TcInOutLog();
         result.setIp(OldIpMap.REWRITE_IP_MAP.get(ip));
         result.setDateTime(DateUtils.parseDateToStr("yyyy/MM/dd HH:mm:ss", new Date()));
@@ -598,8 +731,10 @@ public class ApiService {
                 break;
             case "02"://车进
                 result.setType("3");
+                break;
             case "12"://车出
                 result.setType("4");
+                break;
         }
         result.setIdNo(no);
         result.setUploaded(0);
@@ -714,7 +849,7 @@ public class ApiService {
             requestVo.setDeviceNos(indexNos);
 
         }
-        String faceBase64 = HttpUtils.requestUrlToBase64("http://127.0.0.1:" + port + "/ruoyi-admin" +factory.getFace());
+        String faceBase64 = HttpUtils.requestUrlToBase64("http://127.0.0.1:" + port + "/ruoyi-admin" + factory.getFace());
         requestVo.setFaceBase64Str(faceBase64);
         requestVo.setJobNo(null);
         requestVo.setOrderSn(factory.getWorkNo());
@@ -743,6 +878,8 @@ public class ApiService {
             indexNos.addAll(equipmentMapper.findLocationEquipList());
             requestVo.setDeviceNos(indexNos);
         }
+        requestVo.setPersonType(1);
+        requestVo.setOrderSn(factory.getWorkNo());
         requestVo.setPersonId(factory.getIdCard());
         return requestVo;
     }
@@ -758,6 +895,7 @@ public class ApiService {
     /**
      * 2022.08.09 修改逻辑
      * 原方法注释掉 新逻辑只修改海康权限
+     *
      * @param user
      */
 //    public void userBindHlk(SysUser user) {
@@ -850,8 +988,6 @@ public class ApiService {
 //            userMapper.sendBackStatus(user.getUserId(), 9);
 //        }
 //    }
-
-
     public void userBindHlk(SysUser user) {
         //身份证、照片、定位卡号不为空，就可以下发了
         if (StringUtils.isBlank(user.getFace()) || StringUtils.isBlank(user.getIdCard())) {
@@ -859,7 +995,7 @@ public class ApiService {
         }
         //拿到人员的角色
         List<SysRole> roles = sysRoleMapper.selectRolePermissionByUserId(user.getUserId());
-        Integer resultCode=0;
+        Integer resultCode = 0;
         //判断人员信息是不是已经下发过了
         if (user.getSended() != null && 1 == user.getSended()) {
             //已经下发过了，需要调用照片更新
@@ -900,7 +1036,7 @@ public class ApiService {
 //            //内部员工信息
 //            PersonVO requestVo = new PersonVO();
 //            requestVo.setAuthIsAll(false);
-            //requestVo.setDeviceNos(userJurisdiction.getCodeByUser(user));
+        //requestVo.setDeviceNos(userJurisdiction.getCodeByUser(user));
 //            //拿到人脸Base64编码
 //            String faceBase64 = HttpUtils.requestUrlToBase64("http://127.0.0.1:" + port+"/ruoyi-admin" + user.getFace());
 //            requestVo.setFaceBase64Str(faceBase64);
@@ -933,7 +1069,7 @@ public class ApiService {
 //            }
 //
 //            //调用下发人员信息接口
-            //resultCode = personSendService.downSendPersonInfoRequest(requestVo);
+        //resultCode = personSendService.downSendPersonInfoRequest(requestVo);
 //        }
 //        if (resultCode == 200) {
 //            userMapper.sendBackStatus(user.getUserId(), 1);

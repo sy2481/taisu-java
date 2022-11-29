@@ -117,6 +117,10 @@
     </update>
     <!--解绑()-->
     <update id="relieveByIdCard">
-        UPDATE person_bind SET event_type = 1 ,sn=NULL WHERE id_card = #{IdCard}
+        UPDATE person_bind SET event_type = 1 ,sn=NULL WHERE id_card = #{idCard}
     </update>
+
+    <delete id="deleteByIdCard">
+        delete from person_bind where idCard = #{idCard}
+    </delete>
 </mapper>

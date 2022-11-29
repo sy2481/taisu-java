@@ -100,5 +100,16 @@ public class CarCardSendService {
         HttpUtils.sendJsonPost(host + "/hik/car/untie/card", json.toJSONString());
     }
 
+    /**
+     * 下发解绑车卡
+     */
+    public void downSendUnbindCarCard(CarCardVO carCardVO) {
+        System.out.println("carCardVO = " + carCardVO);
+        JSONObject json = new JSONObject();
+        json.put("cardNumber", carCardVO.getCardNumber());
+        json.put("cardNo", carCardVO.getCardNo());
+        json.put("cardType", carCardVO.getCardType());
+        HttpUtils.sendJsonPost(host + "/hik/car/untie/carcard", json.toJSONString());
+    }
 
 }

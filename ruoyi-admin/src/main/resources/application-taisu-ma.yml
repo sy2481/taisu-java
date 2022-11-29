@@ -2,24 +2,24 @@
 ruoyi:
   # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /home/ruoyi/uploadPath）
   profile: C:\Users\Administrator\Desktop\taisu\upload
-  machine: SAP
+  machine: MA
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为8080
-  port: 36680
+  port: 36700
 
 plchlk:
-  host: http://192.168.10.44:11180
+  host: http://192.168.10.44:11200
 dingyue:
   host: http://192.168.10.44:80/prod-api/api/warn/addWarnInfo
 cent:
   host: http://127.0.0.1:8090/ruoyi-center
-# 厂区编号 SAP
-factoryCode: PPF2A01
+# 厂区编号 三井
+factoryCode: PMA1001
 #定时器开关
 scheduling:
   getFactoryMsgEnabled: true
-  getDangerWorkEnabled: true
+  getDangerWorkEnabled: false
   buildIdSendEnabled: false
 
 
@@ -29,7 +29,7 @@ spring:
     host: 127.0.0.1
     port: 36652
     password:
-    database: 8
+    database: 10
     # 连接超时时间
     timeout: 30s
     lettuce:
@@ -50,7 +50,7 @@ spring:
     druid:
       # 主库数据源
       master:
-        url: jdbc:sqlserver://192.168.10.15:1433;DatabaseName=taisu-sap
+        url: jdbc:sqlserver://192.168.10.15:1433;DatabaseName=taisu-ma
         username: sa
         password: '*A23A1C66AABC5165074F3EDFEF866BC67FAD047F'
         # 从库数据源
@@ -63,7 +63,7 @@ spring:
       # 定时器数据源
       iemdg:
         enabled: true
-        url: jdbc:sqlserver://10.217.33.38:1433;DatabaseName=IEMDG
+        url: jdbc:sqlserver://10.217.25.103:1433;DatabaseName=IEMDG
         username: faceid
         password: faceid
       # 初始连接数

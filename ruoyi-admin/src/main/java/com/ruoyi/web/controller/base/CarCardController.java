@@ -185,7 +185,8 @@ public class CarCardController extends BaseController
         //已绑定车卡列表
         resultObj.put("bind",carCardArray);
         CarCard carCard = new CarCard();
-        carCard.setCardCarStatus("0");
+//        carCard.setCardCarStatus("0");
+        carCard.setCardType("1");
         //未绑定车卡列表
         List<CarCard> list = carCardService.selectCarCardList(carCard);
         resultObj.put("noBind",list);

@@ -6,10 +6,10 @@ ruoyi:
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为8080
-  port: 36610
+  port: 36710
 
 plchlk:
-  host: http://192.168.10.44:11110
+  host: http://192.168.10.44:11210
 dingyue:
   host: http://192.168.10.44:80/prod-api/api/warn/addWarnInfo
 cent:
@@ -50,7 +50,7 @@ spring:
     druid:
       # 主库数据源
       master:
-        url: jdbc:sqlserver://192.168.10.15:1433;DatabaseName=taisu-ae
+        url: jdbc:sqlserver://192.168.10.15:1433;DatabaseName=taisu-pz
         username: sa
         password: '*A23A1C66AABC5165074F3EDFEF866BC67FAD047F'
         # 从库数据源

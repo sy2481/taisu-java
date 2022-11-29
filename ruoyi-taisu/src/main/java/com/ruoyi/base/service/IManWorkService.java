@@ -65,7 +65,11 @@ public interface IManWorkService
 
     void addCarCard(JSONObject jsonObject);
 
+    int addCarCardOneToMany(JSONObject jsonObject);
+
     void delCard(JSONObject jsonObject);
+
+    void delCardOneToMany(JSONObject jsonObject);
 
     /**
      * 根据厂区获取IP
