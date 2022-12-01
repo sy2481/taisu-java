@@ -17,6 +17,16 @@
         select door_id, door_name, command_type, plc_ip, plc_port, command from door_plc_manage
     </sql>
 
+    <select id="selectDoorPlcManageList" resultMap="DoorPlcManageResult">
+        select door_id, door_name, command_type, plc_ip, plc_port, command from door_plc_manage
+        <where>
+            <if test="doorName != null and doorName != ''"> and door_name like concat('%', #{doorName},'%')</if>
+            <if test="plcIp !=null and plcIp!=''"> and plc_ip like concat('%',#{plcIp},'%')</if>
+            <if test="plcPort != null  and plcPort != ''"> and plc_port like concat('%', #{plcPort},'%')</if>
+            <if test="command != null  and command != ''"> and command like concat('%', #{command},'%')</if>
+        </where>
+    </select>
+
 
     <select id="selectDoorPlcManageByDoorId" parameterType="Long" resultMap="DoorPlcManageResult">
         <include refid="selectDoorPlcManageVo"/>
@@ -26,7 +36,6 @@
     <insert id="insertDoorPlcManage" parameterType="DoorPlcManage">
         insert into door_plc_manage
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="doorId != null">door_id,</if>
             <if test="doorName != null">door_name,</if>
             <if test="commandType != null">command_type,</if>
             <if test="plcIp != null">plc_ip,</if>
@@ -34,7 +43,6 @@
             <if test="command != null">command,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="doorId != null">#{doorId},</if>
             <if test="doorName != null">#{doorName},</if>
             <if test="commandType != null">#{commandType},</if>
             <if test="plcIp != null">#{plcIp},</if>

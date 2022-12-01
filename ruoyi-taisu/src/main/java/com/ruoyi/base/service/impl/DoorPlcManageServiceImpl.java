@@ -31,10 +31,10 @@ public class DoorPlcManageServiceImpl implements DoorPlcManageService {
      * @param doorPlcManage 车道人道plc指令
      * @return 车道人道plc指令
      */
-//    @Override
-//    public List<DoorPlcManage> selectDoorPlcManageList(DoorPlcManage doorPlcManage) {
-//        return doorPlcManageMapper.selectDoorPlcManageList(doorPlcManage);
-//    }
+    @Override
+    public List<DoorPlcManage> selectDoorPlcManageList(DoorPlcManage doorPlcManage) {
+        return doorPlcManageMapper.selectDoorPlcManageList(doorPlcManage);
+    }
 
     /**
      * 新增车道人道plc指令

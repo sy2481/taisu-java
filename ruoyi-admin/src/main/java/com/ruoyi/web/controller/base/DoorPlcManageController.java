@@ -40,14 +40,14 @@ public class DoorPlcManageController extends BaseController
     /**
      * 查询车道人道plc指令列表
      */
-//    @PreAuthorize("@ss.hasPermi('system:manage:list')")
-//    @GetMapping("/list")
-//    public TableDataInfo list(DoorPlcManage doorPlcManage)
-//    {
-//        startPage();
-//        List<DoorPlcManage> list = doorPlcManageService.selectDoorPlcManageList(doorPlcManage);
-//        return getDataTable(list);
-//    }
+    @PreAuthorize("@ss.hasPermi('system:manage:list')")
+    @GetMapping("/list")
+    public TableDataInfo list(DoorPlcManage doorPlcManage)
+    {
+        startPage();
+        List<DoorPlcManage> list = doorPlcManageService.selectDoorPlcManageList(doorPlcManage);
+        return getDataTable(list);
+    }
 
     /**
      * 导出车道人道plc指令列表
@@ -105,11 +105,12 @@ public class DoorPlcManageController extends BaseController
         return toAjax(doorPlcManageService.deleteDoorPlcManageByDoorIds(doorIds));
     }
 
-    @PreAuthorize("@ss.hasPermi('system:manage:export')")
+    @PreAuthorize("@ss.hasPermi('system:manage:sendPlc')")
     @PostMapping("/sendPlc")
-    public void export(@RequestBody PlcCommandDTO plcCommandDTO)
+    public AjaxResult sendPlc(@RequestBody PlcCommandDTO plcCommandDTO)
     {
         doorPlcManageService.executePlcSendCommand(plcCommandDTO.getIp(),plcCommandDTO.getPort(),plcCommandDTO.getCommand());
+        return AjaxResult.success();
     }
 
 }

@@ -1,15 +1,20 @@
 package com.ruoyi.web.api;
 
 import com.ruoyi.base.domain.*;
+import com.ruoyi.base.mapper.ManBlackInfoMapper;
 import com.ruoyi.base.mapper.ManFactoryMapper;
 import com.ruoyi.base.mapper.ManWorkMapper;
 import com.ruoyi.base.service.IHikEquipmentService;
 import com.ruoyi.base.service.IInOutLogService;
+import com.ruoyi.base.service.IManBlackInfoService;
 import com.ruoyi.base.service.IPlcEquipmentService;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.system.domain.SysConfig;
 import com.ruoyi.system.mapper.SysUserMapper;
+import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.ISysDeptService;
 import com.ruoyi.web.api.basic.Response;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +54,13 @@ public class ApiInOutCheckController {
 
     @Autowired
     private IInOutLogService inOutLogService;
+
+    @Autowired
+    IManBlackInfoService manBlackInfoService;
+
+    @Autowired
+    ISysConfigService sysConfigService;
+
     //出
     private static final String OUT = "OUT";
     //进
@@ -70,14 +82,18 @@ public class ApiInOutCheckController {
             Integer integer = inOutUser(inOutType, idCard, ip, "0");
             if (integer != -1) {
                 if (integer == 1) {
-                    return Response.error("已经进入，不可重复进入");
+                    return Response.error("上次未出廠");
+                    //return Response.error("已经进入，不可重复进入");
                 } else if (integer == 2) {
-                    return Response.error("没有进的记录，出去需要去补录");
+                    return Response.error("上次未入廠");
+                    //return Response.error("没有进的记录，出去需要去补录");
                 } else if (integer == 3) {
-                    return Response.error("最近一条记录为出去记录，无法再次出厂");
+                    return Response.error("上次未入廠");
+                    //return Response.error("最近一条记录为出去记录，无法再次出厂");
                 }
             }
-            return Response.success("内部員工,放行");
+            return Response.success("内部員工,认证成功，请通行");
+            //return Response.success("内部員工,放行");
         }
 
 
@@ -86,16 +102,25 @@ public class ApiInOutCheckController {
             return Response.error("查無此人");
         }
 
+        //黑名单禁入
+        ManBlackInfo manBlackInfo= manBlackInfoService.getBlackInfoByCard(idCard);
+        if(manBlackInfo!=null){
+            return Response.error("黑名单禁入");
+        }
+
 
         Integer integer = inOutUser(inOutType, idCard, ip, "1");
 
         if (integer != -1) {
             if (integer == 1) {
-                return Response.error("已经进入，不可重复进入");
+                return Response.error("上次未出廠");
+                //return Response.error("已经进入，不可重复进入");
             } else if (integer == 2) {
-                return Response.error("没有进的记录，出去需要去补录");
+                return Response.error("上次未入廠");
+                //return Response.error("没有进的记录，出去需要去补录");
             } else if (integer == 3) {
-                return Response.error("最近一条记录为出去记录，无法再次出厂");
+                return Response.error("上次未入廠");
+                //return Response.error("最近一条记录为出去记录，无法再次出厂");
             }
         }
         //是厂商人员，manFactory：厂商人員信息
@@ -118,7 +143,20 @@ public class ApiInOutCheckController {
             if ((now.after(manWork.getStartTime()) && now.before(manWork.getEndTime())) || (now.after(manWork.getExtendStartTime()) && now.before(manWork.getExtendEndTime()))) {
                 log.info("工单时间可以进入");
             } else {
-               log.info("工单时间不可以进入");
+                log.info("工单时间不可以进入");
+            }
+        }
+
+        //午休管制
+        String noonControl= sysConfigService.selectConfigByKey("sys.noon.control");
+        String noonBeginTime=sysConfigService.selectConfigByKey("sys.noon.beginTime");
+        String noonEndTime=sysConfigService.selectConfigByKey("sys.noon.endTime");
+        if(!StringUtils.isEmpty(noonControl) && "0".equals(noonControl)){
+            String nowTime=DateUtils.parseDateToStr("HH:mm:ss", DateUtils.getNowDate());
+            if(!StringUtils.isEmpty(noonBeginTime) && !StringUtils.isEmpty(noonEndTime)){
+                if(nowTime.compareTo(noonBeginTime)>0 && nowTime.compareTo(noonEndTime)<0){
+                    return Response.error("午休禁入");
+                }
             }
         }
 
@@ -127,7 +165,8 @@ public class ApiInOutCheckController {
 
         //判断是否是临时单，不需要判断直接放行
         if (StringUtils.isNotBlank(manWork.getProjectNo()) && manWork.getProjectNo().startsWith("1")) {
-            return Response.success("放行");
+            return Response.success("认证成功，请通行");
+            //return Response.success("放行");
         }
 
 
@@ -155,11 +194,13 @@ public class ApiInOutCheckController {
                     manFactory.setEntered(1);
                     manFactoryMapper.updateManFactory(manFactory);
                 }
-                return Response.success("放行");
+                return Response.success("认证成功，请通行");
+                //return Response.success("放行");
             } else if (OUT.equals(inOutType)) {
                 //XT出请求
                 if (checkXtOut(manWork, workNo, manFactory)) {
-                    return Response.success("放行");
+                    return Response.success("认证成功，请通行");
+                    //return Response.success("放行");
                 } else {
                     return Response.error("工安應後出");
                 }
@@ -171,8 +212,8 @@ public class ApiInOutCheckController {
             if (inOutType.equals(ENTER)) {
                 //普通厂商人员进请求
                 if (checkEmployeeIn(manWork, workNo, manFactory)) {
-
-                    return Response.success("放行");
+                    return Response.success("认证成功，请通行");
+                    //return Response.success("放行");
                 } else {
                     return Response.error("工安應先入");
                 }
@@ -183,7 +224,8 @@ public class ApiInOutCheckController {
                     workMapper.comOut(workNo);
                     manFactoryMapper.updateManFactory(manFactory);
                 }
-                return Response.success("放行");
+                return Response.success("认证成功，请通行");
+                //return Response.success("放行");
             }
         }
         return Response.error("请求参数异常！");

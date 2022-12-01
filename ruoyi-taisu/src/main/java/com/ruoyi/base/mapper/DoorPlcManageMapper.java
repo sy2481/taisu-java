@@ -19,7 +19,7 @@ public interface DoorPlcManageMapper {
      * @param doorPlcManage 车道人道plc指令
      * @return 车道人道plc指令集合
      */
-    //public List<DoorPlcManage> selectDoorPlcManageList(DoorPlcManage doorPlcManage);
+    public List<DoorPlcManage> selectDoorPlcManageList(DoorPlcManage doorPlcManage);
 
     /**
      * 新增车道人道plc指令
