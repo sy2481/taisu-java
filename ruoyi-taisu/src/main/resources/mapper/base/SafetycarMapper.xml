@@ -10,6 +10,8 @@
             <result property="ipLtLic" column="ip_lt_lic" jdbcType="VARCHAR"/>
             <result property="pz" column="pz" jdbcType="VARCHAR"/>
         <result property="decimalCode" column="decimal_code" jdbcType="VARCHAR"/>
+        <result property="carType" column="car_type"/>
+        <result property="carTypeName" column="car_type_name"/>
 
     </resultMap>
 
@@ -18,7 +20,7 @@
     </sql>
 
     <insert id="insertCarlist">
-        insert into base_safetyCar (idno,work_name,ip_lt_lic,pz) values(#{idno},#{workName},#{ipLtLic},#{pz});
+        insert into base_safetyCar (idno,work_name,ip_lt_lic,pz,car_type,car_type_name) values(#{idno},#{workName},#{ipLtLic},#{pz},#{carType},#{carTypeName});
     </insert>
 
     <select id="isExist" resultMap="BaseResultMap">
@@ -32,7 +34,7 @@
 
 
     <sql id="selectBaseSafetycarVo">
-        select idno, work_name, ip_lt_lic, pz, decimal_code from base_safetyCar
+        select idno, work_name, ip_lt_lic, pz, decimal_code,car_type,car_type_name from base_safetyCar
     </sql>
 
 
@@ -42,6 +44,8 @@
             <if test="idno != null  and idno != ''">and idno like concat('%', #{idno}, '%')</if>
             <if test="workName != null  and workName != ''">and work_name like concat('%', #{workName}, '%')</if>
             <if test="decimalCode != null  and decimalCode != ''">and decimal_code like concat('%', #{decimalCode}, '%')</if>
+            <if test="carType != null "> and car_type = #{carType}</if>
+            <if test="carTypeName != null  and carTypeName != ''"> and car_type_name like concat('%', #{carTypeName}, '%')</if>
         </where>
     </select>
 
@@ -60,6 +64,8 @@
             <if test="ipLtLic != null  and ipLtLic != ''"> and ip_lt_lic = #{ipLtLic}</if>
             <if test="pz != null  and pz != ''"> and pz = #{pz}</if>
             <if test="decimalCode != null  and decimalCode != ''"> and decimal_code = #{decimalCode}</if>
+            <if test="carType != null "> and car_type = #{carType}</if>
+            <if test="carTypeName != null  and carTypeName != ''"> and car_type_name like concat('%', #{carTypeName}, '%')</if>
         </where>
     </select>
 
@@ -76,6 +82,8 @@
             <if test="ipLtLic != null">ip_lt_lic,</if>
             <if test="pz != null">pz,</if>
             <if test="decimalCode != null">decimal_code,</if>
+            <if test="carType != null">car_type,</if>
+            <if test="carTypeName != null">car_type_name,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="idno != null">#{idno},</if>
@@ -83,6 +91,8 @@
             <if test="ipLtLic != null">#{ipLtLic},</if>
             <if test="pz != null">#{pz},</if>
             <if test="decimalCode != null">#{decimalCode},</if>
+            <if test="carType != null">#{carType},</if>
+            <if test="carTypeName != null">#{carTypeName},</if>
         </trim>
     </insert>
 
@@ -92,6 +102,8 @@
             <if test="workName != null and workName != ''">work_name = #{workName},</if>
             <if test="pz != null and pz != ''">pz = #{pz},</if>
             <if test="decimalCode != null and decimalCode != ''">decimal_code = #{decimalCode},</if>
+            <if test="carType != null and carType != ''">car_type = #{carType},</if>
+            <if test="carTypeName != null and carTypeName != ''">car_type_name = #{carTypeName},</if>
         </trim>
         where ip_lt_lic = #{ipLtLic}
     </update>

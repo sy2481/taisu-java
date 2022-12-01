@@ -1,6 +1,8 @@
 package com.ruoyi.web.api;
 
 import com.ruoyi.base.bo.PersonMsgBO;
+import com.ruoyi.base.domain.BaseSafetycar;
+import com.ruoyi.base.service.SafetycarService;
 import com.ruoyi.base.service.impl.ApiService;
 import com.ruoyi.web.api.basic.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,9 @@ public class ApiQueryController {
     @Autowired
     private ApiService apiService;
 
+    @Autowired
+    private SafetycarService safetycarService;
+
     /**
      * 根据⻋牌号、⻋卡查询⼈员信息
      * 根据 ⻋牌号/⻋卡，查询 对应的⼈员信息、⼈员对应的⼯单。我们提供数据结构，全了就⾏
@@ -45,7 +50,7 @@ public class ApiQueryController {
             } else {
                 throw new Exception("查询类型不正确");
             }
-            if (result.size() == 0){
+            if (result.size() == 0) {
                 return Response.error("未查詢到相關人員信息！");
             }
             return Response.builder().code(0).data(result).build();
@@ -63,12 +68,12 @@ public class ApiQueryController {
      */
     @ResponseBody
     @GetMapping("/getByIdCardNo")
-        public Response getByIdCardNo(String param) {
+    public Response getByIdCardNo(String param) {
         try {
             PersonMsgBO result = null;
             // 先查询员工表，没有的话，再查询厂商
             result = apiService.queryPersonByIdcardNo(param);
-            if (result == null){
+            if (result == null) {
                 return Response.error("未查詢到相關人員信息！");
             }
             return Response.builder().code(0).data(result).build();
@@ -90,7 +95,7 @@ public class ApiQueryController {
             PersonMsgBO result = null;
             // 先查询员工表，没有的话，再查询厂商
             result = apiService.queryPersonByLocationCardNo(param);
-            if (result == null){
+            if (result == null) {
                 return Response.error("未查詢到相關人員信息！");
             }
             return Response.builder().code(0).data(result).build();
@@ -103,5 +108,25 @@ public class ApiQueryController {
     /**
      * TODO 判断押运员、司机、车辆是否是同一个人
      */
+
+    /*根據車牌獲取車輛數據*/
+
+    /**
+     * 根据定位卡编号查询⼈员信息
+     * 根据定位卡编号，返回⼈员信息，和上一个一样
+     */
+    @ResponseBody
+    @GetMapping("/getSafetyCarByIdno")
+    public Response getSafetyCarByIdno(String param) {
+        try {
+            List<BaseSafetycar> result = null;
+            result = safetycarService.getSafetycarByCarno(param);
+
+            return Response.builder().code(0).data(result).build();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Response.error("查詢出錯，請稍後再試！");
+    }
 
 }

@@ -6,6 +6,8 @@ import java.io.Serializable;
  * @TableName base_safetyCar
  */
 public class BaseSafetycar implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     /**
      * 关联编号 - 车辆(车牌号码)
      */
@@ -26,7 +28,12 @@ public class BaseSafetycar implements Serializable {
      */
     private String pz;
 
-    private static final long serialVersionUID = 1L;
+    /** 車輛類型（1 大 2小） */
+    private Long carType;
+
+    /** 車輛類型名稱 */
+    private String carTypeName;
+
 
     /**
      * 十进制码
@@ -96,6 +103,22 @@ public class BaseSafetycar implements Serializable {
      */
     public void setPz(String pz) {
         this.pz = pz;
+    }
+
+    public Long getCarType() {
+        return carType;
+    }
+
+    public void setCarType(Long carType) {
+        this.carType = carType;
+    }
+
+    public String getCarTypeName() {
+        return carTypeName;
+    }
+
+    public void setCarTypeName(String carTypeName) {
+        this.carTypeName = carTypeName;
     }
 
     @Override
