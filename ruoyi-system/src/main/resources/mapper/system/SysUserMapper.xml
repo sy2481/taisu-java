@@ -447,8 +447,4 @@
         update sys_user set face = #{face} where id_card = #{idCard}
     </update>
 
-
-	<update id="updateUserCarCard" parameterType="SysUser">
-		update sys_user set car_card = #{carCard} where user_id = #{userId}
-	</update>
 </mapper>
