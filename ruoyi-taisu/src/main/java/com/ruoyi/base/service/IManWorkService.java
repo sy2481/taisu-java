@@ -2,6 +2,7 @@ package com.ruoyi.base.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.base.bo.WorkBo;
+import com.ruoyi.base.bo.workCarBo;
 import com.ruoyi.base.domain.ManWork;
 
 import java.util.List;
@@ -76,4 +77,6 @@ public interface IManWorkService
      */
 
      String getIp(Long deptId);
+
+    public List<workCarBo> selectManWork(String workNo, String date);
 }

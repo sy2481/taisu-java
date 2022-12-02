@@ -2,9 +2,13 @@ package com.ruoyi.web.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.base.bo.FactoryWorkBO;
+import com.ruoyi.base.bo.workCarBo;
+import com.ruoyi.base.domain.ManBlackInfo;
 import com.ruoyi.base.domain.ManFactory;
 import com.ruoyi.base.interact.HlkFaceCheckUtil;
 import com.ruoyi.base.mapper.ManFactoryMapper;
+import com.ruoyi.base.service.IManBlackInfoService;
+import com.ruoyi.base.service.IManWorkService;
 import com.ruoyi.base.service.impl.ApiService;
 import com.ruoyi.base.service.impl.ManFactoryServiceImpl;
 import com.ruoyi.base.utils.HttpUtils;
@@ -25,10 +29,7 @@ import com.ruoyi.web.api.bo.EmployeeBO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
@@ -60,7 +61,10 @@ public class ApiFaceDataController {
     private HlkFaceCheckUtil hlkFaceCheckUtil;
     @Autowired
     private ISysUserService sysUserService;
-
+    @Autowired
+    private IManWorkService iManWorkService;
+    @Autowired
+    private IManBlackInfoService manBlackInfoService;
     /**
      * 中心库地址
      */
@@ -223,6 +227,7 @@ public class ApiFaceDataController {
             }
             //根据工单号，查询厂商列表
             List<FactoryWorkBO> list = factoryService.listByWorkNoAndDate(workNo, DateUtils.getDate(), workType);
+            List<workCarBo> workCarList = iManWorkService.selectManWork(workNo, DateUtils.getDate());
 
             //如果没有头像，从中心库取头像
             List<String> noFaceIdCardList = list.stream().filter(x -> StringUtils.isEmpty(x.getFace()))
@@ -257,7 +262,10 @@ public class ApiFaceDataController {
                     factoryWorkBO.setIdCard(stringBuffer.toString());
                 });
             }
-            return Response.builder().code(0).data(list).build();
+            JSONObject back = new JSONObject();
+            back.put("list",list);
+            back.put("workCarList",workCarList);
+            return Response.builder().code(0).data(back).build();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -290,7 +298,76 @@ public class ApiFaceDataController {
             //最后调用下厂商人脸下发的方法
             pool.threadPoolTaskExecutor().execute(() -> {
                 Long[] ids = new Long[]{manFactory.getFactoryId()};
-                apiService.sendFactoryMsgListForManFactory(ids);
+                apiService.sendFactoryMsgList(ids);
+            });
+            return Response.builder().code(0).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Response.error("設置出錯，請稍後再試！");
+    }
+
+    /**
+     * H5公众号物流通道  工单下有车牌无人员 添加人员接口 2022.10.10
+     * @param manFactory
+     * @return
+     */
+    @ResponseBody
+    @PostMapping("/addPersonAndFacePicForSupplier")
+    public Response addPersonAndFacePicForSupplier(@RequestBody ManFactory manFactory) {
+        System.out.println(manFactory);
+        try {
+            if (StringUtils.isBlank(manFactory.getFace())) {
+                return Response.error("資料不全，請稍後再試。");
+            }
+            if (StringUtils.isBlank(manFactory.getIdCard())) {
+                return Response.error("資料不全，請稍後再試。");
+            }else{
+                //判断是否在黑名单(身份証)
+                ManBlackInfo blackInfo = manBlackInfoService.getBlackInfoByCard(manFactory.getIdCard());
+                if (blackInfo != null) {
+                    return Response.error(manFactory.getName() + "(" + manFactory.getIdCard() + ")已被拉黑，请核对后再添加！");
+                }
+            }
+            ManFactory selectManFactoryByIdCard = factoryMapper.selectManFactoryByIdCard(manFactory.getIdCard());
+            if(selectManFactoryByIdCard == null){
+                // 工单插入，记得保存中间表
+                manFactory.setName(ZJFConverter.SimToTra(manFactory.getName()));
+                manFactory.setBirthDay(IDcard.getBirthday(manFactory.getIdCard()));
+                manFactory.setSended(0);
+                manFactory.setAddress(ZJFConverter.SimToTra(manFactory.getAddress()));
+                manFactory.setDangerType(1);
+                manFactory.setPicInsertTime(new Date());
+                factoryService.insertManFactory(manFactory);
+                selectManFactoryByIdCard = factoryMapper.selectManFactoryByIdCard(manFactory.getIdCard());
+            }else{
+                // 設置人臉照片，绑定WorkNo
+                selectManFactoryByIdCard.setLcensePlate(manFactory.getLcensePlate());
+                selectManFactoryByIdCard.setWorkNo(manFactory.getWorkNo());
+                selectManFactoryByIdCard.setFace(manFactory.getFace());
+                if(StringUtils.isNotEmpty(manFactory.getPhone())){
+                    selectManFactoryByIdCard.setPhone(manFactory.getPhone());
+                }
+                if(manFactory.getSex()!=null){
+                    selectManFactoryByIdCard.setSex(manFactory.getSex());
+                }
+                if(StringUtils.isNotEmpty(manFactory.getAddress())){
+                    selectManFactoryByIdCard.setAddress(ZJFConverter.SimToTra(manFactory.getAddress()));
+                }
+                manFactory.setDangerType(1);
+                selectManFactoryByIdCard.setPicInsertTime(new Date());
+                factoryMapper.updateManFactory(selectManFactoryByIdCard);
+            }
+
+
+            //同时更新中心库-修改by-sunlj
+            HttpUtils.sendJsonPost(centHost+"/api/wechat/faceDataCent/saveFaceForSupplier", JSONObject.toJSONString(selectManFactoryByIdCard));
+
+            //最后调用下厂商人脸下发的方法
+            ManFactory finalSelectManFactoryByIdCard = selectManFactoryByIdCard;
+            pool.threadPoolTaskExecutor().execute(() -> {
+                Long[] ids = new Long[]{finalSelectManFactoryByIdCard.getFactoryId()};
+                apiService.sendFactoryMsgList(ids);
             });
             return Response.builder().code(0).build();
         } catch (Exception e) {

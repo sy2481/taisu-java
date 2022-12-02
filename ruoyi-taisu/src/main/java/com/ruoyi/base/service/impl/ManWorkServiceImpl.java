@@ -1,6 +1,7 @@
 package com.ruoyi.base.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.base.bo.workCarBo;
 import com.ruoyi.base.domain.*;
 import com.ruoyi.base.interact.CarCardSendService;
 import com.ruoyi.base.mapper.*;
@@ -472,7 +473,6 @@ public class ManWorkServiceImpl implements IManWorkService {
         pool.threadPoolTaskExecutor().execute(() -> carCardSendService.downSendUnbindCarCard(carCarNo));
     }
 
-
     @Override
     public void delCardOneToMany(JSONObject jsonObject) {
         //获取要删除的车卡
@@ -593,5 +593,8 @@ public class ManWorkServiceImpl implements IManWorkService {
         }
     }
 
-
+    @Override
+    public List<workCarBo> selectManWork(String workNo, String date) {
+        return manWorkMapper.selectManWork(workNo,date);
+    }
 }
