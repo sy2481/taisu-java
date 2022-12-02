@@ -142,20 +142,24 @@ public class ApiInOutCheckController {
             Date now = new Date();
             if ((now.after(manWork.getStartTime()) && now.before(manWork.getEndTime())) || (now.after(manWork.getExtendStartTime()) && now.before(manWork.getExtendEndTime()))) {
                 log.info("工单时间可以进入");
+                return Response.error("非施工時間");
             } else {
                 log.info("工单时间不可以进入");
+                return Response.error("非施工時間");
             }
         }
 
         //午休管制
-        String noonControl= sysConfigService.selectConfigByKey("sys.noon.control");
-        String noonBeginTime=sysConfigService.selectConfigByKey("sys.noon.beginTime");
-        String noonEndTime=sysConfigService.selectConfigByKey("sys.noon.endTime");
-        if(!StringUtils.isEmpty(noonControl) && "0".equals(noonControl)){
-            String nowTime=DateUtils.parseDateToStr("HH:mm:ss", DateUtils.getNowDate());
-            if(!StringUtils.isEmpty(noonBeginTime) && !StringUtils.isEmpty(noonEndTime)){
-                if(nowTime.compareTo(noonBeginTime)>0 && nowTime.compareTo(noonEndTime)<0){
-                    return Response.error("午休禁入");
+        if (ENTER.equals(inOutType)){
+            String noonControl= sysConfigService.selectConfigByKey("sys.noon.control");
+            String noonBeginTime=sysConfigService.selectConfigByKey("sys.noon.beginTime");
+            String noonEndTime=sysConfigService.selectConfigByKey("sys.noon.endTime");
+            if(!StringUtils.isEmpty(noonControl) && "0".equals(noonControl)){
+                String nowTime=DateUtils.parseDateToStr("HH:mm:ss", DateUtils.getNowDate());
+                if(!StringUtils.isEmpty(noonBeginTime) && !StringUtils.isEmpty(noonEndTime)){
+                    if(nowTime.compareTo(noonBeginTime)>0 && nowTime.compareTo(noonEndTime)<0){
+                        return Response.error("午休禁入厂");
+                    }
                 }
             }
         }
