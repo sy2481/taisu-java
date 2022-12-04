@@ -6,9 +6,12 @@ import com.ruoyi.base.bo.PlcRelationBO;
 import com.ruoyi.base.domain.HikEquipment;
 import com.ruoyi.base.domain.LocateCard;
 import com.ruoyi.base.domain.PlcEquipment;
+import com.ruoyi.base.domain.PlcHikCommand;
 import com.ruoyi.base.mapper.EquipmentMapper;
 import com.ruoyi.base.mapper.LocateCardMapper;
+import com.ruoyi.base.mapper.PlcHikCommandMapper;
 import com.ruoyi.base.service.ILocateCardService;
+import com.ruoyi.base.service.IPlcHikCommandService;
 import com.ruoyi.base.service.impl.PlcEquipmentServiceImpl;
 import com.ruoyi.base.utils.PlcRedisUtils;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -37,6 +40,10 @@ public class ApiEquipmentController {
 
     @Autowired
     private EquipmentMapper equipmentMapper;
+    @Autowired
+    private PlcHikCommandMapper plcHikCommandMapper;
+    @Autowired
+    private IPlcHikCommandService plcHikCommandService;
 
     /*********************************************************/
     @Autowired
@@ -52,6 +59,10 @@ public class ApiEquipmentController {
             List<EquipmentBO> result = new ArrayList<>();
             //先拿到全部的 PLC 和下属设备的关系列表
             List<PlcRelationBO> plcRelationBOS = equipmentMapper.listPlcRelation();
+            //設備PLC指令
+            List<PlcHikCommand> plcHikCommands= plcHikCommandMapper.selectPlcHikCommandList(null);
+            plcHikCommandService.addPlcHalfCommand(plcRelationBOS,plcHikCommands);
+
             for (PlcRelationBO plcRelationBO : plcRelationBOS) {
                 // 对每一个 PLC ，都要专门区分，是不是车道设备和人脸设备绑定
                 result.addAll(getEquipmentBOList(plcRelationBO));
@@ -106,6 +117,7 @@ public class ApiEquipmentController {
     private EquipmentBO instanceEquipmentBO(PlcRelationBO source) {
         EquipmentBO item = new EquipmentBO();
         item.setPlcCommand(source.getPlcCommand());
+        item.setPlcCommandHalf(source.getPlcCommandHalf());
         item.setPlcIp(source.getPlcIp());
         item.setPlcName(source.getPlcName());
         item.setPlcPort(source.getPlcPort());

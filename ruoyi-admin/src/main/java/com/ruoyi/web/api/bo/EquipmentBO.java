@@ -71,4 +71,7 @@ public class EquipmentBO implements Serializable {
     /** 通道管制是否开启，0-开启，1-关闭 */
     private Long controlType;
 
+    //plc指令 半開/半關
+    private String plcCommandHalf;
+
 }

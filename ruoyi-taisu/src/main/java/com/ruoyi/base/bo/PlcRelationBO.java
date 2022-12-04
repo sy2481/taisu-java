@@ -40,4 +40,7 @@ public class PlcRelationBO implements Serializable {
 
     /** 通道管制是否开启，0-开启，1-关闭 */
     private Long controlType;
+
+    /**半開/半關指令**/
+    private String plcCommandHalf;
 }

@@ -1,6 +1,8 @@
 package com.ruoyi.base.service;
 
 import java.util.List;
+
+import com.ruoyi.base.bo.PlcRelationBO;
 import com.ruoyi.base.domain.PlcHikCommand;
 
 /**
@@ -58,4 +60,12 @@ public interface IPlcHikCommandService
      * @return 结果
      */
     public int deletePlcHikCommandById(Long id);
+
+    /**
+     * 按設備編號，獲取半開半關的指令
+     * @param plcRelationBos
+     * @param plcHikCommands
+     * @return
+     */
+    public List<PlcRelationBO> addPlcHalfCommand(List<PlcRelationBO> plcRelationBos,List<PlcHikCommand> plcHikCommands);
 }
