@@ -55,4 +55,7 @@ public class FactoryBo {
     private String face;
     private String phone;
     private String address;
+
+    /**工程名稱**/
+    private String egNm;
 }

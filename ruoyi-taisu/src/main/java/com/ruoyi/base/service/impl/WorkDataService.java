@@ -296,6 +296,8 @@ public class WorkDataService {
         manFactory.setLcensePlate(factoryBo.getIdCard().length() > 7 ? " " : factoryBo.getIdCard());
         //当前工程编号
         manFactory.setThisNumber(factoryBo.getThisNumber());
+        //工程編號
+        manFactory.setEgNm(factoryBo.getEgNm());
         //工头
         manFactory.setLead(factoryBo.getProfsid());
         //合约卡号：lpltlic+pz，到时候回写到旧库
@@ -383,8 +385,10 @@ public class WorkDataService {
             //添加关联表
             ManWorkFactory manWorkFactory = new ManWorkFactory();
 
-            manWorkFactory.setWorkId(dangerWork.getWorkId());
-            manWorkFactory.setFactoryId(dangerFactory.getFactoryId());
+            //manWorkFactory.setWorkId(dangerWork.getWorkId());
+            //manWorkFactory.setFactoryId(dangerFactory.getFactoryId());
+            BeanUtils.copyProperties(manWork, manWorkFactory);
+            BeanUtils.copyProperties(dangerFactory,manWorkFactory);
             manWorkFactory.setEffectiveTime(dangerWork.getWorkTime());
             //查询中间表，有将不插入，没有进行插入
             if (manWorkFactoryMapper.selectManWorkInfo(manWorkFactory) == null) {
@@ -449,6 +453,7 @@ public class WorkDataService {
         dangerFactory.setLcensePlate(workBo.getCarId());
         //当前工程编号
         dangerFactory.setThisNumber(workBo.getWorkNumber());
+        dangerFactory.setEgNm(ZJFConverter.SimToTra(workBo.getEgnm()));
         //危险品人员
         dangerFactory.setDangerType(1);
         dangerFactory.setSended(0);

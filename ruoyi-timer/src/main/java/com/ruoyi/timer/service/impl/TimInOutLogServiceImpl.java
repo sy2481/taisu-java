@@ -4,6 +4,7 @@ import com.ruoyi.base.bo.CarBo;
 import com.ruoyi.base.bo.FactoryBo;
 import com.ruoyi.base.bo.WorkBo;
 import com.ruoyi.base.domain.InOutLogPvc;
+import com.ruoyi.base.utils.ZJFConverter;
 import com.ruoyi.common.annotation.DataSource;
 import com.ruoyi.common.enums.DataSourceType;
 import com.ruoyi.timer.domain.TimInOutLog;
@@ -211,6 +212,7 @@ public class TimInOutLogServiceImpl implements ITimInOutLogService {
         factoryBo.setFactoryNo(inOutLog.getPz());
         factoryBo.setFactoryName(inOutLog.getTkvnd());
         factoryBo.setThisNumber(inOutLog.getEgno());
+        factoryBo.setEgNm(ZJFConverter.SimToTra(inOutLog.getEgnm()));
         factoryBo.setDatetime(inOutLog.getDatetime());
         factoryBo.setProfsid(inOutLog.getProfsid());
         factoryBo.setAid(inOutLog.getAid());

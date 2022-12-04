@@ -32,6 +32,7 @@ public class ManFactory extends BaseEntity {
      */
     @Excel(name = "工程編號", prompt = "當前工程編號")
     private String thisNumber;
+
     /**
      * 姓名
      */
@@ -78,6 +79,12 @@ public class ManFactory extends BaseEntity {
      */
     @Excel(name = "車卡")
     private String carCardNo;
+
+    /**
+     * 當前工程名稱
+     */
+    @Excel(name = "工程名稱", prompt = "當前工程名稱")
+    private String egNm;
 
     /**
      * 入場證（定位卡編號）
@@ -154,6 +161,7 @@ public class ManFactory extends BaseEntity {
     private Integer sended;
 
     private Date picInsertTime;
+
 
     public Date getPicInsertTime() {
         return picInsertTime;
@@ -436,6 +444,14 @@ public class ManFactory extends BaseEntity {
         this.carCardNo = carCardNo;
     }
 
+    public String getEgNm() {
+        return egNm;
+    }
+
+    public void setEgNm(String egNm) {
+        this.egNm = egNm;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -458,6 +474,7 @@ public class ManFactory extends BaseEntity {
                 .append("locationCard", getLocationCard())
                 .append("workNo", getWorkNo())
                 .append("lead", getLead())
+                .append("egNm",getEgNm())
                 .toString();
     }
 

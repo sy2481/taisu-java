@@ -177,6 +177,8 @@ public class ManWorkFactory extends BaseEntity {
     private Date extendStartTime;
     private Date extendEndTime;
 
+    /**工程名稱**/
+    private String egNm;
 
 
 }

@@ -768,6 +768,9 @@ public class ApiService {
         log.setPersonType("1");
         log.setFactoryId(factory.getFactoryId());
         log.setProjectNo(factory.getThisNumber());
+        log.setProjectName(factory.getEgNm());
+
+        log.setProjectName(factory.getThisNumber());
         log.setWorkNo(factory.getWorkNo());
         log.setFactoryName(factory.getFactoryName());
         log.setName(factory.getName());

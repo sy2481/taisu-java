@@ -36,12 +36,13 @@
         <result property="deptId" column="dept_id"/>
         <result property="snNum" column="sn_num"/>
         <result property="picInsertTime" column="pic_insert_time"/>
+        <result property="egNm" column="eg_nm"/>
     </resultMap>
 
     <sql id="selectManFactoryVo">
         select factory_id, id_card, lcense_plate, name, ip_lt_lic, factory_name, mng_name,
                mng_time, type, sex, face, phone, address, this_number, birth_day, card_type, location_card,
-               del_flag, create_by, create_time, car_card_no,work_no, lead, entered, danger_type, sended,dept_id,sn_num,pic_insert_time from man_factory
+               del_flag, create_by, create_time, car_card_no,work_no, lead, entered, danger_type, sended,dept_id,sn_num,pic_insert_time,eg_nm from man_factory
     </sql>
 
 
@@ -122,6 +123,7 @@
             <if test="sended != null">sended,</if>
             <if test="deptId != null">dept_id,</if>
             <if test="picInsertTime != null">pic_insert_time</if>
+            <if test="egNm != null">eg_nm</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="factoryId != null">#{factoryId},</if>
@@ -150,6 +152,7 @@
             <if test="sended != null">#{sended},</if>
             <if test="deptId != null">#{deptId},</if>
             <if test="picInsertTime != null">#{picInsertTime}</if>
+            <if test="egNm != null">#{egNm}</if>
         </trim>
     </insert>
 
@@ -181,6 +184,7 @@
             <if test="sended != null">sended = #{sended},</if>
             <if test="deptId != null">dept_id =#{deptId},</if>
             <if test="picInsertTime !=null">pic_insert_time=#{picInsertTime},</if>
+            <if test="egNm !=null">eg_nm=#{egNm},</if>
         </trim>
         where factory_id = #{factoryId}
     </update>
@@ -208,6 +212,7 @@
             <if test="lead != null">lead = #{lead},</if>
             <if test="deptId != null">dept_id =#{deptId},</if>
             <if test="picInsertTime != null">pic_insert_time=#{picInsertTime},</if>
+            <if test="egNm !=null">eg_nm=#{egNm},</if>
         </trim>
         where work_no = #{workNo} and del_flag = '0'
     </update>
