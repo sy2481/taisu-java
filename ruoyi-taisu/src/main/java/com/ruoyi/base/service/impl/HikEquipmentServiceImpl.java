@@ -6,6 +6,7 @@ import com.ruoyi.base.domain.PlcHik;
 import com.ruoyi.base.interact.PersonSendService;
 import com.ruoyi.base.mapper.HikEquipmentMapper;
 import com.ruoyi.base.mapper.PlcEquipmentMapper;
+import com.ruoyi.base.mapper.PlcHikCommandMapper;
 import com.ruoyi.base.service.IHikEquipmentService;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.framework.config.ThreadPoolConfig;
@@ -30,7 +31,10 @@ public class HikEquipmentServiceImpl implements IHikEquipmentService {
     @Autowired
     private PersonSendService personSendService;
     @Autowired
+    private PlcHikCommandMapper plcHikCommandMapper;
+    @Autowired
     private ThreadPoolConfig pool;
+
 
     /**
      * 查询HIK 海康设备
@@ -158,6 +162,8 @@ public class HikEquipmentServiceImpl implements IHikEquipmentService {
         //重置 ip 字段
         hikEquipmentMapper.updateFrontIpById(plcHik.getCarDeviceId(), null);
         hikEquipmentMapper.updateFrontIpById(plcHik.getPersonDeviceId(), null);
+        //刪除設備命令表
+        plcHikCommandMapper.deletePlcHikCommandByPlcHikId(plcHik.getId());
         //再删除中间表
         hikEquipmentMapper.deletePlcHikById(id);
         pool.threadPoolTaskExecutor().execute(() ->  personSendService.equipmentCache());

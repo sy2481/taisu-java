@@ -97,4 +97,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where plc_hik_id = #{plcHikId}
         and code = #{code}
     </select>
+
+    <delete id="deletePlcHikCommandByPlcHikId" parameterType="Long">
+        delete from plc_hik_command where plc_hik_id = #{plcHikId}
+    </delete>
 </mapper>

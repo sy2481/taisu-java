@@ -67,4 +67,12 @@ public interface PlcHikCommandMapper
      * @return
      */
     public List<PlcHikCommand> existPlcHikCommand(@Param("plcHikId")Long plcHikId,@Param("code")String code);
+
+    /**
+     * 根據中間表ID删除設備所屬指令
+     *
+     * @param plcHikId 中間表ID
+     * @return 结果
+     */
+    public int deletePlcHikCommandByPlcHikId(Long plcHikId);
 }
