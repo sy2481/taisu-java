@@ -227,7 +227,6 @@ public class ApiFaceDataController {
             }
             //根据工单号，查询厂商列表
             List<FactoryWorkBO> list = factoryService.listByWorkNoAndDate(workNo, DateUtils.getDate(), workType);
-            List<workCarBo> workCarList = iManWorkService.selectManWork(workNo, DateUtils.getDate());
 
             //如果没有头像，从中心库取头像
             List<String> noFaceIdCardList = list.stream().filter(x -> StringUtils.isEmpty(x.getFace()))
@@ -262,10 +261,15 @@ public class ApiFaceDataController {
                     factoryWorkBO.setIdCard(stringBuffer.toString());
                 });
             }
-            JSONObject back = new JSONObject();
-            back.put("list",list);
-            back.put("workCarList",workCarList);
-            return Response.builder().code(0).data(back).build();
+            if (workType == 1) {
+                List<workCarBo> workCarList = iManWorkService.selectManWork(workNo, DateUtils.getDate());
+                JSONObject back = new JSONObject();
+                back.put("list", list);
+                back.put("workCarList", workCarList);
+                return Response.builder().code(0).data(back).build();
+            } else {
+                return Response.builder().code(0).data(list).build();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
