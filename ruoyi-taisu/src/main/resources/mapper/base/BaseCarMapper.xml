@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.BaseCarMapper">
+
+    <resultMap type="BaseCar" id="BaseCarResult">
+        <result property="id"    column="id"    />
+        <result property="idCard"    column="id_card"    />
+        <result property="name"    column="name"    />
+        <result property="emisStandard"    column="emis_standard"    />
+        <result property="emisStandardName"    column="emis_standard_name"    />
+        <result property="envSign"    column="env_sign"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectBaseCarVo">
+        select id, id_card, name, emis_standard, emis_standard_name, env_sign, create_by, create_time, update_by, update_time from base_car
+    </sql>
+
+    <select id="selectBaseCarList" parameterType="BaseCar" resultMap="BaseCarResult">
+        <include refid="selectBaseCarVo"/>
+        <where>
+            <if test="idCard != null  and idCard != ''"> and id_card like concat('%', #{idCard}, '%')</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="emisStandard != null "> and emis_standard = #{emisStandard}</if>
+            <if test="emisStandardName != null  and emisStandardName != ''"> and emis_standard_name like concat('%', #{emisStandardName}, '%')</if>
+            <if test="envSign != null  and envSign != ''"> and env_sign = #{envSign}</if>
+        </where>
+    </select>
+
+    <select id="selectBaseCarById" parameterType="Long" resultMap="BaseCarResult">
+        <include refid="selectBaseCarVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertBaseCar" parameterType="BaseCar">
+        insert into base_car
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="idCard != null">id_card,</if>
+            <if test="name != null">name,</if>
+            <if test="emisStandard != null">emis_standard,</if>
+            <if test="emisStandardName != null">emis_standard_name,</if>
+            <if test="envSign != null">env_sign,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="idCard != null">#{idCard},</if>
+            <if test="name != null">#{name},</if>
+            <if test="emisStandard != null">#{emisStandard},</if>
+            <if test="emisStandardName != null">#{emisStandardName},</if>
+            <if test="envSign != null">#{envSign},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBaseCar" parameterType="BaseCar">
+        update base_car
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="idCard != null">id_card = #{idCard},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="emisStandard != null">emis_standard = #{emisStandard},</if>
+            <if test="emisStandardName != null">emis_standard_name = #{emisStandardName},</if>
+            <if test="envSign != null">env_sign = #{envSign},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBaseCarById" parameterType="Long">
+        delete from base_car where id = #{id}
+    </delete>
+
+    <delete id="deleteBaseCarByIds" parameterType="String">
+        delete from base_car where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectBaseCarByIdCard" resultMap="BaseCarResult">
+        <include refid="selectBaseCarVo"/>
+        where id_card = #{idCard}
+    </select>
+</mapper>

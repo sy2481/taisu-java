@@ -213,6 +213,12 @@ public class ManFactory extends BaseEntity {
         this.haveCarNum = haveCarNum;
     }
 
+    private String carIdCard;
+    private Long emisStandard;
+    private String emisStandardName;
+    private String envSign;
+
+
 
 
     public Integer getToday() {
@@ -450,6 +456,38 @@ public class ManFactory extends BaseEntity {
 
     public void setEgNm(String egNm) {
         this.egNm = egNm;
+    }
+
+    public String getCarIdCard() {
+        return carIdCard;
+    }
+
+    public void setCarIdCard(String carIdCard) {
+        this.carIdCard = carIdCard;
+    }
+
+    public Long getEmisStandard() {
+        return emisStandard;
+    }
+
+    public void setEmisStandard(Long emisStandard) {
+        this.emisStandard = emisStandard;
+    }
+
+    public String getEmisStandardName() {
+        return emisStandardName;
+    }
+
+    public void setEmisStandardName(String emisStandardName) {
+        this.emisStandardName = emisStandardName;
+    }
+
+    public String getEnvSign() {
+        return envSign;
+    }
+
+    public void setEnvSign(String envSign) {
+        this.envSign = envSign;
     }
 
     @Override

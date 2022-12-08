@@ -60,6 +60,21 @@ public class SecurityUtils
     }
 
     /**
+     * 获取用户账户,無用戶則顯示system
+     **/
+    public static String getUsernameDefaultSystem()
+    {
+        try
+        {
+            return getUsername();
+        }
+        catch (Exception e)
+        {
+            return "system";
+        }
+    }
+
+    /**
      * 获取用户
      **/
     public static LoginUser getLoginUser()

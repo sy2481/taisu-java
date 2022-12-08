@@ -3,10 +3,12 @@ package com.ruoyi.web.api;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.base.bo.FactoryWorkBO;
 import com.ruoyi.base.bo.workCarBo;
+import com.ruoyi.base.domain.BaseCar;
 import com.ruoyi.base.domain.ManBlackInfo;
 import com.ruoyi.base.domain.ManFactory;
 import com.ruoyi.base.interact.HlkFaceCheckUtil;
 import com.ruoyi.base.mapper.ManFactoryMapper;
+import com.ruoyi.base.service.IBaseCarService;
 import com.ruoyi.base.service.IManBlackInfoService;
 import com.ruoyi.base.service.IManWorkService;
 import com.ruoyi.base.service.impl.ApiService;
@@ -15,6 +17,7 @@ import com.ruoyi.base.utils.HttpUtils;
 import com.ruoyi.base.utils.IDcard;
 import com.ruoyi.base.utils.ZJFConverter;
 import com.ruoyi.common.config.RuoYiConfig;
+import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
@@ -26,9 +29,11 @@ import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.web.api.basic.Response;
 import com.ruoyi.web.api.bo.EmployeeBO;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -65,6 +70,8 @@ public class ApiFaceDataController {
     private IManWorkService iManWorkService;
     @Autowired
     private IManBlackInfoService manBlackInfoService;
+    @Autowired
+    private IBaseCarService baseCarService;
     /**
      * 中心库地址
      */
@@ -373,6 +380,46 @@ public class ApiFaceDataController {
                 Long[] ids = new Long[]{finalSelectManFactoryByIdCard.getFactoryId()};
                 apiService.sendFactoryMsgList(ids);
             });
+            return Response.builder().code(0).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Response.error("設置出錯，請稍後再試！");
+    }
+
+    /**
+     * 获取車详细信息
+     */
+    @ApiOperation("根據車牌獲取車輛信息")
+    @ResponseBody
+    @GetMapping(value = "/getInfoByIdCard")
+    public Response getInfoByIdCard(String idCard)
+    {
+        BaseCar baseCar= baseCarService.selectBaseCarByIdCard(idCard);
+        return Response.builder().code(0).data(baseCar).build();
+    }
+
+    // 上傳危化車輛信息
+    //carIdCard：車牌
+    //emisStandard：排放標準
+    //emisStandardName：排放標準名稱
+    //envSign：環保標誌
+    @ResponseBody
+    @GetMapping("/picForHcCar")
+    public Response picForHcCar(String carIdCard,Long emisStandard,String emisStandardName,String envSign) {
+        try {
+            if (StringUtils.isEmpty(carIdCard) || StringUtils.isEmpty(envSign)) {
+                return Response.error("資料不全，請稍後再試。");
+            }
+
+            //保存車輛信息
+            BaseCar baseCar=new BaseCar();
+            baseCar.setIdCard(carIdCard);
+            baseCar.setEmisStandard(emisStandard);
+            baseCar.setEmisStandardName(emisStandardName);
+            baseCar.setEnvSign(envSign);
+            baseCarService.saveBaseCar(baseCar);
+
             return Response.builder().code(0).build();
         } catch (Exception e) {
             e.printStackTrace();
