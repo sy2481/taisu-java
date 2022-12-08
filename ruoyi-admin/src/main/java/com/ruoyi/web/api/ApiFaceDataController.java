@@ -286,7 +286,7 @@ public class ApiFaceDataController {
     // 根据厂商人员ID，上传人脸照片，并设置人脸
     @ResponseBody
     @GetMapping("/facePicForSupplier")
-    public Response facePicForSupplier(Long id, String facePicUrl, String phone, String address, Long sex) {
+    public Response facePicForSupplier(Long id, String facePicUrl, String phone, String address, Long sex,String carIdCard,Long emisStandard,String emisStandardName,String envSign) {
         try {
             if (id == null || StringUtils.isBlank(facePicUrl)) {
                 return Response.error("資料不全，請稍後再試。");
@@ -302,6 +302,14 @@ public class ApiFaceDataController {
             manFactory.setSex(sex);
             manFactory.setPicInsertTime(new Date());
             factoryMapper.updateManFactory(manFactory);
+
+            //保存車輛信息
+            BaseCar baseCar=new BaseCar();
+            baseCar.setIdCard(carIdCard);
+            baseCar.setEmisStandard(emisStandard);
+            baseCar.setEmisStandardName(emisStandardName);
+            baseCar.setEnvSign(envSign);
+            baseCarService.saveBaseCar(baseCar);
 
             //同时更新中心库-修改by-sunlj
             HttpUtils.sendJsonPost(centHost+"/api/wechat/faceDataCent/saveFaceForSupplier", JSONObject.toJSONString(manFactory));
@@ -370,6 +378,13 @@ public class ApiFaceDataController {
                 factoryMapper.updateManFactory(selectManFactoryByIdCard);
             }
 
+            //保存車輛信息
+            BaseCar baseCar=new BaseCar();
+            baseCar.setIdCard(manFactory.getCarIdCard());
+            baseCar.setEmisStandard(manFactory.getEmisStandard());
+            baseCar.setEmisStandardName(manFactory.getEmisStandardName());
+            baseCar.setEnvSign(manFactory.getEnvSign());
+            baseCarService.saveBaseCar(baseCar);
 
             //同时更新中心库-修改by-sunlj
             HttpUtils.sendJsonPost(centHost+"/api/wechat/faceDataCent/saveFaceForSupplier", JSONObject.toJSONString(selectManFactoryByIdCard));
