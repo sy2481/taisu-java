@@ -145,4 +145,5 @@ public interface ManFactoryMapper {
      * @param manFactory
      */
     void updateFaceByIdCard(ManFactory manFactory);
+
 }

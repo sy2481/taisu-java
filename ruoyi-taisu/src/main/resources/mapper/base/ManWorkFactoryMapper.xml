@@ -46,6 +46,9 @@
         <result property="extendStartTime" column="extend_start_time"/>
         <result property="extendEndTime" column="extend_end_time"/>
         <result property="egNm" column="eg_nm"/>
+        <result property="emisStandard"    column="emis_standard"    />
+        <result property="emisStandardName"    column="emis_standard_name"    />
+        <result property="envSign"    column="env_sign"    />
     </resultMap>
 
     <sql id="selectManWorkFactoryVo">
@@ -53,7 +56,8 @@
                mng_time, type, sex, face, phone, address, this_number, birth_day, card_type, location_card,
                project_no, work_no, work_time, car_id, project_name, job_category, inspector, inspector2, car_card,
                xt_in_num, com_in_num, ip,factory_door_name,
-               work_type, work_status,dept_id,eg_nm from man_work_factory
+               work_type, work_status,dept_id,
+               eg_nm,emis_standard ,emis_standard_name ,env_sign from man_work_factory
     </sql>
 
     <select id="selectManWorkInfo" parameterType="ManWorkFactory" resultMap="ManWorkFactoryResult">
@@ -117,6 +121,9 @@
             <if test="extendStartTime!=null">extend_start_time,</if>
             <if test="extendEndTime!=null">extend_end_time,</if>
             <if test="egNm != null">eg_nm</if>
+            <if test="emisStandard != null">emis_standard,</if>
+            <if test="emisStandardName != null">emis_standard_name,</if>
+            <if test="envSign != null">env_sign,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="workId != null">#{workId},</if>
@@ -159,6 +166,9 @@
             <if test="extendStartTime!=null">#{extendStartTime},</if>
             <if test="extendEndTime!=null">#{extendEndTime},</if>
             <if test="egNm != null">#{egNm}</if>
+            <if test="emisStandard != null">#{emisStandard},</if>
+            <if test="emisStandardName != null">#{emisStandardName},</if>
+            <if test="envSign != null">#{envSign},</if>
         </trim>
     </insert>
 
@@ -188,6 +198,9 @@
             <if test="extendStartTime!=null">extend_start_time=#{extendStartTime},</if>
             <if test="extendEndTime!=null">extend_end_time=#{extendEndTime},</if>
             <if test="egNm !=null">eg_nm=#{egNm},</if>
+            <if test="emisStandard != null">emis_standard = #{emisStandard},</if>
+            <if test="emisStandardName != null">emis_standard_name = #{emisStandardName},</if>
+            <if test="envSign != null">env_sign = #{envSign},</if>
         </trim>
         where factory_id = #{factoryId}
     </update>

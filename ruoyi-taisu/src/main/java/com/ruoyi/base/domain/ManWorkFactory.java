@@ -180,5 +180,10 @@ public class ManWorkFactory extends BaseEntity {
     /**工程名稱**/
     private String egNm;
 
+    private String carIdCard;
+    private Long emisStandard;
+    private String emisStandardName;
+    private String envSign;
+
 
 }

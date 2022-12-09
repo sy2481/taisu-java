@@ -218,6 +218,11 @@ public class ManFactory extends BaseEntity {
     private String emisStandardName;
     private String envSign;
 
+    /**
+     * 車牌，用於模糊查詢
+     */
+    private String plateNo;
+
 
 
 
@@ -488,6 +493,14 @@ public class ManFactory extends BaseEntity {
 
     public void setEnvSign(String envSign) {
         this.envSign = envSign;
+    }
+
+    public String getPlateNo() {
+        return plateNo;
+    }
+
+    public void setPlateNo(String plateNo) {
+        this.plateNo = plateNo;
     }
 
     @Override

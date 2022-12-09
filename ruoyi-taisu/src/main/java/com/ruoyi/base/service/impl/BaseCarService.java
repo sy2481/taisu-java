@@ -1,8 +1,12 @@
 package com.ruoyi.base.service.impl;
 
 import java.util.List;
+
+import com.ruoyi.base.domain.ManFactory;
+import com.ruoyi.base.mapper.ManFactoryMapper;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
+import com.ruoyi.common.utils.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +25,8 @@ public class BaseCarService implements IBaseCarService
 {
     @Autowired
     private BaseCarMapper baseCarMapper;
+    @Autowired
+    private ManFactoryMapper manFactoryMapper;
 
     /**
      * 查询車
@@ -113,7 +119,7 @@ public class BaseCarService implements IBaseCarService
      * @param baseCar
      * @return
      */
-    public int saveBaseCar(BaseCar baseCar){
+    public int saveBaseCar(BaseCar baseCar,Long manFactoryId){
         int result=0;
         BaseCar entity=baseCarMapper.selectBaseCarByIdCard(baseCar.getIdCard());
         Long oldId=null;
@@ -132,6 +138,17 @@ public class BaseCarService implements IBaseCarService
             entity.setId(oldId);
             result+=this.updateBaseCar(entity);
         }
+
+        //同時更新工單數據
+        if(manFactoryId!=null){
+            ManFactory manFactory=new ManFactory();
+            manFactory.setEmisStandard(baseCar.getEmisStandard());
+            manFactory.setEmisStandardName(baseCar.getEmisStandardName());
+            manFactory.setEnvSign(baseCar.getEnvSign());
+            manFactory.setFactoryId(manFactoryId);
+            manFactoryMapper.updateManFactory(manFactory);
+        }
+
         return result;
     }
 }

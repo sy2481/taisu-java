@@ -73,5 +73,5 @@ public interface IBaseCarService
      * @param baseCar
      * @return
      */
-    public int saveBaseCar(BaseCar baseCar);
+    public int saveBaseCar(BaseCar baseCar,Long manFactoryId);
 }

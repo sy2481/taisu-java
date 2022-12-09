@@ -37,12 +37,16 @@
         <result property="snNum" column="sn_num"/>
         <result property="picInsertTime" column="pic_insert_time"/>
         <result property="egNm" column="eg_nm"/>
+        <result property="emisStandard"    column="emis_standard"    />
+        <result property="emisStandardName"    column="emis_standard_name"    />
+        <result property="envSign"    column="env_sign"    />
     </resultMap>
 
     <sql id="selectManFactoryVo">
         select factory_id, id_card, lcense_plate, name, ip_lt_lic, factory_name, mng_name,
                mng_time, type, sex, face, phone, address, this_number, birth_day, card_type, location_card,
-               del_flag, create_by, create_time, car_card_no,work_no, lead, entered, danger_type, sended,dept_id,sn_num,pic_insert_time,eg_nm from man_factory
+               del_flag, create_by, create_time, car_card_no,work_no, lead, entered, danger_type, sended,dept_id,sn_num,pic_insert_time,
+               eg_nm,emis_standard ,emis_standard_name ,env_sign from man_factory
     </sql>
 
 
@@ -124,6 +128,9 @@
             <if test="deptId != null">dept_id,</if>
             <if test="picInsertTime != null">pic_insert_time</if>
             <if test="egNm != null">eg_nm</if>
+            <if test="emisStandard != null">emis_standard,</if>
+            <if test="emisStandardName != null">emis_standard_name,</if>
+            <if test="envSign != null">env_sign,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="factoryId != null">#{factoryId},</if>
@@ -153,6 +160,9 @@
             <if test="deptId != null">#{deptId},</if>
             <if test="picInsertTime != null">#{picInsertTime}</if>
             <if test="egNm != null">#{egNm}</if>
+            <if test="emisStandard != null">#{emisStandard},</if>
+            <if test="emisStandardName != null">#{emisStandardName},</if>
+            <if test="envSign != null">#{envSign},</if>
         </trim>
     </insert>
 
@@ -185,6 +195,9 @@
             <if test="deptId != null">dept_id =#{deptId},</if>
             <if test="picInsertTime !=null">pic_insert_time=#{picInsertTime},</if>
             <if test="egNm !=null">eg_nm=#{egNm},</if>
+            <if test="emisStandard != null">emis_standard = #{emisStandard},</if>
+            <if test="emisStandardName != null">emis_standard_name = #{emisStandardName},</if>
+            <if test="envSign != null">env_sign = #{envSign},</if>
         </trim>
         where factory_id = #{factoryId}
     </update>
@@ -213,6 +226,9 @@
             <if test="deptId != null">dept_id =#{deptId},</if>
             <if test="picInsertTime != null">pic_insert_time=#{picInsertTime},</if>
             <if test="egNm !=null">eg_nm=#{egNm},</if>
+            <if test="emisStandard != null">emis_standard = #{emisStandard},</if>
+            <if test="emisStandardName != null">emis_standard_name = #{emisStandardName},</if>
+            <if test="envSign != null">env_sign = #{envSign},</if>
         </trim>
         where work_no = #{workNo} and del_flag = '0'
     </update>

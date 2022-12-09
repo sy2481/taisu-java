@@ -309,7 +309,7 @@ public class ApiFaceDataController {
             baseCar.setEmisStandard(emisStandard);
             baseCar.setEmisStandardName(emisStandardName);
             baseCar.setEnvSign(envSign);
-            baseCarService.saveBaseCar(baseCar);
+            baseCarService.saveBaseCar(baseCar,id);
 
             //同时更新中心库-修改by-sunlj
             HttpUtils.sendJsonPost(centHost+"/api/wechat/faceDataCent/saveFaceForSupplier", JSONObject.toJSONString(manFactory));
@@ -384,7 +384,7 @@ public class ApiFaceDataController {
             baseCar.setEmisStandard(manFactory.getEmisStandard());
             baseCar.setEmisStandardName(manFactory.getEmisStandardName());
             baseCar.setEnvSign(manFactory.getEnvSign());
-            baseCarService.saveBaseCar(baseCar);
+            baseCarService.saveBaseCar(baseCar,manFactory.getFactoryId());
 
             //同时更新中心库-修改by-sunlj
             HttpUtils.sendJsonPost(centHost+"/api/wechat/faceDataCent/saveFaceForSupplier", JSONObject.toJSONString(selectManFactoryByIdCard));
@@ -414,33 +414,6 @@ public class ApiFaceDataController {
         return Response.builder().code(0).data(baseCar).build();
     }
 
-    // 上傳危化車輛信息
-    //carIdCard：車牌
-    //emisStandard：排放標準
-    //emisStandardName：排放標準名稱
-    //envSign：環保標誌
-    @ResponseBody
-    @GetMapping("/picForHcCar")
-    public Response picForHcCar(String carIdCard,Long emisStandard,String emisStandardName,String envSign) {
-        try {
-            if (StringUtils.isEmpty(carIdCard) || StringUtils.isEmpty(envSign)) {
-                return Response.error("資料不全，請稍後再試。");
-            }
-
-            //保存車輛信息
-            BaseCar baseCar=new BaseCar();
-            baseCar.setIdCard(carIdCard);
-            baseCar.setEmisStandard(emisStandard);
-            baseCar.setEmisStandardName(emisStandardName);
-            baseCar.setEnvSign(envSign);
-            baseCarService.saveBaseCar(baseCar);
-
-            return Response.builder().code(0).build();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return Response.error("設置出錯，請稍後再試！");
-    }
 
 
 }
