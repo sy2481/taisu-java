@@ -39,7 +39,7 @@
     <sql id="selectManWorkVo">
         select work_id, project_no, work_no, mng_name, mng_time,
                work_time, car_id, project_name, job_category, inspector, inspector2, car_card,
-               xt_in_num, com_in_num, del_flag, create_by, create_time, ip,factory_door_name, work_type, work_status,dept_id,area_no from man_work
+               xt_in_num, com_in_num, del_flag, create_by, create_time, ip,factory_door_name, work_type, work_status,dept_id,area_no,start_time,end_time,extend_start_time,extend_end_time from man_work
     </sql>
 
     <select id="selectManWorkList" parameterType="com.ruoyi.base.domain.ManWork" resultMap="ManWorkResult">

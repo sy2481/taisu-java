@@ -891,7 +891,7 @@ public class SysSubFactoryUserController extends BaseController {
             if (StringUtils.isNotBlank(sysUser.getIdCard())){
                 personSendService.downSendDeletePerson(sysUser.getIdCard());
             }
-            userService.deleteFaceByUserId(userId);
+            userService.deleteSysUserFaceByUserId(userId);
             return AjaxResult.success();
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,5 +1,6 @@
 package com.ruoyi.web.api;
 
+import cn.hutool.core.date.DateUtil;
 import com.ruoyi.base.domain.*;
 import com.ruoyi.base.mapper.ManBlackInfoMapper;
 import com.ruoyi.base.mapper.ManFactoryMapper;
@@ -103,8 +104,8 @@ public class ApiInOutCheckController {
         }
 
         //黑名单禁入
-        ManBlackInfo manBlackInfo= manBlackInfoService.getBlackInfoByCard(idCard);
-        if(manBlackInfo!=null){
+        ManBlackInfo manBlackInfo = manBlackInfoService.getBlackInfoByCard(idCard);
+        if (manBlackInfo != null) {
             return Response.error("黑名单禁入");
         }
 
@@ -130,6 +131,7 @@ public class ApiInOutCheckController {
         //工单信息
         ManWork manWork = workMapper.selectManWorkByworkNo(workNo);
 
+
         //TODO 此功能需要
         //入场判断工单时间 是否能进场 出场不需要管制
         Long loadType = 0L;
@@ -137,27 +139,38 @@ public class ApiInOutCheckController {
         if (hikEquipmentList.size() > 0) {
             loadType = hikEquipmentList.get(0).getSign();
         }
-        if (loadType.compareTo(0L) == 0) {
+        if (ENTER.equals(inOutType)) {
             //判断工单是否结束
-            Date now = new Date();
-            if ((now.after(manWork.getStartTime()) && now.before(manWork.getEndTime())) || (now.after(manWork.getExtendStartTime()) && now.before(manWork.getExtendEndTime()))) {
-                log.info("工单时间可以进入");
-                return Response.error("非施工時間");
+            Date now = DateUtils.getNowDate();
+            //if ((now.after(manWork.getStartTime()) && now.before(manWork.getEndTime())) || (now.after(manWork.getExtendStartTime()) && now.before(manWork.getExtendEndTime()))) {
+            log.error("manWork.getStartTime()-->" + manWork.getStartTime() + "manWork.getEndTime()" + manWork.getEndTime());
+            if (now.after(manWork.getStartTime()) && now.before(manWork.getEndTime())) {
+                log.info("正常工单时间可以进入");
+                //return Response.success("施工時間可以进入");
             } else {
-                log.info("工单时间不可以进入");
-                return Response.error("非施工時間");
+                if (manWork.getExtendStartTime() != null && manWork.getExtendEndTime() != null) {
+                    if (now.after(manWork.getExtendStartTime()) && now.before(manWork.getExtendEndTime())) {
+                        log.info("延長工单时间可以进入");
+                        //return Response.success("施工時間可以进入");
+                    } else {
+                        log.info("工单时间不可以进入");
+                        return Response.error("非施工時間");
+                    }
+                } else {
+                    log.info("工单时间不可以进入");
+                    return Response.error("非施工時間");
+                }
             }
         }
-
         //午休管制
-        if (ENTER.equals(inOutType)){
-            String noonControl= sysConfigService.selectConfigByKey("sys.noon.control");
-            String noonBeginTime=sysConfigService.selectConfigByKey("sys.noon.beginTime");
-            String noonEndTime=sysConfigService.selectConfigByKey("sys.noon.endTime");
-            if(!StringUtils.isEmpty(noonControl) && "0".equals(noonControl)){
-                String nowTime=DateUtils.parseDateToStr("HH:mm:ss", DateUtils.getNowDate());
-                if(!StringUtils.isEmpty(noonBeginTime) && !StringUtils.isEmpty(noonEndTime)){
-                    if(nowTime.compareTo(noonBeginTime)>0 && nowTime.compareTo(noonEndTime)<0){
+        if (ENTER.equals(inOutType)) {
+            String noonControl = sysConfigService.selectConfigByKey("sys.noon.control");
+            String noonBeginTime = sysConfigService.selectConfigByKey("sys.noon.beginTime");
+            String noonEndTime = sysConfigService.selectConfigByKey("sys.noon.endTime");
+            if (!StringUtils.isEmpty(noonControl) && "0".equals(noonControl)) {
+                String nowTime = DateUtils.parseDateToStr("HH:mm:ss", DateUtils.getNowDate());
+                if (!StringUtils.isEmpty(noonBeginTime) && !StringUtils.isEmpty(noonEndTime)) {
+                    if (nowTime.compareTo(noonBeginTime) > 0 && nowTime.compareTo(noonEndTime) < 0) {
                         return Response.error("午休禁入厂");
                     }
                 }
@@ -165,15 +178,12 @@ public class ApiInOutCheckController {
         }
 
 
-
-
         //判断是否是临时单，不需要判断直接放行
         if (StringUtils.isNotBlank(manWork.getProjectNo()) && manWork.getProjectNo().startsWith("1")) {
+            log.error("StringUtils.isNotBlank(manWork.getProjectNo()) && manWork.getProjectNo().startsWith(1)");
             return Response.success("认证成功，请通行");
             //return Response.success("放行");
         }
-
-
 
 
         //这里的两个判断是：门开了但是人没走，重复刷脸的问题
@@ -187,10 +197,12 @@ public class ApiInOutCheckController {
         }*/
 
         if ("XT".equals(manFactory.getLead())) {
+            log.error("XT--->" + ("XT".equals(manFactory.getLead())));
             //是XT（厂商人员负责人）
             //进条件：直接进
             //出条件：如还有XT在内可以出如果没有则需要厂商普通人员出完才能出
             if (ENTER.equals(inOutType)) {
+                log.error("ENTER");
                 //XT进请求；判断人员是否已经在内
                 if (1 != manFactory.getEntered()) {
                     //还不在里面，那就 +1，顺便设置为1表示已经进去了
@@ -201,6 +213,7 @@ public class ApiInOutCheckController {
                 return Response.success("认证成功，请通行");
                 //return Response.success("放行");
             } else if (OUT.equals(inOutType)) {
+                log.error("OUT");
                 //XT出请求
                 if (checkXtOut(manWork, workNo, manFactory)) {
                     return Response.success("认证成功，请通行");

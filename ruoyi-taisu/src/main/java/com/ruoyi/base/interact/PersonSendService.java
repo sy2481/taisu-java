@@ -28,6 +28,14 @@ public class PersonSendService {
     }
 
     /**
+     * 更新海康人员门禁权限
+     */
+    public void updateHikAuthsSysyUser(PersonVO personVO) {
+        String json = JSONObject.toJSONString(personVO);
+        HttpUtils.sendJsonPost(host + "/hik/person/issue/auth/SysUser", json);
+    }
+
+    /**
      * 根据身份证号，更新人脸
      */
     public Integer updateUserFace(String inCard, String face) {
@@ -64,6 +72,13 @@ public class PersonSendService {
     public Integer downSendPersonInfoRequest(PersonVO personVo) {
         String json = JSONObject.toJSONString(personVo);
         String resultStr = HttpUtils.sendJsonPost(host + "/hik/person", json);
+        JSONObject downSednResultObj = JSONObject.parseObject(resultStr);
+        return (Integer) downSednResultObj.get("code");
+    }
+
+    public Integer downSendPersonInfoRequestForSubSysUser(PersonVO personVo) {
+        String json = JSONObject.toJSONString(personVo);
+        String resultStr = HttpUtils.sendJsonPost(host + "/hik/person/sysUser", json);
         JSONObject downSednResultObj = JSONObject.parseObject(resultStr);
         return (Integer) downSednResultObj.get("code");
     }

@@ -9,7 +9,7 @@ import java.net.SocketException;
 
 import static java.lang.Thread.sleep;
 
-public class PlcSocket {
+public class NewPlcSocket {
     public enum CODE_TYPE {
         ASCII, //普通文本发送
         HEX    //十六进制发送
@@ -54,9 +54,9 @@ public class PlcSocket {
     /**
      * logger
      */
-    private final Logger logger = LoggerFactory.getLogger(PlcSocket.class);
+    private final Logger logger = LoggerFactory.getLogger(NewPlcSocket.class);
 
-    public PlcSocket(String ip, int port, int dataLength, String codeType) {
+    public NewPlcSocket(String ip, int port, int dataLength, String codeType) {
         this.ip = ip;
         this.port = port;
         this.dataLength = dataLength;
@@ -204,43 +204,67 @@ public class PlcSocket {
     }
 
 
-    public static void sentMessage(String ip,String port, String index) {
+//    public static void sentMessage(String ip,String port, String index) {
+//        if (ip != null && (ip.equals("") || (ip.equals("127.0.0.1")))) {
+//            return;
+//        }
+//        if (!index.equals("")) {
+//            NewPlcSocket plc = new NewPlcSocket(ip, 6000, 0, NewPlcSocket.CODE_TYPE.HEX.name());
+//            // byte[] bytes = CrcUtils.hexStringToByte(String.format(PlcCommandConstant.CLOSE_DOOR_COMMAND, index));
+//            plc.sendComm(String.format(PlcCommandConstant.CLOSE_DOOR_COMMAND, index));
+////        plc.sendComm("02FF0A0000000000204D010000");
+//            try {
+//                Thread.sleep(400);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+////        plc.sendComm("02FF0A0000000000204D010010");
+//            //byte[] bytes1 = CrcUtils.hexStringToByte(String.format(PlcCommandConstant.OPEN_DOOR_COMMAND, index));
+//            plc.sendComm(String.format(PlcCommandConstant.OPEN_DOOR_COMMAND, index));
+//            try {
+//                Thread.sleep(400);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+////        plc.sendComm("02FF0A0000000000204D010000");
+//            plc.sendComm(String.format(PlcCommandConstant.CLOSE_DOOR_COMMAND, index));
+//            try {
+//                Thread.sleep(200);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            plc.close();
+//        }
+//
+//    }
+
+    public static void sentMessage(String ip, String port, String index) {
         if (ip != null && (ip.equals("") || (ip.equals("127.0.0.1")))) {
             return;
         }
-        if (!index.equals("")) {
-            PlcSocket plc = new PlcSocket(ip, 6000, 0, PlcSocket.CODE_TYPE.HEX.name());
-            // byte[] bytes = CrcUtils.hexStringToByte(String.format(PlcCommandConstant.CLOSE_DOOR_COMMAND, index));
-            plc.sendComm(String.format(PlcCommandConstant.CLOSE_DOOR_COMMAND, index));
-//        plc.sendComm("02FF0A0000000000204D010000");
-            try {
+        try {
+            if (!index.equals("")) {
+                NewPlcSocket plc = new NewPlcSocket(ip, 6000, 0, NewPlcSocket.CODE_TYPE.HEX.name());
                 Thread.sleep(400);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-//        plc.sendComm("02FF0A0000000000204D010010");
-            //byte[] bytes1 = CrcUtils.hexStringToByte(String.format(PlcCommandConstant.OPEN_DOOR_COMMAND, index));
-            plc.sendComm(String.format(PlcCommandConstant.OPEN_DOOR_COMMAND, index));
-            try {
+                String[] commands = index.split(":");
+                for (int i = 0; i < commands.length; i++) {
+                    plc.sendComm(String.format(PlcCommandConstant.CLOSE_DOOR_COMMAND, commands[i]));
+
+                    Thread.sleep(400);
+
+                }
                 Thread.sleep(400);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                plc.close();
             }
-//        plc.sendComm("02FF0A0000000000204D010000");
-            plc.sendComm(String.format(PlcCommandConstant.CLOSE_DOOR_COMMAND, index));
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            plc.close();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
     }
 
 
     public static void main(String[] args) {
-        PlcSocket plc = new PlcSocket("192.168.1.202", 4000, 0, CODE_TYPE.HEX.name());
+        NewPlcSocket plc = new NewPlcSocket("192.168.1.202", 4000, 0, CODE_TYPE.HEX.name());
         System.out.println(plc.sendComm("03FF0A0000000000204D01000000"));
 
         System.out.println(plc.sendComm("03FF0A0000000000204D01000100"));

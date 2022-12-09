@@ -18,6 +18,7 @@ import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.enums.BusinessType;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.config.ThreadPoolConfig;
@@ -37,7 +38,7 @@ import org.springframework.web.bind.annotation.*;
  * @author wang
  */
 @RestController
-@RequestMapping("api/sync")
+@RequestMapping("/system/newsysuser")
 public class SysUserNewController extends BaseController {
 
     @Autowired
@@ -57,6 +58,9 @@ public class SysUserNewController extends BaseController {
     private SyncCenterService syncCenterService;
     @Autowired
     private SysUserCenterSyncService userCenterSyncService;
+
+    @Autowired
+    private PersonSendService personSendService;
 
     /**
      * 更新用户
@@ -156,5 +160,88 @@ public class SysUserNewController extends BaseController {
         userCenterSyncService.syncUpdateUser(centerUser);
         return AjaxResult.success();
     }
+
+    /**
+     * 新增內部員工用户
+     */
+    @PreAuthorize("@ss.hasPermi('system:user:add')")
+    @Log(title = "用户管理", businessType = BusinessType.INSERT)
+    @PostMapping("/new")
+    public AjaxResult addSysUser(@Validated @RequestBody SysUser user) {
+        //修改判斷編號是否重複
+        SysUser userNo = userService.getByUserNo(user.getEmpNo());
+        if (userNo != null) {
+            return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，員工編號已存在");
+        }
+        if (UserConstants.NOT_UNIQUE.equals(userService.checkUserNameUnique(user.getUserName()))) {
+            return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，登录账号已存在");
+        }
+        if (StringUtils.isNotEmpty(user.getPhonenumber()) && "1".equals(userService.checkPhoneUnique(user))) {
+            return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，手机号码已存在");
+        }
+        if (StringUtils.isNotNull(user.getFactoryIdArray())&&user.getFactoryIdArray().length>0){
+            StringBuilder factory = new StringBuilder();
+            for (int i = 0; i < user.getFactoryIdArray().length; i++) {
+                if (i == 0) {
+                    factory.append(user.getFactoryIdArray()[i]);
+                } else {
+                    factory.append(",").append(user.getFactoryIdArray()[i]);
+                }
+            }
+            user.setFactoryId(factory.toString());
+        }
+
+        if (StringUtils.isNotNull(user.getPlcInfo())&&user.getPlcInfo().length>0){
+            StringBuilder factory = new StringBuilder();
+            for (int i = 0; i < user.getPlcInfo().length; i++) {
+                if (i == 0) {
+                    factory.append(user.getPlcInfo()[i]);
+                } else {
+                    factory.append(",").append(user.getPlcInfo()[i]);
+                }
+            }
+            user.setPlc(factory.toString());
+        }
+        user.setCreateBy(getUsername());
+        user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
+//        user.setPassword("");
+        //先判断身份证格式
+        try {
+            IDcard.checkIdCard(user.getIdCard());
+            IDcard.competeUserByIdcard(user);
+        } catch (Exception e) {
+            return AjaxResult.error(e.getMessage());
+        }
+
+//        user.setSended(0L);
+        user.setSended(0L);
+
+        int userRow = userService.insertUser(user);
+        if (userRow > 0) {
+//            // 新增用户的时候，可能需要下发车牌权限
+//            pool.threadPoolTaskExecutor().execute(() -> plateSendService.userCarDownSend(userService.selectUserById(user.getUserId())));
+            return toAjax(userRow);
+        }
+        return AjaxResult.error(user.getIdCard() + "身份证号已存在");
+
+    }
+
+    @GetMapping("/deleteFace")
+    public AjaxResult deleteFace(Long userId) {
+        try {
+            SysUser sysUser = userService.selectUserById(userId);
+            if (StringUtils.isNotBlank(sysUser.getIdCard())){
+                personSendService.downSendDeletePersonOnlyFace(sysUser.getIdCard());
+            }
+            userService.deleteFaceByUserId(userId);
+            return AjaxResult.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AjaxResult.error("操作失敗，請稍後再試。");
+        }
+    }
+
+
+
 
 }

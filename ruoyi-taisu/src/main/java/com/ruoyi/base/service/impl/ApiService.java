@@ -1145,7 +1145,7 @@ public class ApiService {
         }
     }
 
-    public void userBindHlkSubUser(SysUser user) {
+    public void userBindHlkSubSysUser(SysUser user) {
         //身份证、照片不为空，就可以下发了
         if (StringUtils.isBlank(user.getFace()) || StringUtils.isBlank(user.getIdCard())) {
             return;
@@ -1156,56 +1156,57 @@ public class ApiService {
 
 
         //判断人员信息是不是已经下发过了
-        if (user.getSended() != null && 1 == user.getSended()) {
-            //已经下发过了，需要调用照片更新
+        //8 曾經下發過信息 人臉刪除
+        if (user.getSended() != null && 8 == user.getSended()) {
+//            //已经下发过了，需要调用照片更新
             resultCode = personSendService.updateUserOnlyFace(user.getIdCard(), HttpUtils.requestUrlToBase64("http://127.0.0.1:" + port +"/ruoyi-admin"+ user.getFace()));
-            //更新海康权限
+//            //更新海康权限
             PersonVO personVO = new PersonVO();
             personVO.setAuthIsAll(false);
             personVO.setDeviceNos(userJurisdiction.getCodeByUser(user));
             personVO.setPersonId(user.getIdCard());
             personVO.setJobNo(user.getEmpNo());
             personVO.setPersonType(0);
-            //判断是不是存在特殊权限
-//            if (roles.size() > 0) {
-//                roles.forEach(sysRole -> {
-//                    //人道特殊权限-脸
-//                    if ("facePeopleRoad".equals(sysRole.getRoleKey())) {
-//                        personVO.setFaceSpecialPersonRoad("facePeopleRoad");
-//                    }
-//                    //车道特殊权限-脸
-//                    if ("facecCarRoad".equals(sysRole.getRoleKey())) {
-//                        personVO.setFaceSpecialCarRoad("facecCarRoad");
-//                    }
-//                    //人道特殊权限-卡
-//                    if ("CardPeopleRoad".equals(sysRole.getRoleKey())) {
-//                        personVO.setCardSpecialPersonRoad("CardPeopleRoad");
-//                    }
-//                    //车道特殊权限-卡
-//                    if ("cardCarRoad".equals(sysRole.getRoleKey())) {
-//                        personVO.setCardSpecialCarRoad("cardCarRoad");
-//                    }
-//                });
-//            }
-
-            personSendService.updateHikAuths(personVO);
-        }
-//        else {
-//            //还没下发过，下发新的内部人员
-//            //内部员工信息
-//            PersonVO requestVo = new PersonVO();
-//            requestVo.setAuthIsAll(false);
-        //requestVo.setDeviceNos(userJurisdiction.getCodeByUser(user));
-//            //拿到人脸Base64编码
-//            String faceBase64 = HttpUtils.requestUrlToBase64("http://127.0.0.1:" + port+"/ruoyi-admin" + user.getFace());
-//            requestVo.setFaceBase64Str(faceBase64);
-//            requestVo.setJobNo(user.getEmpNo());
-//            requestVo.setOrderSn(null);
-//            requestVo.setPersonId(user.getIdCard());
-//            requestVo.setPersonName(user.getNickName());
-//            requestVo.setPersonType(0);
-//            requestVo.setPhoneNo(user.getPhonenumber());
 //            //判断是不是存在特殊权限
+////            if (roles.size() > 0) {
+////                roles.forEach(sysRole -> {
+////                    //人道特殊权限-脸
+////                    if ("facePeopleRoad".equals(sysRole.getRoleKey())) {
+////                        personVO.setFaceSpecialPersonRoad("facePeopleRoad");
+////                    }
+////                    //车道特殊权限-脸
+////                    if ("facecCarRoad".equals(sysRole.getRoleKey())) {
+////                        personVO.setFaceSpecialCarRoad("facecCarRoad");
+////                    }
+////                    //人道特殊权限-卡
+////                    if ("CardPeopleRoad".equals(sysRole.getRoleKey())) {
+////                        personVO.setCardSpecialPersonRoad("CardPeopleRoad");
+////                    }
+////                    //车道特殊权限-卡
+////                    if ("cardCarRoad".equals(sysRole.getRoleKey())) {
+////                        personVO.setCardSpecialCarRoad("cardCarRoad");
+////                    }
+////                });
+////            }
+//
+            personSendService.updateHikAuthsSysyUser(personVO);
+        }
+        else if (user.getSended() != null && 0 == user.getSended()) {
+            //还没下发过，下发新的内部人员
+            //内部员工信息
+            PersonVO requestVo = new PersonVO();
+            requestVo.setAuthIsAll(false);
+            requestVo.setDeviceNos(userJurisdiction.getCodeByUser(user));
+            //拿到人脸Base64编码
+            String faceBase64 = HttpUtils.requestUrlToBase64("http://127.0.0.1:" + port+"/ruoyi-admin" + user.getFace());
+            requestVo.setFaceBase64Str(faceBase64);
+            requestVo.setJobNo(user.getEmpNo());
+            requestVo.setOrderSn(null);
+            requestVo.setPersonId(user.getIdCard());
+            requestVo.setPersonName(user.getNickName());
+            requestVo.setPersonType(0);
+            requestVo.setPhoneNo(user.getPhonenumber());
+            //判断是不是存在特殊权限
 //            if (roles.size() > 0) {
 //                roles.forEach(sysRole -> {
 //                    //人道特殊权限-脸
@@ -1226,10 +1227,10 @@ public class ApiService {
 //                    }
 //                });
 //            }
-//
-//            //调用下发人员信息接口
-        //resultCode = personSendService.downSendPersonInfoRequest(requestVo);
-//        }
+
+            //调用下发人员信息接口
+            resultCode = personSendService.downSendPersonInfoRequestForSubSysUser(requestVo);
+        }
 //        if (resultCode == 200) {
 //            userMapper.sendBackStatus(user.getUserId(), 1);
 //            //人员信息下发成功，调用绑定定位卡接口

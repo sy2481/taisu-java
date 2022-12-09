@@ -164,6 +164,8 @@ public interface SysUserMapper {
 
     int deleteFaceByUserId(@Param("userId") Long userId);
 
+    int deleteSysUserFaceByUserId(@Param("userId") Long userId);
+
     List<SysUser> selectByEmpNo(@Param("empNo") String empNo);
 
     /**

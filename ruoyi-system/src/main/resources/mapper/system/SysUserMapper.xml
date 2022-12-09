@@ -426,6 +426,13 @@
         where user_id = #{userId}
     </delete>
 
+    <delete id="deleteSysUserFaceByUserId">
+        update sys_user
+        set face   = null,
+            sended = 8
+        where user_id = #{userId}
+    </delete>
+
     <select id="selectByEmpNo" parameterType="java.lang.String"
             resultType="com.ruoyi.common.core.domain.entity.SysUser">
 

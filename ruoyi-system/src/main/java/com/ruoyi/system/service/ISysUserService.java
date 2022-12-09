@@ -230,6 +230,8 @@ public interface ISysUserService
 
     int deleteFaceByUserId( Long userId);
 
+    int deleteSysUserFaceByUserId( Long userId);
+
     public SysUser saveForNoFace(SysUser sysUser, Map<String, JSONObject> map);
 
     /**

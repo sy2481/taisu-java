@@ -628,9 +628,18 @@ public class SysUserServiceImpl implements ISysUserService {
     @Override
     public int deleteFaceByUserId(Long userId) {
         //修改状态
-        userMapper.sendBackStatus(userId,0);
+        //userMapper.sendBackStatus(userId,0);
         //删除人脸
         return userMapper.deleteFaceByUserId(userId);
+
+    }
+
+    @Override
+    public int deleteSysUserFaceByUserId(Long userId) {
+        //修改状态
+        //userMapper.sendBackStatus(userId,0);
+        //删除人脸
+        return userMapper.deleteSysUserFaceByUserId(userId);
 
     }
 
