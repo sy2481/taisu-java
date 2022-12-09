@@ -42,6 +42,15 @@ public class FactoryWorkBO implements Serializable {
     //车牌
     private String lcensePlate;
 
+    /** 排放標準 */
+    private Long emisStandard;
+
+    /** 排放標準名稱 */
+    private String emisStandardName;
+
+    /** 環保標誌圖片路徑 */
+    private String envSign;
+
     /**
      * 工单车辆
      */
