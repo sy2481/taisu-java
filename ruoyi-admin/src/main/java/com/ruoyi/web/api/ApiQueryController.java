@@ -4,12 +4,12 @@ import com.ruoyi.base.bo.PersonMsgBO;
 import com.ruoyi.base.domain.BaseSafetycar;
 import com.ruoyi.base.service.SafetycarService;
 import com.ruoyi.base.service.impl.ApiService;
+import com.ruoyi.common.core.domain.entity.SysDictData;
+import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.system.service.ISysDictTypeService;
 import com.ruoyi.web.api.basic.Response;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +28,8 @@ public class ApiQueryController {
 
     @Autowired
     private SafetycarService safetycarService;
+    @Autowired
+    private ISysDictTypeService dictTypeService;
 
     /**
      * 根据⻋牌号、⻋卡查询⼈员信息
@@ -121,6 +123,27 @@ public class ApiQueryController {
         try {
             List<BaseSafetycar> result = null;
             result = safetycarService.getSafetycarByCarno(param);
+
+            return Response.builder().code(0).data(result).build();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Response.error("查詢出錯，請稍後再試！");
+    }
+
+    /**
+     * 根据定位卡编号查询⼈员信息
+     * 根据定位卡编号，返回⼈员信息，和上一个一样
+     */
+    @ResponseBody
+    @GetMapping("/dictType/{dictType}")
+    public Response dictType(@PathVariable String dictType) {
+        try {
+            List<SysDictData> result = dictTypeService.selectDictDataByType(dictType);
+            if (StringUtils.isNull(result))
+            {
+                result = new ArrayList<SysDictData>();
+            }
 
             return Response.builder().code(0).data(result).build();
         }catch (Exception e) {
