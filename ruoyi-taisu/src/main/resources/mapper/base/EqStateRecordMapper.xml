@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.EqStateRecordMapper">
+    
+    <resultMap type="EqStateRecord" id="EqStateRecordResult">
+        <result property="id"    column="id"    />
+        <result property="eqType"    column="eq_type"    />
+        <result property="eqId"    column="eq_id"    />
+        <result property="eqName"    column="eq_name"    />
+        <result property="ip"    column="ip"    />
+        <result property="port"    column="port"    />
+        <result property="status"    column="status"    />
+        <result property="statusName"    column="status_name"    />
+        <result property="recordTime"    column="record_time"    />
+    </resultMap>
+
+    <sql id="selectEqStateRecordVo">
+        select id, eq_type, eq_id, eq_name, ip, port, status, status_name, record_time from eq_state_record
+    </sql>
+
+    <select id="selectEqStateRecordList" parameterType="EqStateRecord" resultMap="EqStateRecordResult">
+        <include refid="selectEqStateRecordVo"/>
+        <where>  
+            <if test="eqType != null  and eqType != ''"> and eq_type = #{eqType}</if>
+            <if test="eqId != null "> and eq_id = #{eqId}</if>
+            <if test="eqName != null  and eqName != ''"> and eq_name like concat('%', #{eqName}, '%')</if>
+            <if test="ip != null  and ip != ''"> and ip like concat('%', #{ip}, '%')</if>
+            <if test="port != null  and port != ''"> and port = #{port}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="statusName != null  and statusName != ''"> and status_name like concat('%', #{statusName}, '%')</if>
+            <if test="recordTime != null "> and record_time = #{recordTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectEqStateRecordById" parameterType="Long" resultMap="EqStateRecordResult">
+        <include refid="selectEqStateRecordVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertEqStateRecord" parameterType="EqStateRecord">
+        insert into eq_state_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="eqType != null">eq_type,</if>
+            <if test="eqId != null">eq_id,</if>
+            <if test="eqName != null">eq_name,</if>
+            <if test="ip != null">ip,</if>
+            <if test="port != null">port,</if>
+            <if test="status != null">status,</if>
+            <if test="statusName != null">status_name,</if>
+            <if test="recordTime != null">record_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="eqType != null">#{eqType},</if>
+            <if test="eqId != null">#{eqId},</if>
+            <if test="eqName != null">#{eqName},</if>
+            <if test="ip != null">#{ip},</if>
+            <if test="port != null">#{port},</if>
+            <if test="status != null">#{status},</if>
+            <if test="statusName != null">#{statusName},</if>
+            <if test="recordTime != null">#{recordTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEqStateRecord" parameterType="EqStateRecord">
+        update eq_state_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eqType != null">eq_type = #{eqType},</if>
+            <if test="eqId != null">eq_id = #{eqId},</if>
+            <if test="eqName != null">eq_name = #{eqName},</if>
+            <if test="ip != null">ip = #{ip},</if>
+            <if test="port != null">port = #{port},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="statusName != null">status_name = #{statusName},</if>
+            <if test="recordTime != null">record_time = #{recordTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteEqStateRecordById" parameterType="Long">
+        delete from eq_state_record where id = #{id}
+    </delete>
+
+    <delete id="deleteEqStateRecordByIds" parameterType="String">
+        delete from eq_state_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectEqStateRecordListDescByEqDevice" resultMap="EqStateRecordResult">
+        <include refid="selectEqStateRecordVo"/>
+        <where>
+            and eq_type = #{eqType}
+            and eq_id = #{eqId}
+        </where>
+        order by record_time desc
+    </select>
+</mapper>

@@ -110,3 +110,18 @@ zhenqu:
 
   #账户名
   appId: client
+
+#设备服务
+equipment:
+  #心跳检测
+  ping:
+    #是否启用
+    enable: true
+    #线程池大小
+    threadPoolSize: 10
+    #检测时间间隔(s)
+    interval: 60
+    #检测结果有效时长(s)，超过此时长则判定设备已离线
+    effective: 100
+    #单次重试次数（检测失败时在短时间内重试的次数，如果重试依然失败，且次数达到了上限，那么将会间隔一段时间（interval）后再次检测。）
+    retry: 3
