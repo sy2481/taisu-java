@@ -159,6 +159,31 @@ public class ApiFaceDataController {
         return Response.error("上傳錯誤，請稍後再試。");
     }
 
+    //上傳照片，返回照片地址
+    @ResponseBody
+    @RequestMapping("/uploadCarImg")
+    public Response uploadCarImg(MultipartFile file) {
+        try {
+            if (file.getSize() == 0) {
+                return Response.error("圖片不存在，請重新上傳");
+            }
+            // 返回：/profile/face/2022/03/06/原文件名_20220306102949A001.png
+            // 图片全路径为： http://localhost:8080 + fileUrl
+            String fileUrl = FileUploadUtils.upload(RuoYiConfig.getProfile() + "/car", file);
+
+            //循环压缩
+            if (file.getSize() > 1024 * 100) {
+                fileUrl = ImgFileTools.compressionLessByGoogle(RuoYiConfig.getProfile(), fileUrl, 100);
+            }
+            System.out.println("profile:++" + fileUrl);
+
+            return Response.builder().code(0).data(fileUrl).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Response.error("上傳錯誤，請稍後再試。");
+    }
+
     // 根据员工 id,設置人臉照片
     @ResponseBody
     @GetMapping("/facePicForEmployee")
