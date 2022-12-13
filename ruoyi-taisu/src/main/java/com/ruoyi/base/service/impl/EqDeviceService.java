@@ -79,7 +79,7 @@ public class EqDeviceService implements IEqDeviceService {
         List<EqDevice> list=new ArrayList<>();
         for(HikEquipment item:hikList){
             EqDevice vo=new EqDevice();
-            vo.setEqType(EqType.PLC.getName());
+            vo.setEqType(EqType.HIK.getName());
             vo.setEqId(item.getId());
             vo.setEqName(item.getName());
             vo.setIp(item.getIp());
