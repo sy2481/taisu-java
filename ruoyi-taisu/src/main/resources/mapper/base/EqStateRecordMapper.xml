@@ -31,6 +31,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="status != null "> and status = #{status}</if>
             <if test="statusName != null  and statusName != ''"> and status_name like concat('%', #{statusName}, '%')</if>
             <if test="recordTime != null "> and record_time = #{recordTime}</if>
+            <if test="params.beginRecordTime != null">and record_time &gt;= #{params.beginRecordTime} </if>
+            <if test="params.endRecordTime != null ">and record_time &lt;= #{params.endRecordTime} </if>
         </where>
     </select>
     
