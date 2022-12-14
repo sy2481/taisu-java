@@ -246,10 +246,11 @@
 
     <select id="listByWorkNoAndDate" resultType="com.ruoyi.base.bo.FactoryWorkBO">
         select
-               opt.project_no AS projectNo, opt.work_no AS workNo, opt.work_time AS workTime,opt.car_id AS lcensePlate,
-               mf.factory_id AS factoryId, mf.id_card AS idCard, mf.name, mf.face,mf.phone,mf.address, mf.sended, mf.sex
+            opt.project_no AS projectNo, opt.work_no AS workNo, opt.work_time AS workTime,opt.car_id AS lcensePlate,
+            mf.factory_id AS factoryId, mf.id_card AS idCard, mf.name, mf.face,mf.phone,mf.address, mf.sended, mf.sex
+                ,mf.emis_standard as emisStandard,mf.emis_standard_name as emisStandardName,mf.env_sign as envSign
         from man_work opt
-         LEFT JOIN man_factory mf ON opt.work_no = mf.work_no
+                 LEFT JOIN man_factory mf ON opt.work_no = mf.work_no
         where mf.work_no like concat('%', #{workNo}, '%')
           and CONVERT(varchar(100), opt.work_time, 23) = #{date}
           and opt.work_type = #{workType}

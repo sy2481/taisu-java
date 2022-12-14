@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.ruoyi.base.mapper.BaseCarMapper;
 import com.ruoyi.base.domain.BaseCar;
 import com.ruoyi.base.service.IBaseCarService;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 車Service业务层处理
@@ -119,6 +120,8 @@ public class BaseCarService implements IBaseCarService
      * @param baseCar
      * @return
      */
+    @Override
+    @Transactional
     public int saveBaseCar(BaseCar baseCar,Long manFactoryId){
         int result=0;
         BaseCar entity=baseCarMapper.selectBaseCarByIdCard(baseCar.getIdCard());
