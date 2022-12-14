@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.SocketException;
 
@@ -63,7 +64,14 @@ public class PlcSocket {
         this.codeType = codeType;
 
         try {
-            socket = new Socket(ip, port);
+            Integer bindPort = changeIPToBindPort(ip);
+            //修改方法 替换socket绑定端口
+            socket = new Socket();
+            socket.setSoLinger(true, 0);
+//            socket.setReuseAddress(true);
+            socket.bind(new InetSocketAddress(bindPort));
+            socket.connect(new InetSocketAddress(ip, port));
+            //socket = new Socket(ip, port);
             socket.setKeepAlive(true);
         } catch (Exception e) {
             logger.error("socket连接失败", ip + "--->" + port);
@@ -214,7 +222,7 @@ public class PlcSocket {
             plc.sendComm(String.format(PlcCommandConstant.CLOSE_DOOR_COMMAND, index));
 //        plc.sendComm("02FF0A0000000000204D010000");
             try {
-                Thread.sleep(400);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -222,20 +230,25 @@ public class PlcSocket {
             //byte[] bytes1 = CrcUtils.hexStringToByte(String.format(PlcCommandConstant.OPEN_DOOR_COMMAND, index));
             plc.sendComm(String.format(PlcCommandConstant.OPEN_DOOR_COMMAND, index));
             try {
-                Thread.sleep(400);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 //        plc.sendComm("02FF0A0000000000204D010000");
             plc.sendComm(String.format(PlcCommandConstant.CLOSE_DOOR_COMMAND, index));
             try {
-                Thread.sleep(200);
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             plc.close();
         }
 
+    }
+
+    public static Integer changeIPToBindPort(String ip) {
+        String changePortString = ip.replace("0.", "").replace(".", "").substring(6);
+        return Integer.parseInt(changePortString);
     }
 
 

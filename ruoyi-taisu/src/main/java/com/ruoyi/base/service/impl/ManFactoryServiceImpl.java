@@ -232,6 +232,11 @@ public class ManFactoryServiceImpl implements IManFactoryService {
     }
 
     @Override
+    public int updateDangerCar() {
+        return manFactoryMapper.updateDangerCar();
+    }
+
+    @Override
     @Transactional(readOnly = false, rollbackFor = Exception.class)
     public void delFactory() {
         //删除厂商
@@ -242,7 +247,8 @@ public class ManFactoryServiceImpl implements IManFactoryService {
 
     @Override
     public List<ManFactory> selectCangerousCar(String idCard, String plateNo) {
-        return manFactoryMapper.selectCangerousCar(idCard, plateNo);
+        log.error("selectCangerousCar--->"+plateNo);
+        return manFactoryMapper.selectCangerousCar(idCard, plateNo.substring(1));
     }
 
     @Override
@@ -255,13 +261,13 @@ public class ManFactoryServiceImpl implements IManFactoryService {
             personSendService.downSendDeletePersonOnlyFace(factory.getIdCard());
         }
 //        数据中心厂商人员图片会同步 需要删除
-        IdCardBO idCardBO=new IdCardBO();
+        IdCardBO idCardBO = new IdCardBO();
         idCardBO.setIdCard(factory.getIdCard());
 //        JSONObject json = new JSONObject();
 //        json.put("idCard", factory.getIdCard());
 
         String json = JSONObject.toJSONString(idCardBO);
-        HttpUtils.sendJsonPost(centHost+"/api/wechat/faceData/deleteFaceCenter",json);
+        HttpUtils.sendJsonPost(centHost + "/api/wechat/faceData/deleteFaceCenter", json);
 
         return manFactoryMapper.deleteFaceByFactoryId(factoryId);
     }
@@ -316,7 +322,7 @@ public class ManFactoryServiceImpl implements IManFactoryService {
                 item.setPhone(phone);
                 item.setAddress(address);
 
-                ManFactory manFactory=new ManFactory();
+                ManFactory manFactory = new ManFactory();
                 manFactory.setIdCard(idCard);
                 manFactory.setFace(face);
                 manFactory.setPhone(phone);
@@ -368,13 +374,13 @@ public class ManFactoryServiceImpl implements IManFactoryService {
 
 
     public static void main(String[] args) {
-        IdCardBO idCardBO=new IdCardBO();
+        IdCardBO idCardBO = new IdCardBO();
         idCardBO.setIdCard("330203198903010617");
 //        JSONObject json = new JSONObject();
 //        json.put("idCard", factory.getIdCard());
 
         String json = JSONObject.toJSONString(idCardBO);
-        HttpUtils.sendJsonPost("http://192.168.10.45:8090/ruoyi-center"+"/api/wechat/faceData/deleteFaceCenter",json);
+        HttpUtils.sendJsonPost("http://192.168.10.45:8090/ruoyi-center" + "/api/wechat/faceData/deleteFaceCenter", json);
     }
 
 }

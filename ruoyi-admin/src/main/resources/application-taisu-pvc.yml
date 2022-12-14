@@ -63,7 +63,8 @@ spring:
       # 定时器数据源
       iemdg:
         enabled: true
-        url: jdbc:sqlserver://10.217.36.2:1433;DatabaseName=IEMDG
+#        url: jdbc:sqlserver://10.217.36.2:1433;DatabaseName=IEMDG
+        url: jdbc:sqlserver://192.168.50.249:1433;DatabaseName=IEMDG
         username: faceid
         password: faceid
       # 初始连接数

@@ -278,6 +278,10 @@
         update man_factory set lcense_plate = '' ,car_card_no= '', work_no = null, entered = 0, sended = 0
     </update>
 
+    <update id="updateDangerCar">
+        update man_factory set car_card_no= '', work_no = null, entered = 0, sended = 0 where danger_type=1
+    </update>
+
     <update id="deleteFaceByFactoryId">
         update man_factory set face = null, sended = 8 where factory_id = #{factoryId}
     </update>
@@ -297,7 +301,7 @@
                 AND u.id_card = #{idCard}
             </if>
             <if test="plateNo != null and plateNo != ''">
-                AND u.lcense_plate = #{plateNo}
+                AND u.lcense_plate like concat('%', #{plateNo}, '%')
             </if>
             AND (work_no !='' OR work_no IS NOT NULL)
             AND danger_type=1

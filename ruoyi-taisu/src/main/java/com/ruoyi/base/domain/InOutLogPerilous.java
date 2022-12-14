@@ -67,6 +67,7 @@ public class InOutLogPerilous extends BaseEntity
     /**
      * 操作时间
      */
+    @Excel(name = "操作时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date operationTime;
     /**
