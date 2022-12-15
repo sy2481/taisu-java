@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -69,6 +70,7 @@ public class EqDeviceService implements IEqDeviceService {
             vo.setEqName(item.getName());
             vo.setIp(item.getIp());
             vo.setPort(null);
+            vo.setUpdateTime(item.getUpdateTime());
             list.add(vo);
         }
         return list;
@@ -84,8 +86,57 @@ public class EqDeviceService implements IEqDeviceService {
             vo.setEqName(item.getName());
             vo.setIp(item.getIp());
             vo.setPort(null);
+            vo.setUpdateTime(item.getUpdateTime());
             list.add(vo);
         }
         return list;
+    }
+
+    /**
+     * 獲取設備更新時間
+     * @param eqType
+     * @param eqId
+     * @return
+     */
+    @Override
+    public Date lastUpdateTime(String eqType, Long eqId){
+        Date lastUpdateTime=null;
+        if(eqType.equals(EqType.HIK.getName())){
+            HikEquipment hikEquipment= hikEquipmentMapper.selectHikEquipmentById(eqId);
+            if(hikEquipment!=null){
+                lastUpdateTime= hikEquipment.getUpdateTime();
+            }
+        }else if(eqType.equals(EqType.PLC.getName())){
+            PlcEquipment plcEquipment=plcEquipmentMapper.selectPlcEquipmentById(eqId);
+            if(plcEquipment!=null){
+                lastUpdateTime=plcEquipment.getUpdateTime();
+            }
+        }
+        return lastUpdateTime;
+    }
+
+    /**
+     * 獲取設備
+     * @return
+     */
+    public EqDevice getEqDevice(String eqType, Long eqId)
+    {
+        EqDevice eqDevice=null;
+        if(eqType.equals(EqType.HIK.getName())){
+            HikEquipment hikEquipment= hikEquipmentMapper.selectHikEquipmentById(eqId);
+            if(hikEquipment!=null){
+                List<HikEquipment> list=new ArrayList<>();
+                list.add(hikEquipment);
+                eqDevice= this.hikToDevice(list).get(0);
+            }
+        }else if(eqType.equals(EqType.PLC.getName())){
+            PlcEquipment plcEquipment=plcEquipmentMapper.selectPlcEquipmentById(eqId);
+            if(plcEquipment!=null){
+                List<PlcEquipment> list=new ArrayList<>();
+                list.add(plcEquipment);
+                eqDevice= this.plcToDevice(list).get(0);
+            }
+        }
+        return eqDevice;
     }
 }

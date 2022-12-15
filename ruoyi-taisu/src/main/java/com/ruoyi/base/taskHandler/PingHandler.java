@@ -64,6 +64,49 @@ public class PingHandler extends TaskQueueHandler {
         super.start();
     }
 
+    /**
+     * 新增
+     *
+     * @param data 设备信息
+     */
+    public void add(EqDevice data)
+            throws
+            Exception {
+        //新增设备
+        addEquipment(data);
+
+        //开始处理
+        super.handler();
+    }
+
+    /**
+     * 更新设备信息
+     *
+     * @param eqDevice 当前设备信息
+     */
+    private void update(EqDevice eqDevice) {
+        EqDevice newEqDevice
+                = eqDeviceService.getEqDevice(eqDevice.getEqType(),
+                eqDevice.getEqId());
+
+        if (!Objects.equals(newEqDevice.getEqName(),
+                eqDevice.getEqName()))
+            eqDevice.setEqName(newEqDevice.getEqName());
+
+        if (!Objects.equals(newEqDevice.getIp(),
+                eqDevice.getIp()))
+            eqDevice.setIp(newEqDevice.getIp());
+
+        if (!Objects.equals(newEqDevice.getPort(),
+                eqDevice.getPort()))
+            eqDevice.setPort(newEqDevice.getPort());
+
+        if (!Objects.equals(newEqDevice.getUpdateTime(),
+                eqDevice.getUpdateTime()))
+            eqDevice.setUpdateTime(newEqDevice.getUpdateTime());
+
+    }
+
     private void addEquipment(EqDevice vo) {
         EqPing eqPing = eqPingService.getEqPingByEqDevice(vo);
         Long pingId = eqPing.getId();
@@ -163,18 +206,17 @@ public class PingHandler extends TaskQueueHandler {
         EqDevice eqDevice = data.getEqDevice();
 
         try {
-           /* //获取设备最后更新时间
-            Date lastUpdateTime = deviceService.lastUpdateTime(data.a.getType(),
-                    data.a.getKey(),
-                    false);
+            //获取设备最后更新时间
+            Date lastUpdateTime = eqDeviceService.lastUpdateTime(eqDevice.getEqType(),
+                    eqDevice.getEqId());
 
             if (lastUpdateTime == null) {
                 //设备信息已被移除
                 equipmentStateMap.remove(taskKey);
                 return;
-            } else if (!lastUpdateTime.equals(data.a.getUpdateTime()))
+            } else if (!lastUpdateTime.equals(eqDevice.getUpdateTime()))
                 //设备信息已更新
-                update(data.a);*/
+                update(eqDevice);
 
             //检测结果
             boolean flag;
