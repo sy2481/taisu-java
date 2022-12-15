@@ -61,7 +61,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
 
-    <insert id="insertHikEquipment" parameterType="HikEquipment">
+    <insert id="insertHikEquipment" parameterType="HikEquipment" useGeneratedKeys="true" keyProperty="id">
         insert into hik_equipment
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>

@@ -1,12 +1,17 @@
 package com.ruoyi.base.service.impl;
 
 import com.ruoyi.base.domain.PlcEquipment;
+import com.ruoyi.base.enums.EqType;
 import com.ruoyi.base.interact.PersonSendService;
 import com.ruoyi.base.mapper.PlcEquipmentMapper;
+import com.ruoyi.base.service.IEqDeviceService;
 import com.ruoyi.base.service.IPlcEquipmentService;
+import com.ruoyi.base.taskHandler.PingHandler;
 import com.ruoyi.base.utils.PlcRedisUtils;
 import com.ruoyi.base.utils.UserUtils;
 import com.ruoyi.common.core.domain.entity.SysDept;
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.ioc.IOCExtension;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.config.ThreadPoolConfig;
@@ -105,7 +110,17 @@ public class PlcEquipmentServiceImpl implements IPlcEquipmentService {
     @Override
     public int insertPlcEquipment(PlcEquipment plcEquipment) {
         plcEquipment.setCreateTime(DateUtils.getNowDate());
+        plcEquipment.setUpdateTime(DateUtils.getNowDate());
         int i = plcEquipmentMapper.insertPlcEquipment(plcEquipment);
+        //添加設備後，進行設備在線記錄檢測
+        try {
+            IOCExtension.applicationContext.getBean(PingHandler.class)
+                    .add(IOCExtension.applicationContext.getBean(IEqDeviceService.class)
+                            .getEqDevice(EqType.PLC.getName(),
+                                    plcEquipment.getId()));
+        } catch (Exception ex) {
+            throw new ServiceException("新增设备失败");
+        }
         if (i > 0) {
             pool.threadPoolTaskExecutor().execute(() -> personSendService.equipmentCache());
         }
