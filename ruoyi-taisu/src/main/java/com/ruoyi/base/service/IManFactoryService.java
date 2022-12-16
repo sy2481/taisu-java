@@ -94,6 +94,8 @@ public interface IManFactoryService {
      */
     public int updateCar();
 
+    int updateDangerCar();
+
     void delFactory();
 
     List<ManFactory> selectCangerousCar(String idCard, String plateNo);

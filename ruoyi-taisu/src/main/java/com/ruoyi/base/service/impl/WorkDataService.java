@@ -453,7 +453,11 @@ public class WorkDataService {
         dangerFactory.setLcensePlate(workBo.getCarId());
         //当前工程编号
         dangerFactory.setThisNumber(workBo.getWorkNumber());
-        dangerFactory.setEgNm(ZJFConverter.SimToTra(workBo.getEgnm()));
+        if(workBo.getEgnm()!=null) {
+            dangerFactory.setEgNm(ZJFConverter.SimToTra(workBo.getEgnm()));
+        }else {
+            dangerFactory.setEgNm("");
+        }
         //危险品人员
         dangerFactory.setDangerType(1);
         dangerFactory.setSended(0);

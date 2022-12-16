@@ -54,6 +54,7 @@ public class   Timing {
         try {
             log.info(new Date() + "定时开始");
             manFactoryService.updateCar();
+            manFactoryService.updateDangerCar();
             carCardMapper.dailyClear();
             carCardBindMapper.cardBindClear();
         } catch (Exception e) {

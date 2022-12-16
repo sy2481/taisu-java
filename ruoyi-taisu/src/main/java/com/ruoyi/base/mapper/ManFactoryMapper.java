@@ -102,6 +102,8 @@ public interface ManFactoryMapper {
      */
     int updateCar();
 
+    int updateDangerCar();
+
     int deleteFaceByFactoryId(@Param("factoryId") Long factoryId);
 
     void sendBackStatus(@Param("factoryId") Long factoryId, @Param("sendedStatus") Integer sendedStatus);
@@ -131,17 +133,18 @@ public interface ManFactoryMapper {
      *
      * @param idCard
      */
-  //  String selectAllManFactory(@Param("idCard") String idCard);
+    //  String selectAllManFactory(@Param("idCard") String idCard);
 
     /**
      * 根据身份证获取
      *
      * @param idCards 身份证号
      */
-    List<ManFactory> selectListFaceByIdCards(@Param("idCards")List<String> idCards);
+    List<ManFactory> selectListFaceByIdCards(@Param("idCards") List<String> idCards);
 
     /**
      * 根据身份证更新头像
+     *
      * @param manFactory
      */
     void updateFaceByIdCard(ManFactory manFactory);

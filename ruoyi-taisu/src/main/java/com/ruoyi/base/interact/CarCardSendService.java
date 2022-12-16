@@ -97,7 +97,7 @@ public class CarCardSendService {
     public void downSendUnbindCarCard(String cardNumber) {
         JSONObject json = new JSONObject();
         json.put("cardNumber", cardNumber);
-        HttpUtils.sendJsonPost(host + "/hik/car/untie/card", json.toJSONString());
+        HttpUtils.sendJsonPost(host + "/hik/car/untie", json.toJSONString());
     }
 
     /**
@@ -109,7 +109,7 @@ public class CarCardSendService {
         json.put("cardNumber", carCardVO.getCardNumber());
         json.put("cardNo", carCardVO.getCardNo());
         json.put("cardType", carCardVO.getCardType());
-        HttpUtils.sendJsonPost(host + "/hik/car/untie/carcard", json.toJSONString());
+        HttpUtils.sendJsonPost(host + "/hik/car/untie/card", json.toJSONString());
     }
 
 }
