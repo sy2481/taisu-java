@@ -387,7 +387,7 @@ public class WorkDataService {
 
             //manWorkFactory.setWorkId(dangerWork.getWorkId());
             //manWorkFactory.setFactoryId(dangerFactory.getFactoryId());
-            BeanUtils.copyProperties(manWork, manWorkFactory);
+            BeanUtils.copyProperties(dangerWork, manWorkFactory);
             BeanUtils.copyProperties(dangerFactory,manWorkFactory);
             manWorkFactory.setEffectiveTime(dangerWork.getWorkTime());
             //查询中间表，有将不插入，没有进行插入
