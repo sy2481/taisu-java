@@ -1,11 +1,14 @@
 package com.ruoyi.base.domain;
 
+import java.util.Date;
+
 public class EqDevice {
     private String eqType;
     private Long eqId;
     private String eqName;
     private String ip;
     private String port;
+    private Date updateTime;
 
     public String getEqType() {
         return eqType;
@@ -46,4 +49,13 @@ public class EqDevice {
     public void setPort(String port) {
         this.port = port;
     }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
+    }
+
 }

@@ -51,7 +51,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where ip = #{ip}
     </select>
 
-    <insert id="insertPlcEquipment" parameterType="PlcEquipment">
+    <insert id="insertPlcEquipment" parameterType="PlcEquipment" useGeneratedKeys="true" keyProperty="id">
         insert into plc_equipment
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>

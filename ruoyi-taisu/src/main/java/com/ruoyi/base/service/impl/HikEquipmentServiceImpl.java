@@ -3,11 +3,16 @@ package com.ruoyi.base.service.impl;
 import com.ruoyi.base.domain.HikEquipment;
 import com.ruoyi.base.domain.PlcEquipment;
 import com.ruoyi.base.domain.PlcHik;
+import com.ruoyi.base.enums.EqType;
 import com.ruoyi.base.interact.PersonSendService;
 import com.ruoyi.base.mapper.HikEquipmentMapper;
 import com.ruoyi.base.mapper.PlcEquipmentMapper;
 import com.ruoyi.base.mapper.PlcHikCommandMapper;
+import com.ruoyi.base.service.IEqDeviceService;
 import com.ruoyi.base.service.IHikEquipmentService;
+import com.ruoyi.base.taskHandler.PingHandler;
+import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.ioc.IOCExtension;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.framework.config.ThreadPoolConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +72,17 @@ public class HikEquipmentServiceImpl implements IHikEquipmentService {
     @Override
     public int insertHikEquipment(HikEquipment hikEquipment) {
         hikEquipment.setCreateTime(DateUtils.getNowDate());
+        hikEquipment.setUpdateTime(DateUtils.getNowDate());
         int i = hikEquipmentMapper.insertHikEquipment(hikEquipment);
+        //添加設備後，進行設備在線記錄檢測
+        try {
+            IOCExtension.applicationContext.getBean(PingHandler.class)
+                    .add(IOCExtension.applicationContext.getBean(IEqDeviceService.class)
+                            .getEqDevice(EqType.HIK.getName(),
+                                    hikEquipment.getId()));
+        } catch (Exception ex) {
+            throw new ServiceException("新增设备失败");
+        }
         if (i>0){
             pool.threadPoolTaskExecutor().execute(() ->  personSendService.equipmentCache());
         }
