@@ -73,5 +73,19 @@ public interface IBaseCarService
      * @param baseCar
      * @return
      */
-    public int saveBaseCar(BaseCar baseCar,Long manFactoryId);
+    public int saveBaseCarForManFactory(BaseCar baseCar,Long manFactoryId);
+
+    /**
+     * 保存車輛表
+     * @param baseCar
+     * @return
+     */
+    public int saveBaseCarForEmployee(BaseCar baseCar,Long sysUserId);
+
+    /**
+     * 保存車輛表
+     * @param baseCar
+     * @return
+     */
+    public int saveBaseCar(BaseCar baseCar);
 }

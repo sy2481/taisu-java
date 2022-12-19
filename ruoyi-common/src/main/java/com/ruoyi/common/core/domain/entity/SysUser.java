@@ -214,6 +214,11 @@ SysUser extends BaseEntity
      * sn號碼
      */
     private String snNum;
+
+    private Long emisStandard;//排放標準 國5 國6
+    private String emisStandardName;
+    private String envSign; //環保標誌
+
     public String getDeptName() {
         return deptName;
     }
@@ -675,6 +680,30 @@ SysUser extends BaseEntity
     public void setRoleId(Long roleId)
     {
         this.roleId = roleId;
+    }
+
+    public Long getEmisStandard() {
+        return emisStandard;
+    }
+
+    public void setEmisStandard(Long emisStandard) {
+        this.emisStandard = emisStandard;
+    }
+
+    public String getEmisStandardName() {
+        return emisStandardName;
+    }
+
+    public void setEmisStandardName(String emisStandardName) {
+        this.emisStandardName = emisStandardName;
+    }
+
+    public String getEnvSign() {
+        return envSign;
+    }
+
+    public void setEnvSign(String envSign) {
+        this.envSign = envSign;
     }
 
     @Override

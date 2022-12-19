@@ -1,19 +1,20 @@
 package com.ruoyi.base.service.impl;
 
-import java.util.List;
-
+import com.ruoyi.base.domain.BaseCar;
 import com.ruoyi.base.domain.ManFactory;
+import com.ruoyi.base.mapper.BaseCarMapper;
 import com.ruoyi.base.mapper.ManFactoryMapper;
+import com.ruoyi.base.service.IBaseCarService;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
-import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.system.mapper.SysUserMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ruoyi.base.mapper.BaseCarMapper;
-import com.ruoyi.base.domain.BaseCar;
-import com.ruoyi.base.service.IBaseCarService;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 車Service业务层处理
@@ -22,12 +23,13 @@ import org.springframework.transaction.annotation.Transactional;
  * @date 2022-12-08
  */
 @Service
-public class BaseCarService implements IBaseCarService
-{
+public class BaseCarService implements IBaseCarService {
     @Autowired
     private BaseCarMapper baseCarMapper;
     @Autowired
     private ManFactoryMapper manFactoryMapper;
+    @Autowired
+    private SysUserMapper sysUserMapper;
 
     /**
      * 查询車
@@ -36,8 +38,7 @@ public class BaseCarService implements IBaseCarService
      * @return 車
      */
     @Override
-    public BaseCar selectBaseCarById(Long id)
-    {
+    public BaseCar selectBaseCarById(Long id) {
         return baseCarMapper.selectBaseCarById(id);
     }
 
@@ -48,8 +49,7 @@ public class BaseCarService implements IBaseCarService
      * @return 車
      */
     @Override
-    public List<BaseCar> selectBaseCarList(BaseCar baseCar)
-    {
+    public List<BaseCar> selectBaseCarList(BaseCar baseCar) {
         return baseCarMapper.selectBaseCarList(baseCar);
     }
 
@@ -60,8 +60,7 @@ public class BaseCarService implements IBaseCarService
      * @return 结果
      */
     @Override
-    public int insertBaseCar(BaseCar baseCar)
-    {
+    public int insertBaseCar(BaseCar baseCar) {
         baseCar.setCreateBy(SecurityUtils.getUsernameDefaultSystem());
         baseCar.setCreateTime(DateUtils.getNowDate());
         return baseCarMapper.insertBaseCar(baseCar);
@@ -74,8 +73,7 @@ public class BaseCarService implements IBaseCarService
      * @return 结果
      */
     @Override
-    public int updateBaseCar(BaseCar baseCar)
-    {
+    public int updateBaseCar(BaseCar baseCar) {
         baseCar.setUpdateBy(SecurityUtils.getUsernameDefaultSystem());
         baseCar.setUpdateTime(DateUtils.getNowDate());
         return baseCarMapper.updateBaseCar(baseCar);
@@ -88,8 +86,7 @@ public class BaseCarService implements IBaseCarService
      * @return 结果
      */
     @Override
-    public int deleteBaseCarByIds(Long[] ids)
-    {
+    public int deleteBaseCarByIds(Long[] ids) {
         return baseCarMapper.deleteBaseCarByIds(ids);
     }
 
@@ -100,8 +97,7 @@ public class BaseCarService implements IBaseCarService
      * @return 结果
      */
     @Override
-    public int deleteBaseCarById(Long id)
-    {
+    public int deleteBaseCarById(Long id) {
         return baseCarMapper.deleteBaseCarById(id);
     }
 
@@ -111,46 +107,85 @@ public class BaseCarService implements IBaseCarService
      * @param idCard 車牌
      * @return 車
      */
-    public BaseCar selectBaseCarByIdCard(String idCard){
+    public BaseCar selectBaseCarByIdCard(String idCard) {
         return baseCarMapper.selectBaseCarByIdCard(idCard);
     }
 
     /**
      * 保存車輛表
+     *
      * @param baseCar
      * @return
      */
     @Override
     @Transactional
-    public int saveBaseCar(BaseCar baseCar,Long manFactoryId){
-        int result=0;
-        BaseCar entity=baseCarMapper.selectBaseCarByIdCard(baseCar.getIdCard());
-        Long oldId=null;
-        boolean isAdd=false;
-        if(entity==null){
-            isAdd=true;
-            entity=new BaseCar();
-        }else{
-            isAdd=false;
-            oldId=entity.getId();
-        }
-        BeanUtils.copyProperties(baseCar,entity);
-        if(isAdd) {
-            result+=this.insertBaseCar(entity);
-        }else{
-            entity.setId(oldId);
-            result+=this.updateBaseCar(entity);
-        }
+    public int saveBaseCarForManFactory(BaseCar baseCar, Long manFactoryId) {
+        int reuslt = 0;
+        reuslt += this.saveBaseCar(baseCar);
 
-        //同時更新工單數據
-        if(manFactoryId!=null){
-            ManFactory manFactory=new ManFactory();
+        //同時更新廠商數據
+        if (manFactoryId != null) {
+            ManFactory manFactory = new ManFactory();
             manFactory.setEmisStandard(baseCar.getEmisStandard());
             manFactory.setEmisStandardName(baseCar.getEmisStandardName());
             manFactory.setEnvSign(baseCar.getEnvSign());
             manFactory.setFactoryId(manFactoryId);
-            manFactoryMapper.updateManFactory(manFactory);
+            reuslt += manFactoryMapper.updateManFactory(manFactory);
         }
+        return reuslt;
+    }
+
+    /**
+     * 保存車輛表
+     *
+     * @param baseCar
+     * @return
+     */
+    @Override
+    @Transactional
+    public int saveBaseCarForEmployee(BaseCar baseCar, Long sysUserId) {
+        int reuslt = 0;
+        reuslt += this.saveBaseCar(baseCar);
+
+        if (sysUserId != null) {
+            SysUser sysUser = new SysUser();
+            sysUser.setEmisStandard(baseCar.getEmisStandard());
+            sysUser.setEmisStandardName(baseCar.getEmisStandardName());
+            sysUser.setEnvSign(baseCar.getEnvSign());
+            sysUser.setUserId(sysUserId);
+            reuslt += sysUserMapper.updateUser(sysUser);
+        }
+        return reuslt;
+    }
+
+    /**
+     * 保存車輛表
+     *
+     * @param baseCar
+     * @return
+     */
+    @Override
+    @Transactional
+    public int saveBaseCar(BaseCar baseCar) {
+        int result = 0;
+        BaseCar entity = baseCarMapper.selectBaseCarByIdCard(baseCar.getIdCard());
+        Long oldId = null;
+        boolean isAdd = false;
+        if (entity == null) {
+            isAdd = true;
+            entity = new BaseCar();
+        } else {
+            isAdd = false;
+            oldId = entity.getId();
+        }
+        BeanUtils.copyProperties(baseCar, entity);
+        if (isAdd) {
+            result += this.insertBaseCar(entity);
+        } else {
+            entity.setId(oldId);
+            result += this.updateBaseCar(entity);
+        }
+
 
         return result;
     }

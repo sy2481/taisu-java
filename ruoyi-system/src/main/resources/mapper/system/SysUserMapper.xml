@@ -45,6 +45,9 @@
         <result property="plc" column="plc"/>
         <result property="sended" column="sended"/>
         <result property="displayStatus" column="display_status"/>
+        <result property="emisStandard"    column="emis_standard"    />
+        <result property="emisStandardName"    column="emis_standard_name"    />
+        <result property="envSign"    column="env_sign"    />
 
         <association property="dept" column="dept_id" javaType="SysDept" resultMap="deptResult"/>
         <!--<association property="factory"    column="factory_id" javaType="SysDept" select="com.ruoyi.system.mapper.SysDeptMapper.selectDeptById" />-->
@@ -109,6 +112,9 @@
                u.sended,
                u.sn_num,
                u.display_status,
+               u.emis_standard ,
+               u.emis_standard_name ,
+               u.env_sign,
                d.dept_id,
                d.parent_id,
                d.dept_name,
@@ -132,7 +138,9 @@
         u.plc,u.status, u.del_flag, u.login_ip, u.login_date,
         u.create_by, u.create_time, u.remark, d.dept_name, d.leader,u.company_id, u.id_card, u.sn_num,u.family_address,
         u.birthday, u.position_card_no, u.join_date, u.hik_card, u.factory_id, u.title, u.mng_mk, u.fct_dor_nm, u.fvid,
-        u.peison_id, u.age, u.face, u.face_id, u.emp_no,u.car_id, u.car_card, u.sended ,d1.dept_name as factory_name
+        u.peison_id, u.age, u.face, u.face_id, u.emp_no,u.car_id, u.car_card, u.sended ,
+        u.emis_standard ,u.emis_standard_name ,u.env_sign,
+        d1.dept_name as factory_name
         from sys_user u
         left join sys_dept d on u.dept_id = d.dept_id
 
@@ -361,6 +369,9 @@
             <if test="snNum != null">sn_num = #{snNum},</if>
             <if test="joinDate != null and joinDate != ''">join_date = #{joinDate},</if>
             <if test="sended != null and sended != ''">sended = #{sended},</if>
+            <if test="emisStandard != null">emis_standard = #{emisStandard},</if>
+            <if test="emisStandardName != null">emis_standard_name = #{emisStandardName},</if>
+            <if test="envSign != null">env_sign = #{envSign},</if>
             plc = #{plc},
             update_time = getdate()
         </set>

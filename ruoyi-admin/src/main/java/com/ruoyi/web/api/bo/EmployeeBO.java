@@ -17,6 +17,10 @@ public class EmployeeBO implements Serializable {
     private String idCard;
     private String face;
     private Long sended;
+    private String carCard;
+    private Long emisStandard;
+    private String emisStandardName;
+    private String envSign;
 
 
 }
