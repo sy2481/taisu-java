@@ -539,7 +539,7 @@ public class ManFactory extends BaseEntity {
                 .append("sex", getSex())
                 .append("phone", getPhone())
                 .append("address", getAddress())
-                .append("lcensePlate", getLcensePlate())
+                //.append("lcensePlate", getLcensePlate())
                 .append("face",getFace())
                 .toString();
     }

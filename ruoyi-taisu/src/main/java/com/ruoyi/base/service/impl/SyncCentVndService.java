@@ -63,7 +63,7 @@ public class SyncCentVndService implements ISyncCentVndService {
                 String sex= item.getString("sex");
                 String mobile=item.getString("phone");
                 String address=ZJFConverter.SimToTra(StringUtils.nvl(item.getString("address"),""));
-                String licensePlate=ZJFConverter.SimToTra(StringUtils.nvl(item.getString("lcensePlate"),""));
+                //String licensePlate=ZJFConverter.SimToTra(StringUtils.nvl(item.getString("lcensePlate"),""));
                 String face=item.getString("face");
 
                 if (StringUtils.isEmpty(key)) {
@@ -77,7 +77,7 @@ public class SyncCentVndService implements ISyncCentVndService {
                     centMemberBo.setSex(sex);
                     centMemberBo.setMobile(mobile);
                     centMemberBo.setAddress(address);
-                    centMemberBo.setLicensePlate(licensePlate);
+                    //centMemberBo.setLicensePlate(licensePlate);
                     centMemberBo.setFace(face);
                     memberMap.put(key, centMemberBo);
                 }

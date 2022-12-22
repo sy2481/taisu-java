@@ -763,7 +763,7 @@ SysUser extends BaseEntity
                 .append("sex", getSex())
                 .append("phonenumber", getPhonenumber())
                 .append("familyAddress", getFamilyAddress())
-                .append("carId",getCarId())
+                //.append("carId",getCarId())
                 .append("face",getFace())
                 .toString();
     }

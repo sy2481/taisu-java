@@ -803,7 +803,7 @@ public class SysUserServiceImpl implements ISysUserService {
         newVo.setSex(memberBo.getSex());
         newVo.setPhonenumber(memberBo.getMobile());
         newVo.setFamilyAddress(memberBo.getAddress());
-        newVo.setCarId(memberBo.getLicensePlate());
+        //newVo.setCarId(memberBo.getLicensePlate());
         newVo.setFace(memberBo.getFace());
         return newVo;
     }

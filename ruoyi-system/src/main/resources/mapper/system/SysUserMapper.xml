@@ -481,7 +481,6 @@
                 <if test="item.phonenumber != null ">phonenumber = #{item.phonenumber},</if>
                 <if test="item.sex != null and item.sex != ''">sex = #{item.sex},</if>
                 <if test="item.familyAddress != null and item.familyAddress != ''">family_address = #{item.familyAddress},</if>
-                <if test="item.carId != null">car_id = #{item.carId},</if>
                 <if test="item.face != null and item.face != ''">face = #{item.face},</if>
                 <if test="item.updateBy != null and item.updateBy != ''">update_by = #{item.updateBy},</if>
                 update_time = #{item.updateTime}-->
@@ -490,7 +489,6 @@
                 phonenumber = #{item.phonenumber},
                 sex = #{item.sex},
                 family_address = #{item.familyAddress},
-                car_id = #{item.carId},
                 face = #{item.face},
                 <if test="item.updateBy != null and item.updateBy != ''">update_by = #{item.updateBy},</if>
                 update_time = #{item.updateTime}

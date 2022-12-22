@@ -500,7 +500,7 @@ public class ManFactoryServiceImpl implements IManFactoryService {
         }
         newVo.setPhone(memberBo.getMobile());
         newVo.setAddress(memberBo.getAddress());
-        newVo.setLcensePlate(memberBo.getLicensePlate());
+        //newVo.setLcensePlate(memberBo.getLicensePlate());
         newVo.setFace(memberBo.getFace());
         return newVo;
     }

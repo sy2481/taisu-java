@@ -352,13 +352,12 @@
         <foreach collection="list" item="item" separator=";">
         update man_factory
         <trim prefix="SET" suffixOverrides=",">
-            <!--<if test="item.lcensePlate != null">lcense_plate = #{item.lcensePlate},</if>
+            <!--
             <if test="item.name != null">name = #{item.name},</if>
             <if test="item.sex != null">sex = #{item.sex},</if>
             <if test="item.face != null">face = #{item.face},</if>
             <if test="item.phone != null">phone = #{item.phone},</if>
             <if test="item.address != null">address = #{item.address},</if>-->
-            lcense_plate = #{item.lcensePlate},
             name = #{item.name},
             sex = #{item.sex},
             face = #{item.face},
