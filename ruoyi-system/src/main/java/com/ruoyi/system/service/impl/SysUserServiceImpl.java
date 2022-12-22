@@ -1,24 +1,26 @@
 package com.ruoyi.system.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
 import com.ruoyi.common.annotation.DataScope;
-import com.ruoyi.common.annotation.DataSource;
 import com.ruoyi.common.constant.UserConstants;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.domain.entity.SysUser;
-import com.ruoyi.common.enums.DataSourceType;
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.BatisUtils;
+import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.bean.BeanUtils;
-import com.ruoyi.common.utils.bean.BeanValidators;
 import com.ruoyi.common.utils.spring.SpringUtils;
+import com.ruoyi.system.bo.CentMemberBo;
 import com.ruoyi.system.domain.SysPost;
 import com.ruoyi.system.domain.SysUserPost;
 import com.ruoyi.system.domain.SysUserRole;
 import com.ruoyi.system.domain.ZhongUser;
 import com.ruoyi.system.mapper.*;
+import com.ruoyi.system.service.ISyncCentEmpService;
 import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.system.service.IZhongUserService;
@@ -69,6 +71,8 @@ public class SysUserServiceImpl implements ISysUserService {
     private IZhongUserService zhongUserService;
     @Autowired
     private SysDeptMapper sysDeptMapper;
+    @Autowired
+    private ISyncCentEmpService syncCentEmpService;
 
     /**
      * 根据条件分页查询用户列表
@@ -691,6 +695,117 @@ public class SysUserServiceImpl implements ISysUserService {
             }
         }
         return map;
+    }
+
+    @Override
+    @Transactional
+    public int syncCent() {
+        int result = 0;
+        boolean forceUpdate = false;
+
+        //批量獲取
+        List<SysUser> sysUserList=new ArrayList<>();
+        int pageNum = 1;
+        int pageSize = 1000;
+        String orderBy="";
+        do {
+            PageHelper.startPage(pageNum++, pageSize, orderBy).setReasonable(true);
+            sysUserList = userMapper.selectUserList(new SysUser());
+            //處理廠商人員
+            result+=this.syncCentByEmp(sysUserList,forceUpdate);
+
+        }while (sysUserList.size()>=pageSize);
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public int syncCentByUserIds(Long[] userIds) {
+        boolean forceUpdate = true;
+        List<SysUser> sysUserList = userMapper.selectSysUserListByIds(userIds);
+        return syncCentByEmp(sysUserList, forceUpdate);
+    }
+
+    /**
+     * 從中心庫同步
+     * @param list
+     * @return
+     */
+    public int syncCentByEmp(List<SysUser> list,boolean forceUpdate){
+        int result = 0;
+        List<SysUser> updateListEmp = new ArrayList<SysUser>();
+        SysUser entityEmp = null;
+
+        List<String> idNoList = list.stream().filter(x -> !StringUtils.isEmpty(x.getIdCard()))
+                .map(SysUser::getIdCard).collect(Collectors.toList());
+
+        Map<String, CentMemberBo> memberBoMap = syncCentEmpService.getListFromCent(StringUtils.join(idNoList,","));
+
+        for (SysUser item : list) {
+            //不存在證件號，不更新
+            if (StringUtils.isEmpty(item.getIdCard())) {
+                continue;
+            }
+            CentMemberBo memberBo = memberBoMap.get(item.getIdCard());
+            if (memberBo == null) {
+                continue;
+            }
+            //是否更新數據
+            boolean updateInfo = this.isUpdateInfoFromCent(item,memberBo);
+
+            if (updateInfo) {
+                entityEmp = new SysUser();
+                entityEmp.setUserId(item.getUserId());
+                entityEmp.setIdCard(item.getIdCard());
+                entityEmp.setUpdateBy(SecurityUtils.getUsername());
+                entityEmp.setUpdateTime(DateUtils.getNowDate());
+
+                if (updateInfo) {
+                    entityEmp=this.getSysUserByCentMemberBo(entityEmp,memberBo);
+                }
+
+                updateListEmp.add(entityEmp);
+            }
+        }
+
+        //維護人員表
+        /*if (updateListEmp.size() > 0) {
+            List<BasePeople> peopleList = basePeopleService.transEmpToBasePeople(updateListEmp);
+            result += basePeopleService.saveBasePeople(peopleList);
+        }*/
+
+        //內部人員
+        if (updateListEmp.size() > 0) {
+            List<List<SysUser>> lists = BatisUtils.splitList(updateListEmp, 40);
+            for (List<SysUser> ls : lists) {
+                result += userMapper.batchUpdateUserFromCent(ls);
+            }
+        }
+        return result;
+    }
+
+    //是否从中心库更新基本信息（人脸除外）
+    public boolean isUpdateInfoFromCent(SysUser oldVo, CentMemberBo memberBo) {
+        SysUser newVo = new SysUser();
+        newVo = getSysUserByCentMemberBo(newVo, memberBo);
+
+        //不相等才更新
+        if (!oldVo.toSyncCentCompareString().equals(newVo.toSyncCentCompareString())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    //中心库人员转为内部人员数据
+    public SysUser getSysUserByCentMemberBo(SysUser newVo, CentMemberBo memberBo) {
+        newVo.setNickName(memberBo.getName());
+        newVo.setSex(memberBo.getSex());
+        newVo.setPhonenumber(memberBo.getMobile());
+        newVo.setFamilyAddress(memberBo.getAddress());
+        newVo.setCarId(memberBo.getLicensePlate());
+        newVo.setFace(memberBo.getFace());
+        return newVo;
     }
 
 }

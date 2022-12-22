@@ -752,4 +752,19 @@ SysUser extends BaseEntity
                 .append("carCard", getCarCard())
                 .toString();
     }
+
+    /**
+     * 同步中心库比较字符
+     * @return
+     */
+    public String toSyncCentCompareString(){
+        return new ToStringBuilder(this,ToStringStyle.SIMPLE_STYLE)
+                .append("nickName", getNickName())
+                .append("sex", getSex())
+                .append("phonenumber", getPhonenumber())
+                .append("familyAddress", getFamilyAddress())
+                .append("carId",getCarId())
+                .append("face",getFace())
+                .toString();
+    }
 }

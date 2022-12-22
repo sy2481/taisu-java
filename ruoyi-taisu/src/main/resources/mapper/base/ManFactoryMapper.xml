@@ -340,5 +340,37 @@
        where id_card = #{idCard}
     </update>
 
+    <select id="selectManfactoryListByIds" resultMap="ManFactoryResult">
+        <include refid="selectManFactoryVo"/>
+        where factory_id in
+        <foreach collection="array" item="factoryId" open="(" separator="," close=")">
+            #{factoryId}
+        </foreach>
+    </select>
+
+    <update id="batchUpdateManFactoryFromCent">
+        <foreach collection="list" item="item" separator=";">
+        update man_factory
+        <trim prefix="SET" suffixOverrides=",">
+            <!--<if test="item.lcensePlate != null">lcense_plate = #{item.lcensePlate},</if>
+            <if test="item.name != null">name = #{item.name},</if>
+            <if test="item.sex != null">sex = #{item.sex},</if>
+            <if test="item.face != null">face = #{item.face},</if>
+            <if test="item.phone != null">phone = #{item.phone},</if>
+            <if test="item.address != null">address = #{item.address},</if>-->
+            lcense_plate = #{item.lcensePlate},
+            name = #{item.name},
+            sex = #{item.sex},
+            face = #{item.face},
+            phone = #{item.phone},
+            address = #{item.address},
+            update_time = #{item.updateTime}
+        </trim>
+        where factory_id = #{item.factoryId}
+        </foreach>
+    </update>
+
+
+
 
 </mapper>

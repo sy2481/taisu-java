@@ -3,6 +3,7 @@ package com.ruoyi.base.mapper;
 
 import com.ruoyi.base.bo.FactoryWorkBO;
 import com.ruoyi.base.domain.ManFactory;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
@@ -148,5 +149,20 @@ public interface ManFactoryMapper {
      * @param manFactory
      */
     void updateFaceByIdCard(ManFactory manFactory);
+
+    /**
+     * 根據Ids獲取數據
+     * @param factoryIds
+     * @return
+     */
+    public List<ManFactory> selectManfactoryListByIds(Long[] factoryIds);
+
+    /**
+     * 修改用户信息
+     *
+     * @param list 用户信息
+     * @return 结果
+     */
+    public int batchUpdateManFactoryFromCent(@Param("list") List<ManFactory> list);
 
 }

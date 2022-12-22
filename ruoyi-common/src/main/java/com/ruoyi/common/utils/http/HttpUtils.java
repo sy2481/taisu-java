@@ -1,14 +1,7 @@
 package com.ruoyi.common.utils.http;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.*;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import javax.net.ssl.HostnameVerifier;
@@ -187,6 +180,55 @@ public class HttpUtils
             }
         }
         return result.toString();
+    }
+
+    public static String sendJsonPost(String reqUrl, String json) {
+        log.info("sendPost - {}-{}", reqUrl, json);
+        String result = "";
+        HttpURLConnection httpURLConnection = null;
+        BufferedReader reader = null;
+        try {
+            URL url = new URL(reqUrl);
+            httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setRequestMethod("POST");
+            httpURLConnection.setConnectTimeout(5000);
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.setDoInput(true);
+            httpURLConnection.setUseCaches(false);
+            httpURLConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+            httpURLConnection.connect();
+            OutputStream os = httpURLConnection.getOutputStream();
+            os.write(json.getBytes("utf-8"));
+            os.flush();
+            os.close();
+            if (httpURLConnection.getResponseCode() == 200) {
+                reader = new BufferedReader(
+                        new InputStreamReader(httpURLConnection.getInputStream())
+                );
+                String data = "";
+                StringBuilder builder = new StringBuilder();
+                while ((data = reader.readLine()) != null) {
+                    builder.append(data);
+                }
+                result = builder.toString();
+            }
+        } catch (
+                Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+                if (httpURLConnection != null) {
+                    httpURLConnection.disconnect();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        log.info("recv - {}", result);
+        return result;
     }
 
     public static String sendSSLPost(String url, String param)

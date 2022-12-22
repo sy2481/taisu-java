@@ -529,4 +529,19 @@ public class ManFactory extends BaseEntity {
                 .toString();
     }
 
+    /**
+     * 同步中心库比较字符
+     * @return
+     */
+    public String toSyncCentCompareString(){
+        return new ToStringBuilder(this,ToStringStyle.SIMPLE_STYLE)
+                .append("name", getName())
+                .append("sex", getSex())
+                .append("phone", getPhone())
+                .append("address", getAddress())
+                .append("lcensePlate", getLcensePlate())
+                .append("face",getFace())
+                .toString();
+    }
+
 }

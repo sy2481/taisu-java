@@ -247,6 +247,26 @@ public interface ISysUserService
      */
     Map<String, SysUser> getListByIdCards(List<String> noFaceIdCardList);
 
+    /**
+     * 從中心庫同步
+     * @return
+     */
+    public int syncCent();
+
+    /**
+     * 根據ids從中心庫同步
+     * @param userIds
+     * @return
+     */
+    public int syncCentByUserIds(Long[] userIds);
+
+    /**
+     * 從中心庫同步
+     * @param list
+     * @return
+     */
+    public int syncCentByEmp(List<SysUser> list,boolean forceUpdate);
+
 
 
 }

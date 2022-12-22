@@ -37,6 +37,8 @@ import com.ruoyi.system.service.ISysRoleService;
 import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.web.api.basic.Response;
 import com.ruoyi.web.api.dto.FacePhotoDTO;
+import com.ruoyi.web.controller.timer.TaskSyncCent;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -90,6 +92,9 @@ public class SysUserController extends BaseController {
     private IPersonBindService personBindService;
     @Autowired
     private CarCardBindService carCardBindService;
+
+    @Autowired
+    private TaskSyncCent taskSyncCent;
 
     /**
      * 获取用户列表
@@ -854,5 +859,27 @@ public class SysUserController extends BaseController {
             return AjaxResult.error();
         }
 
+    }
+
+    /**
+     * 中心人臉全量同步
+     */
+    @ApiOperation("中心人臉全量同步")
+    @PreAuthorize("@ss.hasAnyPermi('system:user:syncCent')")
+    @Log(title = "中心人臉全量同步")
+    @GetMapping("/syncCent")
+    public AjaxResult syncCent() {
+        return AjaxResult.success(taskSyncCent.syncEmpFromCent());
+    }
+
+    /**
+     * 選中人臉更新
+     */
+    @ApiOperation("選中人臉更新")
+    @PreAuthorize("@ss.hasAnyPermi('system:user:syncCentForceUpdate')")
+    @Log(title = "選中人臉更新")
+    @GetMapping("/syncCentForceUpdate/{userIds}")
+    public AjaxResult syncCentForceUpdate(@PathVariable Long[] userIds) {
+        return AjaxResult.success(userService.syncCentByUserIds(userIds));
     }
 }

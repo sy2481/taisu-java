@@ -465,4 +465,38 @@
         update sys_user set face = #{face} where id_card = #{idCard}
     </update>
 
+    <select id="selectSysUserListByIds" resultMap="SysUserResult">
+        <include refid="selectUserVo"/>
+        where u.user_id in
+        <foreach collection="array" item="userId" open="(" separator="," close=")">
+            #{userId}
+        </foreach>
+    </select>
+
+    <update id="batchUpdateUserFromCent">
+        <foreach collection="list" item="item" separator=";">
+            update sys_user
+            <set>
+                <!--<if test="item.nickName != null and item.nickName != ''">nick_name = #{item.nickName},</if>
+                <if test="item.phonenumber != null ">phonenumber = #{item.phonenumber},</if>
+                <if test="item.sex != null and item.sex != ''">sex = #{item.sex},</if>
+                <if test="item.familyAddress != null and item.familyAddress != ''">family_address = #{item.familyAddress},</if>
+                <if test="item.carId != null">car_id = #{item.carId},</if>
+                <if test="item.face != null and item.face != ''">face = #{item.face},</if>
+                <if test="item.updateBy != null and item.updateBy != ''">update_by = #{item.updateBy},</if>
+                update_time = #{item.updateTime}-->
+
+                nick_name = #{item.nickName},
+                phonenumber = #{item.phonenumber},
+                sex = #{item.sex},
+                family_address = #{item.familyAddress},
+                car_id = #{item.carId},
+                face = #{item.face},
+                <if test="item.updateBy != null and item.updateBy != ''">update_by = #{item.updateBy},</if>
+                update_time = #{item.updateTime}
+            </set>
+            where user_id = #{item.userId}
+        </foreach>
+    </update>
+
 </mapper>

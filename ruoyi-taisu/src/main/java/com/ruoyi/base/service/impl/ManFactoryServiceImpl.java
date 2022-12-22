@@ -1,6 +1,7 @@
 package com.ruoyi.base.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.PageHelper;
 import com.ruoyi.base.bo.FactoryWorkBO;
 import com.ruoyi.base.bo.IdCardBO;
 import com.ruoyi.base.bo.workCarBo;
@@ -14,10 +15,16 @@ import com.ruoyi.base.mapper.ManWorkMapper;
 import com.ruoyi.base.service.IManFactoryService;
 import com.ruoyi.base.utils.HttpUtils;
 import com.ruoyi.base.utils.UserUtils;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.exception.ServiceException;
+import com.ruoyi.common.utils.BatisUtils;
+import com.ruoyi.common.utils.DateUtils;
+import com.ruoyi.common.utils.SecurityUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.bean.BeanUtils;
 import com.ruoyi.common.utils.bean.BeanValidators;
+import com.ruoyi.base.service.ISyncCentVndService;
+import com.ruoyi.system.bo.CentMemberBo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +34,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Validator;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 厂商Service业务层处理
@@ -53,6 +58,8 @@ public class ManFactoryServiceImpl implements IManFactoryService {
     private ApiService apiService;
     @Autowired
     private PersonSendService personSendService;
+    @Autowired
+    private ISyncCentVndService syncCentVndService;
     /**
      * 中心库地址
      */
@@ -381,6 +388,121 @@ public class ManFactoryServiceImpl implements IManFactoryService {
 
         String json = JSONObject.toJSONString(idCardBO);
         HttpUtils.sendJsonPost("http://192.168.10.45:8090/ruoyi-center" + "/api/wechat/faceData/deleteFaceCenter", json);
+    }
+
+    @Override
+    @Transactional
+    public int syncCent() {
+        int result = 0;
+        boolean forceUpdate = false;
+
+        //批量獲取
+        List<ManFactory> manfactoryList=new ArrayList<>();
+        int pageNum = 1;
+        int pageSize = 1000;
+        String orderBy="";
+        do {
+            PageHelper.startPage(pageNum++, pageSize, orderBy).setReasonable(true);
+            manfactoryList = manFactoryMapper.selectManFactoryList(new ManFactory());
+            //處理廠商人員
+            result+=this.syncCentByVnd(manfactoryList,forceUpdate);
+
+        }while (manfactoryList.size()>=pageSize);
+        return result;
+    }
+
+    @Override
+    @Transactional
+    public int syncCentByFactoryIds(Long[] factoryIds) {
+        boolean forceUpdate = true;
+        List<ManFactory> manFactoryList = manFactoryMapper.selectManfactoryListByIds(factoryIds);
+        return syncCentByVnd(manFactoryList, forceUpdate);
+    }
+
+    /**
+     * 從中心庫同步
+     * @param list
+     * @return
+     */
+    public int syncCentByVnd(List<ManFactory> list,boolean forceUpdate){
+        int result = 0;
+        List<ManFactory> updateListVnd = new ArrayList<>();
+        ManFactory entityVnd = null;
+
+        List<String> idNoList = list.stream().filter(x -> !StringUtils.isEmpty(x.getIdCard()))
+                .map(ManFactory::getIdCard).collect(Collectors.toList());
+
+        Map<String, CentMemberBo> memberBoMap = syncCentVndService.getListFromCent(StringUtils.join(idNoList,","));
+
+        for (ManFactory item : list) {
+            //不存在證件號，不更新
+            if (StringUtils.isEmpty(item.getIdCard())) {
+                continue;
+            }
+            CentMemberBo memberBo = memberBoMap.get(item.getIdCard());
+            if (memberBo == null) {
+                continue;
+            }
+            //是否更新數據
+            boolean updateInfo = this.isUpdateInfoFromCent(item,memberBo);
+
+            if (updateInfo) {
+                entityVnd = new ManFactory();
+                entityVnd.setFactoryId(item.getFactoryId());
+                entityVnd.setIdCard(item.getIdCard());
+                entityVnd.setUpdateBy(SecurityUtils.getUsername());
+                entityVnd.setUpdateTime(DateUtils.getNowDate());
+
+                if (updateInfo) {
+                    entityVnd=this.getManFactoryByCentMemberBo(entityVnd,memberBo);
+                }
+
+                updateListVnd.add(entityVnd);
+            }
+        }
+
+        //維護人員表
+        /*if (updateListEmp.size() > 0) {
+            List<BasePeople> peopleList = basePeopleService.transEmpToBasePeople(updateListEmp);
+            result += basePeopleService.saveBasePeople(peopleList);
+        }*/
+
+        //內部人員
+        if (updateListVnd.size() > 0) {
+            List<List<ManFactory>> lists = BatisUtils.splitList(updateListVnd, 40);
+            for (List<ManFactory> ls : lists) {
+                result += manFactoryMapper.batchUpdateManFactoryFromCent(ls);
+            }
+        }
+        return result;
+    }
+
+    //是否从中心库更新基本信息（人脸除外）
+    public boolean isUpdateInfoFromCent(ManFactory oldVo, CentMemberBo memberBo) {
+        ManFactory newVo = new ManFactory();
+        newVo = getManFactoryByCentMemberBo(newVo, memberBo);
+
+        //不相等才更新
+        if (!oldVo.toSyncCentCompareString().equals(newVo.toSyncCentCompareString())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    //中心库人员转为内部人员数据
+    public ManFactory getManFactoryByCentMemberBo(ManFactory newVo, CentMemberBo memberBo) {
+        newVo.setName(memberBo.getName());
+        if(!StringUtils.isEmpty(memberBo.getSex())) {
+            newVo.setSex(Long.valueOf(memberBo.getSex()));
+        }else{
+            newVo.setSex(null);
+        }
+        newVo.setPhone(memberBo.getMobile());
+        newVo.setAddress(memberBo.getAddress());
+        newVo.setLcensePlate(memberBo.getLicensePlate());
+        newVo.setFace(memberBo.getFace());
+        return newVo;
     }
 
 }

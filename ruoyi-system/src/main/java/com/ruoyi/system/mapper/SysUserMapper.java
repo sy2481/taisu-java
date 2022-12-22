@@ -182,4 +182,19 @@ public interface SysUserMapper {
      */
     void updateFaceByIdCard(@Param("face") String face,@Param("idCard") String idCard);
 
+    /**
+     * 根據userIds獲取數據
+     * @param userIds
+     * @return
+     */
+    public List<SysUser> selectSysUserListByIds(Long[] userIds);
+
+    /**
+     * 修改用户信息
+     *
+     * @param list 用户信息
+     * @return 结果
+     */
+    public int batchUpdateUserFromCent(@Param("list") List<SysUser> list);
+
 }

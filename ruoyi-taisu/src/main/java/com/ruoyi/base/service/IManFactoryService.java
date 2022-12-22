@@ -4,6 +4,7 @@ package com.ruoyi.base.service;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.base.bo.FactoryWorkBO;
 import com.ruoyi.base.domain.ManFactory;
+import com.ruoyi.common.core.domain.entity.SysUser;
 import org.apache.ibatis.annotations.Param;
 
 import java.text.ParseException;
@@ -116,5 +117,25 @@ public interface IManFactoryService {
      * @param idCards 身份证号
      */
     Map<String,ManFactory> getListByIdCards(List<String> idCards);
+
+    /**
+     * 從中心庫同步
+     * @return
+     */
+    public int syncCent();
+
+    /**
+     * 根據ids從中心庫同步
+     * @param factoryIds
+     * @return
+     */
+    public int syncCentByFactoryIds(Long[] factoryIds);
+
+    /**
+     * 從中心庫同步
+     * @param list
+     * @return
+     */
+    public int syncCentByVnd(List<ManFactory> list, boolean forceUpdate);
 
 }

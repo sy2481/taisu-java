@@ -16,6 +16,8 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
+import com.ruoyi.web.controller.timer.TaskSyncCent;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +48,9 @@ public class ManFactoryController extends BaseController {
 
     @Autowired
     private ILocateCardService locateCardService;
+
+    @Autowired
+    private TaskSyncCent taskSyncCent;
     /**
      * 查询厂商列表
      */
@@ -171,6 +176,28 @@ public class ManFactoryController extends BaseController {
             e.printStackTrace();
             return AjaxResult.error("操作失敗，請稍後再試。");
         }
+    }
+
+    /**
+     * 中心人臉全量同步
+     */
+    @ApiOperation("中心人臉全量同步")
+    @PreAuthorize("@ss.hasAnyPermi('base:factory:syncCent')")
+    @Log(title = "中心人臉全量同步")
+    @GetMapping("/syncCent")
+    public AjaxResult syncCent() {
+        return AjaxResult.success(taskSyncCent.syncVndFromCent());
+    }
+
+    /**
+     * 選中人臉更新
+     */
+    @ApiOperation("選中人臉更新")
+    @PreAuthorize("@ss.hasPermi('base:factory:syncCentForceUpdate')")
+    @Log(title = "選中人臉更新")
+    @GetMapping("/syncCentForceUpdate/{factoryIds}")
+    public AjaxResult syncCentForceUpdate(@PathVariable Long[] factoryIds) {
+        return AjaxResult.success(manFactoryService.syncCentByFactoryIds(factoryIds));
     }
 
 
