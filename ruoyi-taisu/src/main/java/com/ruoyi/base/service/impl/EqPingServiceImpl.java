@@ -4,9 +4,11 @@ import com.ruoyi.base.domain.EqDevice;
 import com.ruoyi.base.domain.EqPing;
 import com.ruoyi.base.enums.EqDeviceStatus;
 import com.ruoyi.base.mapper.EqPingMapper;
+import com.ruoyi.base.service.IEqDeviceService;
 import com.ruoyi.base.service.IEqPingService;
 import com.ruoyi.base.service.IEqStateRecordService;
 import com.ruoyi.base.taskHandler.PingState;
+import com.ruoyi.common.utils.BatisUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +28,8 @@ public class EqPingServiceImpl implements IEqPingService {
     private EqPingMapper eqPingMapper;
     @Autowired
     private IEqStateRecordService eqStateRecordService;
+    @Autowired
+    private IEqDeviceService eqDeviceService;
 
     /**
      * 查询設備檢測記錄
@@ -135,6 +139,9 @@ public class EqPingServiceImpl implements IEqPingService {
         //寫入在線記錄
         result += addEqStateRecord(flag, pingState, pingTime);
 
+        //更新設備在線狀態
+
+
         return result;
     }
 
@@ -163,10 +170,17 @@ public class EqPingServiceImpl implements IEqPingService {
             if (lastStateRecordStatus == null || lastStateRecordStatus == 0l) {//上次狀態為離線，或者null，增加記錄
                 result+=eqStateRecordService.addEqStateRecordVo(eqDevice, EqDeviceStatus.ON_LINE.getCode(), pingTime);
             }
-
+            //當前狀態不在線，則更新
+            if(!BatisUtils.longIsNvl(eqDevice.getStatus(),null).equals(EqDeviceStatus.ON_LINE.getCode())){
+                result+=eqDeviceService.updateEqDeviceStatus(EqDeviceStatus.ON_LINE.getCode(),eqDevice.getEqType(),eqDevice.getEqId());
+            }
         } else {
             if (lastStateRecordStatus == null || lastStateRecordStatus == 1l) {//上次狀態為在線，或者null，增加記錄
                 result+=eqStateRecordService.addEqStateRecordVo(eqDevice, EqDeviceStatus.OFF_LINE.getCode(), pingTime);
+            }
+            //當前狀態不是離線，則更新
+            if(!BatisUtils.longIsNvl(eqDevice.getStatus(),null).equals(EqDeviceStatus.OFF_LINE.getCode())){
+                result+=eqDeviceService.updateEqDeviceStatus(EqDeviceStatus.OFF_LINE.getCode(),eqDevice.getEqType(),eqDevice.getEqId());
             }
         }
         return result;

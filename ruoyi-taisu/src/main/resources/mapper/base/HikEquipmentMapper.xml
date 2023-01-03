@@ -18,6 +18,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="equipmentUseType"    column="equipment_use_type"    />
         <result property="ledCode" column="led_code"/>
         <result property="type" column="type"/>
+        <result property="status"    column="status"    />
+        <result property="statusName"    column="status_name"    />
     </resultMap>
 
     <resultMap type="PlcHik" id="PlcHikResult">
@@ -28,12 +30,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="deviceType"    column="device_type"    />
         <result property="plcCommand"    column="plc_command"    />
         <result property="deviceName"    column="device_name"    />
+        <result property="status"    column="status"    />
+        <result property="statusName"    column="status_name"    />
         <association property="carEquip"    column="car_device_id" javaType="HikEquipment" select="com.ruoyi.base.mapper.HikEquipmentMapper.selectHikEquipmentById" />
         <association property="personEquip"    column="person_device_id" javaType="HikEquipment" select="com.ruoyi.base.mapper.HikEquipmentMapper.selectHikEquipmentById" />
     </resultMap>
 
     <sql id="selectHikEquipmentVo">
-        select id, name, ip, sign, create_time, update_time, index_code, front_ip, device_type, subtitle_machine_ip, equipment_use_type ,led_code,type from hik_equipment
+        select id, name, ip, sign, create_time, update_time, index_code, front_ip, device_type, subtitle_machine_ip, equipment_use_type ,led_code,type,status, status_name from hik_equipment
     </sql>
 
     <sql id="selectHikEquipmentNotBind">
@@ -52,6 +56,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="subtitleMachineIp != null  and subtitleMachineIp != ''"> and subtitle_machine_ip = #{subtitleMachineIp}</if>
             <if test="equipmentUseType != null  and equipmentUseType != ''"> and equipment_use_type = #{equipmentUseType}</if>
             <if test="ledCode != null  and ledCode != ''">and led_code like concat('%', #{ledCode}, '%')</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="statusName != null  and statusName != ''"> and status_name like concat('%', #{statusName}, '%')</if>
         </where>
     </select>
     
@@ -77,6 +83,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="equipmentUseType != null">equipment_use_type,</if>
             <if test="ledCode != null">led_code,</if>
             <if test="type != null">type,</if>
+            <if test="status != null">status,</if>
+            <if test="statusName != null">status_name,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -92,6 +100,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="equipmentUseType != null">#{equipmentUseType},</if>
             <if test="ledCode != null">#{ledCode},</if>
             <if test="type != null">#{type},</if>
+            <if test="status != null">#{status},</if>
+            <if test="statusName != null">#{statusName},</if>
          </trim>
     </insert>
 
@@ -110,6 +120,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="equipmentUseType != null">equipment_use_type = #{equipmentUseType},</if>
             <if test="ledCode != null">led_code = #{ledCode},</if>
             <if test="type != null">type = #{type},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="statusName != null">status_name = #{statusName},</if>
         </trim>
         where id = #{id}
     </update>
@@ -157,6 +169,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="plcCommand != null">plc_command,</if>
             <if test="deviceName != null">device_name,</if>
             <if test="createTime != null">create_time,</if>
+            <if test="status != null">status,</if>
+            <if test="statusName != null">status_name,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -167,6 +181,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="plcCommand != null">#{plcCommand},</if>
             <if test="deviceName != null">#{deviceName},</if>
             <if test="createTime != null">#{createTime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="statusName != null">#{statusName},</if>
         </trim>
     </insert>
 
@@ -180,6 +196,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="plcCommand != null">plc_command = #{plcCommand},</if>
             <if test="deviceName != null">device_name = #{deviceName},</if>
             <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="statusName != null">status_name = #{statusName},</if>
         </trim>
         where id = #{id}
     </update>

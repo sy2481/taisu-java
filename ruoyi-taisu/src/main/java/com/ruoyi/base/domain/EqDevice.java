@@ -9,6 +9,8 @@ public class EqDevice {
     private String ip;
     private String port;
     private Date updateTime;
+    private Long status;
+    private String statusName;
 
     public String getEqType() {
         return eqType;
@@ -58,4 +60,19 @@ public class EqDevice {
         this.updateTime = updateTime;
     }
 
+    public Long getStatus() {
+        return status;
+    }
+
+    public void setStatus(Long status) {
+        this.status = status;
+    }
+
+    public String getStatusName() {
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
 }

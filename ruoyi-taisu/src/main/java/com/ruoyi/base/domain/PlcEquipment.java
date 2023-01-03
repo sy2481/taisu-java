@@ -74,6 +74,14 @@ public class PlcEquipment extends BaseEntity
 
     private String endTime3;
 
+    /** 在線狀態(1=在線;0=離線) */
+    @Excel(name = "在線狀態(1=在線;0=離線)")
+    private Long status;
+
+    /** 在線狀態名稱 */
+    @Excel(name = "在線狀態名稱")
+    private String statusName;
+
 
     private String time1;
     private String time2;
@@ -247,6 +255,22 @@ public class PlcEquipment extends BaseEntity
         return hazardousChemicals;
     }
 
+    public Long getStatus() {
+        return status;
+    }
+
+    public void setStatus(Long status) {
+        this.status = status;
+    }
+
+    public String getStatusName() {
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -258,6 +282,8 @@ public class PlcEquipment extends BaseEntity
             .append("port", getPort())
             .append("plantAreaId", getPlantAreaId())
             .append("hazardousChemicals", getHazardousChemicals())
+            .append("status", getStatus())
+            .append("statusName", getStatusName())
             .toString();
     }
 }

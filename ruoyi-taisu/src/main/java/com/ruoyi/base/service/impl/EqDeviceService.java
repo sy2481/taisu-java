@@ -8,8 +8,7 @@ import com.ruoyi.base.enums.EqType;
 import com.ruoyi.base.mapper.HikEquipmentMapper;
 import com.ruoyi.base.mapper.PlcEquipmentMapper;
 import com.ruoyi.base.service.IEqDeviceService;
-import com.ruoyi.base.service.IHikEquipmentService;
-import com.ruoyi.base.service.IPlcEquipmentService;
+import com.ruoyi.common.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,32 +60,36 @@ public class EqDeviceService implements IEqDeviceService {
     }
 
     //plc轉device
-    public List<EqDevice> plcToDevice(List<PlcEquipment> plcList){
-        List<EqDevice> list=new ArrayList<>();
-        for(PlcEquipment item:plcList){
-            EqDevice vo=new EqDevice();
+    public List<EqDevice> plcToDevice(List<PlcEquipment> plcList) {
+        List<EqDevice> list = new ArrayList<>();
+        for (PlcEquipment item : plcList) {
+            EqDevice vo = new EqDevice();
             vo.setEqType(EqType.PLC.getName());
             vo.setEqId(item.getId());
             vo.setEqName(item.getName());
             vo.setIp(item.getIp());
             vo.setPort(null);
             vo.setUpdateTime(item.getUpdateTime());
+            vo.setStatus(item.getStatus());
+            vo.setStatusName(item.getStatusName());
             list.add(vo);
         }
         return list;
     }
 
     //hik轉device
-    public List<EqDevice> hikToDevice(List<HikEquipment> hikList){
-        List<EqDevice> list=new ArrayList<>();
-        for(HikEquipment item:hikList){
-            EqDevice vo=new EqDevice();
+    public List<EqDevice> hikToDevice(List<HikEquipment> hikList) {
+        List<EqDevice> list = new ArrayList<>();
+        for (HikEquipment item : hikList) {
+            EqDevice vo = new EqDevice();
             vo.setEqType(EqType.HIK.getName());
             vo.setEqId(item.getId());
             vo.setEqName(item.getName());
             vo.setIp(item.getIp());
             vo.setPort(null);
             vo.setUpdateTime(item.getUpdateTime());
+            vo.setStatus(item.getStatus());
+            vo.setStatusName(item.getStatusName());
             list.add(vo);
         }
         return list;
@@ -94,22 +97,23 @@ public class EqDeviceService implements IEqDeviceService {
 
     /**
      * 獲取設備更新時間
+     *
      * @param eqType
      * @param eqId
      * @return
      */
     @Override
-    public Date lastUpdateTime(String eqType, Long eqId){
-        Date lastUpdateTime=null;
-        if(eqType.equals(EqType.HIK.getName())){
-            HikEquipment hikEquipment= hikEquipmentMapper.selectHikEquipmentById(eqId);
-            if(hikEquipment!=null){
-                lastUpdateTime= hikEquipment.getUpdateTime();
+    public Date lastUpdateTime(String eqType, Long eqId) {
+        Date lastUpdateTime = null;
+        if (eqType.equals(EqType.HIK.getName())) {
+            HikEquipment hikEquipment = hikEquipmentMapper.selectHikEquipmentById(eqId);
+            if (hikEquipment != null) {
+                lastUpdateTime = hikEquipment.getUpdateTime();
             }
-        }else if(eqType.equals(EqType.PLC.getName())){
-            PlcEquipment plcEquipment=plcEquipmentMapper.selectPlcEquipmentById(eqId);
-            if(plcEquipment!=null){
-                lastUpdateTime=plcEquipment.getUpdateTime();
+        } else if (eqType.equals(EqType.PLC.getName())) {
+            PlcEquipment plcEquipment = plcEquipmentMapper.selectPlcEquipmentById(eqId);
+            if (plcEquipment != null) {
+                lastUpdateTime = plcEquipment.getUpdateTime();
             }
         }
         return lastUpdateTime;
@@ -117,26 +121,57 @@ public class EqDeviceService implements IEqDeviceService {
 
     /**
      * 獲取設備
+     *
      * @return
      */
-    public EqDevice getEqDevice(String eqType, Long eqId)
-    {
-        EqDevice eqDevice=null;
-        if(eqType.equals(EqType.HIK.getName())){
-            HikEquipment hikEquipment= hikEquipmentMapper.selectHikEquipmentById(eqId);
-            if(hikEquipment!=null){
-                List<HikEquipment> list=new ArrayList<>();
+    public EqDevice getEqDevice(String eqType, Long eqId) {
+        EqDevice eqDevice = null;
+        if (eqType.equals(EqType.HIK.getName())) {
+            HikEquipment hikEquipment = hikEquipmentMapper.selectHikEquipmentById(eqId);
+            if (hikEquipment != null) {
+                List<HikEquipment> list = new ArrayList<>();
                 list.add(hikEquipment);
-                eqDevice= this.hikToDevice(list).get(0);
+                eqDevice = this.hikToDevice(list).get(0);
             }
-        }else if(eqType.equals(EqType.PLC.getName())){
-            PlcEquipment plcEquipment=plcEquipmentMapper.selectPlcEquipmentById(eqId);
-            if(plcEquipment!=null){
-                List<PlcEquipment> list=new ArrayList<>();
+        } else if (eqType.equals(EqType.PLC.getName())) {
+            PlcEquipment plcEquipment = plcEquipmentMapper.selectPlcEquipmentById(eqId);
+            if (plcEquipment != null) {
+                List<PlcEquipment> list = new ArrayList<>();
                 list.add(plcEquipment);
-                eqDevice= this.plcToDevice(list).get(0);
+                eqDevice = this.plcToDevice(list).get(0);
             }
         }
         return eqDevice;
     }
+
+    /**
+     * 更新設備狀態
+     *
+     * @param status
+     * @param eqType
+     * @param eqId
+     * @return
+     */
+    public int updateEqDeviceStatus(Long status, String eqType, Long eqId) {
+        int result = 0;
+        if (eqType.equals(EqType.HIK.getName())) {
+            HikEquipment hikEquipment = new HikEquipment();
+            hikEquipment.setId(eqId);
+            hikEquipment.setStatus(status);
+            hikEquipment.setStatusName(EqDeviceStatus.getNameByCode(status));
+            hikEquipment.setUpdateTime(DateUtils.getNowDate());
+            result += hikEquipmentMapper.updateHikEquipment(hikEquipment);
+        } else if (eqType.equals(EqType.PLC.getName())) {
+            PlcEquipment plcEquipment=new PlcEquipment();
+            plcEquipment.setId(eqId);
+            plcEquipment.setStatus(status);
+            plcEquipment.setStatusName(EqDeviceStatus.getNameByCode(status));
+            plcEquipment.setUpdateTime(DateUtils.getNowDate());
+
+            result += plcEquipmentMapper.updatePlcEquipment(plcEquipment);
+        }
+        return result;
+    }
+
+
 }

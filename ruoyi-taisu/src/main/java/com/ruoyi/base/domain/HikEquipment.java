@@ -59,6 +59,14 @@ public class HikEquipment extends BaseEntity {
      */
     private Integer type;
 
+    /** 在線狀態(1=在線;0=離線) */
+    @Excel(name = "在線狀態(1=在線;0=離線)")
+    private Long status;
+
+    /** 在線狀態名稱 */
+    @Excel(name = "在線狀態名稱")
+    private String statusName;
+
     public Integer getType() {
         return type;
     }
@@ -164,6 +172,22 @@ public class HikEquipment extends BaseEntity {
         return passagewayId;
     }
 
+    public Long getStatus() {
+        return status;
+    }
+
+    public void setStatus(Long status) {
+        this.status = status;
+    }
+
+    public String getStatusName() {
+        return statusName;
+    }
+
+    public void setStatusName(String statusName) {
+        this.statusName = statusName;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -178,6 +202,8 @@ public class HikEquipment extends BaseEntity {
                 .append("deviceType", getDeviceType())
                 .append("subtitleMachineIp", getSubtitleMachineIp())
                 .append("passagewayId", getPassagewayId())
+                .append("status", getStatus())
+                .append("statusName", getStatusName())
                 .toString();
     }
 }

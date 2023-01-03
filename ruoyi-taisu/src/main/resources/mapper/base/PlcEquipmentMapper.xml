@@ -18,11 +18,13 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="time2"    column="time2"    />
         <result property="time3"    column="time3"    />
         <result property="controlType"    column="control_type"    />
+        <result property="status"    column="status"    />
+        <result property="statusName"    column="status_name"    />
     </resultMap>
 
     <sql id="selectPlcEquipmentVo">
         select id, name, ip, create_time, update_time, port, plant_area_id, time1,time2,time3,
-               hazardous_chemicals, control,  control_type from plc_equipment
+               hazardous_chemicals, control,  control_type,status, status_name  from plc_equipment
     </sql>
 
     <select id="selectPlcEquipmentList" parameterType="PlcEquipment" resultMap="PlcEquipmentResult">
@@ -38,6 +40,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="ip != null  and ip != ''"> and ip like concat('%', #{ip}, '%')</if>
             <if test="port != null "> and port = #{port}</if>
             <if test="hazardousChemicals != null "> and hazardous_chemicals = #{hazardousChemicals}</if>
+            <if test="status != null "> and status = #{status}</if>
+            <if test="statusName != null  and statusName != ''"> and status_name like concat('%', #{statusName}, '%')</if>
         </where>
     </select>
     
@@ -67,6 +71,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="time2 != null">time2,</if>
             <if test="time3 != null">time3,</if>
             <if test="controlType != null">control_type,</if>
+            <if test="status != null">status,</if>
+            <if test="statusName != null">status_name,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -82,6 +88,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="time2 != null">#{time2},</if>
             <if test="time3 != null">#{time3},</if>
             <if test="controlType != null">#{controlType},</if>
+            <if test="status != null">#{status},</if>
+            <if test="statusName != null">#{statusName},</if>
          </trim>
     </insert>
 
@@ -100,6 +108,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="time1 != null">time1 = #{time1},</if>
             <if test="time2 != null">time2 = #{time2},</if>
             <if test="time3 != null">time3 = #{time3},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="statusName != null">status_name = #{statusName},</if>
         </trim>
         where id = #{id}
     </update>
