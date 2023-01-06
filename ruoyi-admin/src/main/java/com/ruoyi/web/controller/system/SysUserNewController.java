@@ -1,6 +1,8 @@
 package com.ruoyi.web.controller.system;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.ruoyi.base.bo.IdCardBO;
 import com.ruoyi.base.interact.CarCardSendService;
 import com.ruoyi.base.interact.PersonSendService;
 import com.ruoyi.base.interact.PlateSendService;
@@ -10,6 +12,7 @@ import com.ruoyi.base.mapper.CardRecordMapper;
 import com.ruoyi.base.service.CarCardBindService;
 import com.ruoyi.base.service.IPersonBindService;
 import com.ruoyi.base.service.impl.ApiService;
+import com.ruoyi.base.utils.HttpUtils;
 import com.ruoyi.base.utils.IDcard;
 import com.ruoyi.base.vo.CarCardVO;
 import com.ruoyi.common.annotation.Log;
@@ -25,6 +28,7 @@ import com.ruoyi.framework.config.ThreadPoolConfig;
 import com.ruoyi.system.mapper.SysUserMapper;
 import com.ruoyi.system.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -62,6 +66,8 @@ public class SysUserNewController extends BaseController {
     @Autowired
     private PersonSendService personSendService;
 
+    @Value("${cent.host}")
+    private String centHost;
     /**
      * 更新用户
      * 分厂更新图片后完 人员资料发送给中心做同步
@@ -122,12 +128,12 @@ public class SysUserNewController extends BaseController {
         int userRow = userService.updateUser(user);
         if (userRow > 0) {
             SysUser sysUser = sysUserMapper.selectUserById(user.getUserId());
-            pool.threadPoolTaskExecutor().execute(() -> apiService.userBindHlk(sysUser));
+            pool.threadPoolTaskExecutor().execute(() -> apiService.userBindHlkSubSysUserUpdate(sysUser));
             //这里需要对比前后车牌号差异，有的需要新增，有的需要删除
             pool.threadPoolTaskExecutor().execute(() -> plateSendService.userPlateDiffSend(sysUserMapper.selectUserById(user.getUserId()), oldUser.getCarId()));
 
             //TODO 10-08 更新完照片数据同步到中心
-            pool.threadPoolTaskExecutor().execute(() -> syncCenterService.centerUserUpdate(sysUser));
+            //pool.threadPoolTaskExecutor().execute(() -> syncCenterService.centerUserUpdate(sysUser));
             return toAjax(userRow);
         }
         return AjaxResult.error(user.getIdCard() + "身份证号已存在");
@@ -213,8 +219,7 @@ public class SysUserNewController extends BaseController {
             return AjaxResult.error(e.getMessage());
         }
 
-//        user.setSended(0L);
-        user.setSended(0L);
+        user.setSended(0l);
 
         int userRow = userService.insertUser(user);
         if (userRow > 0) {
@@ -234,6 +239,14 @@ public class SysUserNewController extends BaseController {
                 personSendService.downSendDeletePersonOnlyFace(sysUser.getIdCard());
             }
             userService.deleteFaceByUserId(userId);
+
+            IdCardBO idCardBO = new IdCardBO();
+            idCardBO.setIdCard(sysUser.getIdCard());
+
+            String json = JSONObject.toJSONString(idCardBO);
+            HttpUtils.sendJsonPost(centHost + "/api/wechat/faceData/deleteFaceCenterUser", json);
+
+
             return AjaxResult.success();
         } catch (Exception e) {
             e.printStackTrace();

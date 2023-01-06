@@ -19,7 +19,7 @@ factoryCode: PMA1001
 #定时器开关
 scheduling:
   getFactoryMsgEnabled: true
-  getDangerWorkEnabled: false
+  getDangerWorkEnabled: true
   buildIdSendEnabled: false
 
 

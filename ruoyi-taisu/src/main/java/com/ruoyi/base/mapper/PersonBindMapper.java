@@ -35,4 +35,6 @@ public interface PersonBindMapper {
     int relieveByIdCard(@Param("idCard") String idCard);
 
     void deleteByIdCard(@Param("idCard") String idCard);
+
+    int updateFactoryNameByIdCard(@Param("idCard") String idCard,@Param("factoryName") String factoryName);
 }

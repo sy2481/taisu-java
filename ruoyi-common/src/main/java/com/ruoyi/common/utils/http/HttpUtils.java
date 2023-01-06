@@ -203,7 +203,7 @@ public class HttpUtils
             os.close();
             if (httpURLConnection.getResponseCode() == 200) {
                 reader = new BufferedReader(
-                        new InputStreamReader(httpURLConnection.getInputStream())
+                        new InputStreamReader(httpURLConnection.getInputStream(),"utf-8")
                 );
                 String data = "";
                 StringBuilder builder = new StringBuilder();

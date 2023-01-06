@@ -115,6 +115,16 @@
         </trim>
         WHERE   id_card=#{idCard}
     </update>
+
+
+    <!--根据身份证修改-->
+    <update id="updateFactoryNameByIdCard">
+        update person_bind
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="factoryName != null">factory_name=#{factoryName},</if>
+        </trim>
+        WHERE   id_card=#{idCard}
+    </update>
     <!--解绑()-->
     <update id="relieveByIdCard">
         UPDATE person_bind SET event_type = 1 ,sn=NULL WHERE id_card = #{idCard}

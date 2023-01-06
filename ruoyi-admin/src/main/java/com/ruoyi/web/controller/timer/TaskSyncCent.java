@@ -22,12 +22,12 @@ public class TaskSyncCent {
     @Autowired
     IManFactoryService manFactoryService;
 
-    //@Scheduled(cron = "0 1 0 * * ?")
+    @Scheduled(cron = "0 1/2 * * * ?")
     public int syncEmpFromCent(){
        return sysUserService.syncCent();
     }
 
-    //@Scheduled(cron = "0 1 0 * * ?")
+    //@Scheduled(cron = "0 5/10 * * * ?")
     public int syncVndFromCent(){
         return manFactoryService.syncCent();
     }

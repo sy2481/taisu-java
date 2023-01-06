@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.ruoyi.base.bo.FactoryWorkBO;
 import com.ruoyi.base.bo.IdCardBO;
-import com.ruoyi.base.bo.workCarBo;
+import com.ruoyi.base.bo.WorkCarBo;
 import com.ruoyi.base.domain.ManFactory;
 import com.ruoyi.base.domain.ManWork;
 import com.ruoyi.base.domain.ManWorkFactory;
@@ -181,7 +181,7 @@ public class ManFactoryServiceImpl implements IManFactoryService {
     public List<FactoryWorkBO> listByWorkNoAndDate(String workNo, String date, Integer workType) {
         List<FactoryWorkBO> factoryWork = manFactoryMapper.listByWorkNoAndDate(workNo, date, workType);
         if (workType == 1) {
-            List<workCarBo> manWorkList = manWorkMapper.selectManWork(workNo, date);
+            List<WorkCarBo> manWorkList = manWorkMapper.selectManWork(workNo, date);
             if (factoryWork.size() > 0) {
                 factoryWork.get(0).setWorkCarList(manWorkList);
             }
@@ -450,7 +450,7 @@ public class ManFactoryServiceImpl implements IManFactoryService {
                 entityVnd = new ManFactory();
                 entityVnd.setFactoryId(item.getFactoryId());
                 entityVnd.setIdCard(item.getIdCard());
-                entityVnd.setUpdateBy(SecurityUtils.getUsername());
+                entityVnd.setUpdateBy("system");
                 entityVnd.setUpdateTime(DateUtils.getNowDate());
 
                 if (updateInfo) {

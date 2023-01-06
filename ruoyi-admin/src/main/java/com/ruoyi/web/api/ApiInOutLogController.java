@@ -43,6 +43,18 @@ public class ApiInOutLogController {
         return Response.error("插入出錯，請稍後再試！");
     }
 
+    @ResponseBody
+    @GetMapping("/inOutLogInsertForShipment")
+    public Response inOutLogInsertForShipment(String idCardNo, String locationCardNo, String equipmentIp, String logType, String carParam) {
+        try {
+            apiService.inOutLogInsertCarForShipment(idCardNo, locationCardNo, equipmentIp, logType, carParam);
+            return Response.builder().code(0).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Response.error("插入出錯，請稍後再試！");
+    }
+
     /**
      * TODO 来宾卡进出记录日志
      */

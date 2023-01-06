@@ -1,7 +1,7 @@
 package com.ruoyi.base.mapper;
 
 
-import com.ruoyi.base.bo.workCarBo;
+import com.ruoyi.base.bo.WorkCarBo;
 import com.ruoyi.base.domain.ManWork;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Param;
@@ -79,7 +79,9 @@ public interface ManWorkMapper
      * 根据工单号查询（模糊查询）
      */
 
-    public List<workCarBo> selectManWork(@Param("workNo") String workNo, @Param("date") String date);
+    public List<WorkCarBo> selectManWork(@Param("workNo") String workNo, @Param("date") String date);
+
+    public List<WorkCarBo> selectManWorkNew(@Param("workNo") String workNo, @Param("date") String date,@Param("workType")Integer workType);
     /**
      * 工单下厂商负责人出
      * @param workNo 工单号
@@ -105,7 +107,7 @@ public interface ManWorkMapper
     @Update("UPDATE man_work SET work_time = #{date}, car_id=null, ip=null, xt_in_num=0, com_in_num=0,car_card=null WHERE len(work_no) <= 8 ")
     void resetLongTimeWork(Date date);
 
-    @Update("UPDATE man_work SET car_card=null WHERE len(work_no) > 8 ")
+    @Update("UPDATE man_work SET car_card=null, car_id=null WHERE len(work_no) > 8 and work_type=0")
     void resetWorkCarcard();
 
     @Select("SELECT work_id FROM man_work WHERE len(work_no) <= 8")

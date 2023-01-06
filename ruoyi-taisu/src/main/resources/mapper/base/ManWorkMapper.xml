@@ -85,7 +85,7 @@
         <include refid="selectManWorkVo"/>
         where work_no = #{workNo} and del_flag = '0'
     </select>
-    <select id="selectManWork" resultType="com.ruoyi.base.bo.workCarBo">
+    <select id="selectManWork" resultType="com.ruoyi.base.bo.WorkCarBo">
          select
                project_no AS projectNo,
                work_no AS workNo,
@@ -94,6 +94,17 @@
         from man_work
         where  work_no like concat('%', #{workNo}, '%')
         and CONVERT(varchar(100), work_time, 23) = #{date} and del_flag = '0'
+    </select>
+
+    <select id="selectManWorkNew" resultType="com.ruoyi.base.bo.WorkCarBo">
+        select
+            project_no AS projectNo,
+            work_no AS workNo,
+            work_time AS workTime,
+            car_id AS lcensePlate
+        from man_work
+        where  work_no like concat('%', #{workNo}, '%')
+          and CONVERT(varchar(100), work_time, 23) = #{date} and del_flag = '0' and work_type=#{workType}
     </select>
 
 

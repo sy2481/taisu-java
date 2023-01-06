@@ -757,7 +757,7 @@ public class SysUserServiceImpl implements ISysUserService {
                 entityEmp = new SysUser();
                 entityEmp.setUserId(item.getUserId());
                 entityEmp.setIdCard(item.getIdCard());
-                entityEmp.setUpdateBy(SecurityUtils.getUsername());
+                entityEmp.setUpdateBy("system");
                 entityEmp.setUpdateTime(DateUtils.getNowDate());
 
                 if (updateInfo) {

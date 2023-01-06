@@ -10,7 +10,8 @@ import com.ruoyi.base.vo.CarCardVO;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.mapper.SysUserMapper;
-import lombok.extern.log4j.Log4j2;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,9 +22,12 @@ import java.util.List;
 /**
  * @author shiva   2022-04-02 16:50
  */
-@Log4j2
+
 @Service
 public class CarCardSendService {
+
+    private static final Logger log = LoggerFactory.getLogger(CarCardSendService.class);
+
     @Value("${plchlk.host}")
     private String host;
 
@@ -104,7 +108,6 @@ public class CarCardSendService {
      * 下发解绑车卡
      */
     public void downSendUnbindCarCard(CarCardVO carCardVO) {
-        System.out.println("carCardVO = " + carCardVO);
         JSONObject json = new JSONObject();
         json.put("cardNumber", carCardVO.getCardNumber());
         json.put("cardNo", carCardVO.getCardNo());

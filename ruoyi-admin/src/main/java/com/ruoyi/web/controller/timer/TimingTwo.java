@@ -1,5 +1,6 @@
 package com.ruoyi.web.controller.timer;
 
+import com.ruoyi.base.bo.FactoryBo;
 import com.ruoyi.base.bo.FactoryWorkBO;
 import com.ruoyi.base.bo.WorkBo;
 import com.ruoyi.base.domain.BaseSafetycar;
@@ -7,6 +8,7 @@ import com.ruoyi.base.domain.OaMaxInfo;
 import com.ruoyi.base.interact.PlateSendService;
 import com.ruoyi.base.service.IManFactoryService;
 import com.ruoyi.base.service.IOaMaxInfoService;
+import com.ruoyi.base.service.IPersonBindService;
 import com.ruoyi.base.service.impl.ApiService;
 import com.ruoyi.base.service.impl.WorkDataService;
 import com.ruoyi.common.constant.TsConstant;
@@ -28,6 +30,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.CollectionUtils;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -65,6 +68,9 @@ public class TimingTwo {
     @Autowired
     private SafetycarService safetycarService;
 
+    @Autowired
+    private IPersonBindService personBindService;
+
     @Value("${scheduling.getFactoryMsgEnabled}")
     private boolean getFactoryMsgEnabled;
 
@@ -92,11 +98,11 @@ public class TimingTwo {
             OaMaxInfo oaMaxInfo = oaMaxInfoService.initOaMaxInfo(factoryCode, TsConstant.IN_OUT_LOG_TABLE);
             int maxId = Integer.valueOf(oaMaxInfo.getMaxId().toString());
             Map<String, Object> sourceData = inOutLogService.getInOutLog(maxId,factoryCode);
-
+            List<WorkBo> aeWorkBo=new ArrayList<>();
             if (sourceData.get("newMaxId") != null && sourceData.get("workBos") != null) {
                 int newMaxId = Integer.valueOf(sourceData.get("newMaxId").toString());
                 List<WorkBo> inOutLogs = (List<WorkBo>) sourceData.get("workBos");
-
+                aeWorkBo=inOutLogs;
                 //厂商人员从中心库获取头像信息
                 workDataService.setFaceFromCenter(inOutLogs);
 
@@ -131,6 +137,16 @@ public class TimingTwo {
                 workDataService.saveWorkBo(workBo);
             }
 
+            if(factoryCode.equals("PPC2A01")){
+                for(int i=0;i<aeWorkBo.size();i++){
+                    List<FactoryBo> aeFactoryBos=aeWorkBo.get(i).getFactoryBoList();
+                    if(aeFactoryBos.size()>0){
+                        for(int j=0;j<aeFactoryBos.size();j++){
+                            personBindService.updateFactoryName(aeFactoryBos.get(j).getIdCard(),aeFactoryBos.get(j).getFactoryName());
+                        }
+                    }
+                }
+            }
 
             // HttpUtils.sendJsonPost("http://127.0.0.1:36653/api/timer/InOutLogData", JSON.toJSONString(inOutLog));
         } catch (Exception e) {
@@ -138,7 +154,7 @@ public class TimingTwo {
         }
     }
 
-    @Scheduled(cron = "0 0/3 * * * ?")
+    @Scheduled(cron = "10 1/5 * * * ? ")
     private void getDangerWork() {
         if(!getDangerWorkEnabled){
             return;

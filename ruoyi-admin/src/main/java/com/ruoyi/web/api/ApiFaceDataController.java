@@ -2,7 +2,7 @@ package com.ruoyi.web.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.base.bo.FactoryWorkBO;
-import com.ruoyi.base.bo.workCarBo;
+import com.ruoyi.base.bo.WorkCarBo;
 import com.ruoyi.base.domain.BaseCar;
 import com.ruoyi.base.domain.ManBlackInfo;
 import com.ruoyi.base.domain.ManFactory;
@@ -302,20 +302,23 @@ public class ApiFaceDataController {
             if (sysUser == null) {
                 return Response.error("用戶不存在，請稍後再試！");
             }
+
             // 設置人臉照片，重新保存
             IDcard.checkIdCard(idCard);
             //身份证校验通过，塞进去
             sysUser.setIdCard(idCard);
             IDcard.competeUserByIdcard(sysUser);
             sysUser.setFace(facePicUrl);
-            sysUser.setSended(1L);
             sysUserMapper.updateUser(sysUser);
-
             //同时更新中心库-修改by-sunlj
-            HttpUtils.sendJsonPost(centHost+"/api/wechat/faceDataCent/saveFaceForEmployee", JSONObject.toJSONString(sysUser));
-
+            String empNo=sysUser.getEmpNo().toUpperCase();
+            if(empNo.startsWith("PP")|| empNo.startsWith("N")) {
+                HttpUtils.sendJsonPost(centHost + "/api/wechat/faceDataCent/saveFaceForEmployee", JSONObject.toJSONString(sysUser));
+            }
             //保存照片
-            pool.threadPoolTaskExecutor().execute(() -> apiService.userBindHlkSubSysUser(sysUserMapper.selectUserById(sysUser.getUserId())));
+             apiService.userBindHlkSubSysUser(sysUserMapper.selectUserById(sysUser.getUserId()));
+            //System.out.println("start facePicForEmployeeForSubSysUser3");
+
             return Response.builder().code(0).build();
         } catch (Exception e) {
             e.printStackTrace();
@@ -369,7 +372,7 @@ public class ApiFaceDataController {
                 });
             }
             if (workType == 1) {
-                List<workCarBo> workCarList = iManWorkService.selectManWork(workNo, DateUtils.getDate());
+                List<WorkCarBo> workCarList = iManWorkService.selectManWork(workNo, DateUtils.getDate(),workType);
                 JSONObject back = new JSONObject();
                 back.put("list", list);
                 back.put("workCarList", workCarList);
@@ -461,6 +464,43 @@ public class ApiFaceDataController {
         }
         return Response.error("設置出錯，請稍後再試！");
     }
+
+
+    // 根据厂商人员ID，上传人脸照片，并设置人脸
+    @ResponseBody
+    @GetMapping("/facePicForSupplierSubFactory")
+    public Response facePicForSupplierSubFactory(Long id, String facePicUrl, String phone, String address, Long sex) {
+        try {
+            if (id == null || StringUtils.isBlank(facePicUrl)) {
+                return Response.error("資料不全，請稍後再試。");
+            }
+            ManFactory manFactory = factoryMapper.selectManFactoryByFactoryId(id);
+            if (manFactory == null) {
+                return Response.error("人員不存在，請稍後再試！");
+            }
+            // 設置人臉照片，重新保存
+            manFactory.setFace(facePicUrl);
+            manFactory.setPhone(phone);
+            manFactory.setAddress(ZJFConverter.SimToTra(address));
+            manFactory.setSex(sex);
+            manFactory.setPicInsertTime(new Date());
+            factoryMapper.updateManFactory(manFactory);
+
+            //同时更新中心库-修改by-sunlj
+            HttpUtils.sendJsonPost(centHost+"/api/wechat/faceDataCent/saveFaceForSupplier", JSONObject.toJSONString(manFactory));
+
+            //最后调用下厂商人脸下发的方法
+            pool.threadPoolTaskExecutor().execute(() -> {
+                Long[] ids = new Long[]{manFactory.getFactoryId()};
+                apiService.sendFactoryMsgListForManFactory(ids);
+            });
+            return Response.builder().code(0).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Response.error("設置出錯，請稍後再試！");
+    }
+
 
     /**
      * H5公众号物流通道  工单下有车牌无人员 添加人员接口 2022.10.10

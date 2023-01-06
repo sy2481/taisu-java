@@ -95,6 +95,9 @@ public class ApiService {
     @Autowired
     private SafetycarService safetycarService;
 
+    @Autowired
+    private SysUserMapper sysUserMapper;
+
     /* 人员查询相关方法 *********************************************************************************************************************/
 
 
@@ -718,6 +721,134 @@ public class ApiService {
 
     }
 
+    @Transactional(readOnly = false)
+    public void inOutLogInsertCarForShipment(String idCardNo, String locationCardNo, String equipmentIp, String logType, String carParam) {
+        //预备拿一下回写数据库的编号
+        String idNo = "";
+        InOutLog log = new InOutLog();
+        log.setLocationCardNo(locationCardNo);
+        log.setIp(equipmentIp);
+        log.setPlateNo(carParam);
+        //道路類型
+        log.setLoadType(carParam == null ? "0" : "1");
+
+        //1.查到人 ：工程、工单、名称、人员信息
+        //2.查到对应设备 ：厂区、人/车道、
+        List<SysUser> userList = userMapper.getByCommonParams(idCardNo, null, null, null);
+        if (userList.size() > 0) {
+            // 员工进入
+            competeLogFromUser(log, userList.get(0));
+            idNo = userList.get(0).getEmpNo();
+        } else {
+            List<ManFactory> factoryList = factoryMapper.getByCommonParams(idCardNo, null, null, null);
+            if (factoryList.size() == 0) {
+                return;
+            }
+            //厂商人员进入
+            competeLogFromFactory(log, factoryList.get(0));
+            idNo = factoryList.get(0).getIpLtLic();
+        }
+        competeLogFromEquipment(log, equipmentIp);
+        // 第一位，出入，0-入场，1-离场
+        // 第二位，0-員工、1-廠商、2-車輛
+        // 先判斷是不是車輛
+        String secType = StringUtils.isBlank(carParam) ? "" : "2";
+        //不是車輛的話，就拿人員類型
+        secType = StringUtils.isBlank(secType) ? log.getPersonType() : secType;
+        //最後再拼成兩位字符串
+        log.setLogType(logType + secType);
+        inOutLogMapper.insertInOutLog(log);
+
+        try {
+            //获取厂区
+            //String fctDorNm = "";//厂区编号
+            //获取海康设备
+//            HikEquipment equipment = equipmentMapper.findByIp(equipmentIp);
+            //根据ip获取设备
+//            if (equipment.getFrontIp() != null) {
+//                PlcEquipment plcEquipment = plcRedisUtils.getPlcEquipment(equipment.getFrontIp());
+            //根据设备获取厂区编号
+//                if (plcEquipment != null) {
+//                    SysDept dept = sysDeptMapper.selectDeptById(plcEquipment.getPlantAreaId());
+//                    fctDorNm = dept != null ? dept.getDeptNo() : "";
+//                }
+//            }
+
+            //TODO  回显信息修改
+            //然后还要往旧数据库插入数据；
+            //车道信息补全
+            TcInOutLog tcInOutLogCar = null;
+            logger.info("equipmentIp"+equipmentIp);
+            System.out.println("logType : " + logType);
+            if (carParam != null) {
+                //获取到车辆信息
+                List<BaseSafetycar> safetycarlist = safetycarService.getSafetycarByCarno(carParam);
+                if (!CollectionUtils.isEmpty(safetycarlist)) {
+                    BaseSafetycar baseSafetycar = safetycarlist.get(0);
+                    String CarIdNo = baseSafetycar.getIpLtLic() + baseSafetycar.getPz();
+                    tcInOutLogCar = getTcInOutLog(equipmentIp, logType + secType, CarIdNo, factoryCode);
+                }
+            }
+
+            //然后还要往旧数据库插入数据； factoryCode:模拟字段
+            String personSecType = log.getPersonType();
+            System.out.println("logType + personSecType = " + logType + personSecType);
+            TcInOutLog tcInOutLog = getTcInOutLog(equipmentIp, logType + personSecType, idNo, factoryCode);
+            System.out.println("tcInOutLog = " + tcInOutLog);
+
+
+            switch (factoryCode) {
+                case "PPC2A01"://AE廠
+//                    if (tcInOutLogCar != null) {
+//                        HttpUtils.sendJsonPost("http://127.0.0.1:36670/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLogCar));
+//                    }
+                    HttpUtils.sendJsonPost("http://127.0.0.1:36670/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
+                    break;
+                case "PPF2A01"://SAP厰
+//                    if (tcInOutLogCar != null) {
+//                        HttpUtils.sendJsonPost("http://127.0.0.1:36680/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLogCar));
+//                    }
+                    HttpUtils.sendJsonPost("http://127.0.0.1:36680/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
+                    break;
+                case "PPC1A01"://PVC廠
+//                    if (tcInOutLogCar != null) {
+//                        HttpUtils.sendJsonPost("http://127.0.0.1:36650/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLogCar));
+//                    }
+                    HttpUtils.sendJsonPost("http://127.0.0.1:36650/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
+                    break;
+                case "PPC8601"://EVA廠
+//                    if (tcInOutLogCar != null) {
+//                        HttpUtils.sendJsonPost("http://127.0.0.1:36690/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLogCar));
+//                    }
+                    HttpUtils.sendJsonPost("http://127.0.0.1:36690/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
+                    break;
+                case "PPCP101"://PP廠
+//                    if (tcInOutLogCar != null) {
+//                        HttpUtils.sendJsonPost("http://127.0.0.1:36660/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLogCar));
+//                    }
+                    HttpUtils.sendJsonPost("http://127.0.0.1:36660/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
+                    break;
+                case "PMA1001"://港務公司
+//                    if (tcInOutLogCar != null) {
+//                        HttpUtils.sendJsonPost("http://127.0.0.1:36700/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLogCar));
+//                    }
+                    HttpUtils.sendJsonPost("http://127.0.0.1:36700/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
+                    break;
+                case "PPZ1101"://台塑三井
+//                    if (tcInOutLogCar != null) {
+//                        HttpUtils.sendJsonPost("http://127.0.0.1:36710/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLogCar));
+//                    }
+                    HttpUtils.sendJsonPost("http://127.0.0.1:36710/ruoyi-admin/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
+                    break;
+            }
+            //HttpUtils.sendJsonPost("http://127.0.0.1:8080/api/inOutLog/setOutLog", JSONObject.toJSONString(tcInOutLog));
+        } catch (
+                Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     //车出去的时候，需要发两条
     private TcInOutLog getTcInOutLog(String ip, String type, String no, String fctDorNm) {
         TcInOutLog result = new TcInOutLog();
@@ -1147,6 +1278,8 @@ public class ApiService {
 
     public void userBindHlkSubSysUser(SysUser user) {
         //身份证、照片不为空，就可以下发了
+
+        System.out.println(user.getFace()+"---->"+user.getIdCard());
         if (StringUtils.isBlank(user.getFace()) || StringUtils.isBlank(user.getIdCard())) {
             return;
         }
@@ -1157,13 +1290,15 @@ public class ApiService {
 
         //判断人员信息是不是已经下发过了
         //8 曾經下發過信息 人臉刪除
+        System.out.println("user.getSended()--->"+user.getSended());
         if (user.getSended() != null && 8 == user.getSended()) {
+            System.out.println("8 == user.getSended()");
 //            //已经下发过了，需要调用照片更新
             resultCode = personSendService.updateUserOnlyFace(user.getIdCard(), HttpUtils.requestUrlToBase64("http://127.0.0.1:" + port +"/ruoyi-admin"+ user.getFace()));
 //            //更新海康权限
             PersonVO personVO = new PersonVO();
             personVO.setAuthIsAll(false);
-            personVO.setDeviceNos(userJurisdiction.getCodeByUser(user));
+            personVO.setDeviceNos(userJurisdiction.getCodeByUserNew(user));
             personVO.setPersonId(user.getIdCard());
             personVO.setJobNo(user.getEmpNo());
             personVO.setPersonType(0);
@@ -1192,11 +1327,12 @@ public class ApiService {
             personSendService.updateHikAuthsSysyUser(personVO);
         }
         else if (user.getSended() != null && 0 == user.getSended()) {
+            System.out.println("0 == user.getSended()");
             //还没下发过，下发新的内部人员
             //内部员工信息
             PersonVO requestVo = new PersonVO();
             requestVo.setAuthIsAll(false);
-            requestVo.setDeviceNos(userJurisdiction.getCodeByUser(user));
+            requestVo.setDeviceNos(userJurisdiction.getCodeByUserNew(user));
             //拿到人脸Base64编码
             String faceBase64 = HttpUtils.requestUrlToBase64("http://127.0.0.1:" + port+"/ruoyi-admin" + user.getFace());
             requestVo.setFaceBase64Str(faceBase64);
@@ -1231,6 +1367,145 @@ public class ApiService {
             //调用下发人员信息接口
             resultCode = personSendService.downSendPersonInfoRequestForSubSysUser(requestVo);
         }
+        //判断人员信息是不是已经下发过了
+       else if (user.getSended() != null && 1 == user.getSended()) {
+            //已经下发过了，需要调用照片更新
+            System.out.println("1 == user.getSended()");
+            //resultCode = personSendService.updateUserFace(user.getIdCard(), HttpUtils.requestUrlToBase64("http://127.0.0.1:" + port +"/ruoyi-admin"+ user.getFace()));
+            //更新海康权限
+            PersonVO personVO = new PersonVO();
+            personVO.setAuthIsAll(false);
+            personVO.setDeviceNos(userJurisdiction.getCodeByUserNew(user));
+            personVO.setPersonId(user.getIdCard());
+            personVO.setJobNo(user.getEmpNo());
+            personVO.setPersonType(0);
+            System.out.println(userJurisdiction.getCodeByUserNew(user));
+
+            personSendService.updateHikAuthsSysyUser(personVO);
+        }
+
+        user.setSended(1L);
+        sysUserMapper.updateUser(user);
+//        if (resultCode == 200) {
+//            userMapper.sendBackStatus(user.getUserId(), 1);
+//            //人员信息下发成功，调用绑定定位卡接口
+//
+//        } else {
+//            userMapper.sendBackStatus(user.getUserId(), 9);
+//        }
+        if (StringUtils.isNotBlank(user.getPositionCardNo())) {
+            locationCardSendService.bindCardRequest(new CardBindVO(user.getPositionCardNo(), user.getIdCard()));
+        }
+    }
+
+    public void userBindHlkSubSysUserUpdate(SysUser user) {
+        //身份证、照片不为空，就可以下发了
+
+        System.out.println(user.getFace()+"---->"+user.getIdCard());
+//        if (StringUtils.isBlank(user.getFace()) || StringUtils.isBlank(user.getIdCard())) {
+//            return;
+//        }
+        //拿到人员的角色
+        //List<SysRole> roles = sysRoleMapper.selectRolePermissionByUserId(user.getUserId());
+        Integer resultCode = 0;
+
+
+        //判断人员信息是不是已经下发过了
+        //8 曾經下發過信息 人臉刪除
+//        if (user.getSended() != null && 8 == user.getSended()) {
+//            System.out.println("8 == user.getSended()");
+////            //已经下发过了，需要调用照片更新
+//            resultCode = personSendService.updateUserOnlyFace(user.getIdCard(), HttpUtils.requestUrlToBase64("http://127.0.0.1:" + port +"/ruoyi-admin"+ user.getFace()));
+////            //更新海康权限
+//            PersonVO personVO = new PersonVO();
+//            personVO.setAuthIsAll(false);
+//            personVO.setDeviceNos(userJurisdiction.getCodeByUserNew(user));
+//            personVO.setPersonId(user.getIdCard());
+//            personVO.setJobNo(user.getEmpNo());
+//            personVO.setPersonType(0);
+////            //判断是不是存在特殊权限
+//////            if (roles.size() > 0) {
+//////                roles.forEach(sysRole -> {
+//////                    //人道特殊权限-脸
+//////                    if ("facePeopleRoad".equals(sysRole.getRoleKey())) {
+//////                        personVO.setFaceSpecialPersonRoad("facePeopleRoad");
+//////                    }
+//////                    //车道特殊权限-脸
+//////                    if ("facecCarRoad".equals(sysRole.getRoleKey())) {
+//////                        personVO.setFaceSpecialCarRoad("facecCarRoad");
+//////                    }
+//////                    //人道特殊权限-卡
+//////                    if ("CardPeopleRoad".equals(sysRole.getRoleKey())) {
+//////                        personVO.setCardSpecialPersonRoad("CardPeopleRoad");
+//////                    }
+//////                    //车道特殊权限-卡
+//////                    if ("cardCarRoad".equals(sysRole.getRoleKey())) {
+//////                        personVO.setCardSpecialCarRoad("cardCarRoad");
+//////                    }
+//////                });
+//////            }
+////
+//            personSendService.updateHikAuthsSysyUser(personVO);
+//        }
+//        else if (user.getSended() != null && 0 == user.getSended()) {
+//            System.out.println("0 == user.getSended()");
+//            //还没下发过，下发新的内部人员
+//            //内部员工信息
+//            PersonVO requestVo = new PersonVO();
+//            requestVo.setAuthIsAll(false);
+//            requestVo.setDeviceNos(userJurisdiction.getCodeByUserNew(user));
+//            //拿到人脸Base64编码
+//            String faceBase64 = HttpUtils.requestUrlToBase64("http://127.0.0.1:" + port+"/ruoyi-admin" + user.getFace());
+//            requestVo.setFaceBase64Str(faceBase64);
+//            requestVo.setJobNo(user.getEmpNo());
+//            requestVo.setOrderSn(null);
+//            requestVo.setPersonId(user.getIdCard());
+//            requestVo.setPersonName(user.getNickName());
+//            requestVo.setPersonType(0);
+//            requestVo.setPhoneNo(user.getPhonenumber());
+//            //判断是不是存在特殊权限
+////            if (roles.size() > 0) {
+////                roles.forEach(sysRole -> {
+////                    //人道特殊权限-脸
+////                    if ("facePeopleRoad".equals(sysRole.getRoleKey())) {
+////                        requestVo.setFaceSpecialPersonRoad("facePeopleRoad");
+////                    }
+////                    //车道特殊权限-脸
+////                    if ("facecCarRoad".equals(sysRole.getRoleKey())) {
+////                        requestVo.setFaceSpecialCarRoad("facecCarRoad");
+////                    }
+////                    //人道特殊权限-卡
+////                    if ("CardPeopleRoad".equals(sysRole.getRoleKey())) {
+////                        requestVo.setCardSpecialPersonRoad("CardPeopleRoad");
+////                    }
+////                    //车道特殊权限-卡
+////                    if ("cardCarRoad".equals(sysRole.getRoleKey())) {
+////                        requestVo.setCardSpecialCarRoad("cardCarRoad");
+////                    }
+////                });
+////            }
+//
+//            //调用下发人员信息接口
+//            resultCode = personSendService.downSendPersonInfoRequestForSubSysUser(requestVo);
+//        }
+        //判断人员信息是不是已经下发过了
+         if (user.getSended() != null && 1 == user.getSended()) {
+            //已经下发过了，需要调用照片更新
+            System.out.println("1 == user.getSended()");
+            //resultCode = personSendService.updateUserFace(user.getIdCard(), HttpUtils.requestUrlToBase64("http://127.0.0.1:" + port +"/ruoyi-admin"+ user.getFace()));
+            //更新海康权限
+            PersonVO personVO = new PersonVO();
+            personVO.setAuthIsAll(false);
+            personVO.setDeviceNos(userJurisdiction.getCodeByUserNew(user));
+            personVO.setPersonId(user.getIdCard());
+            personVO.setJobNo(user.getEmpNo());
+            personVO.setPersonType(0);
+            System.out.println(userJurisdiction.getCodeByUserNew(user));
+
+            personSendService.updateHikAuthsSysyUser(personVO);
+        }
+
+
 //        if (resultCode == 200) {
 //            userMapper.sendBackStatus(user.getUserId(), 1);
 //            //人员信息下发成功，调用绑定定位卡接口

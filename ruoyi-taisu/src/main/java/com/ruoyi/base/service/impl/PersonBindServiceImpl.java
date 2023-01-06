@@ -24,7 +24,7 @@ public class PersonBindServiceImpl implements IPersonBindService {
     private PersonBindMapper personBindMapper;
 
     @DataSource(value = DataSourceType.SLAVE)
-    @Transactional(propagation = Propagation.REQUIRES_NEW ,readOnly = false)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
     @Override
     public int insertPersonBind(PersonBind personBind) {
 
@@ -34,12 +34,12 @@ public class PersonBindServiceImpl implements IPersonBindService {
     @DataSource(value = DataSourceType.SLAVE)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public List<PersonBind> selectByIdCard(String idCard,Integer personType) {
-        return personBindMapper.selectByIdCard(idCard,personType);
+    public List<PersonBind> selectByIdCard(String idCard, Integer personType) {
+        return personBindMapper.selectByIdCard(idCard, personType);
     }
 
     @DataSource(value = DataSourceType.SLAVE)
-    @Transactional(propagation = Propagation.REQUIRES_NEW ,readOnly = false)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
     @Override
     public int updateByIdCard(PersonBind personBind) {
         personBind.setCreateTime(new Date());
@@ -47,7 +47,7 @@ public class PersonBindServiceImpl implements IPersonBindService {
     }
 
     @DataSource(value = DataSourceType.SLAVE)
-    @Transactional(propagation = Propagation.REQUIRES_NEW ,readOnly = false)
+    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = false)
     @Override
     public int relieveByIdCard(String idCard) {
         return personBindMapper.relieveByIdCard(idCard);
@@ -55,7 +55,13 @@ public class PersonBindServiceImpl implements IPersonBindService {
 
     @DataSource(value = DataSourceType.SLAVE)
     @Override
-    public void deleteByIdCard(String idCard){
-         personBindMapper.deleteByIdCard(idCard);
+    public void deleteByIdCard(String idCard) {
+        personBindMapper.deleteByIdCard(idCard);
+    }
+
+    @DataSource(value = DataSourceType.SLAVE)
+    @Override
+    public void updateFactoryName(String idCard, String factoryName) {
+        personBindMapper.updateFactoryNameByIdCard(idCard, factoryName);
     }
 }

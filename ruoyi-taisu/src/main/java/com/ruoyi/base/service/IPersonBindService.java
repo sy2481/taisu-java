@@ -31,4 +31,6 @@ public interface IPersonBindService {
     int relieveByIdCard( String IdCard);
 
     void deleteByIdCard(String IdCard);
+
+    void updateFactoryName(String idCard,String factoryName);
 }

@@ -54,5 +54,5 @@ public class FactoryWorkBO implements Serializable {
     /**
      * 工单车辆
      */
-    private List<workCarBo> workCarList;
+    private List<WorkCarBo> workCarList;
 }

@@ -1,7 +1,8 @@
 package com.ruoyi.base.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ruoyi.base.bo.workCarBo;
+import com.ruoyi.base.bo.FactoryWorkBO;
+import com.ruoyi.base.bo.WorkCarBo;
 import com.ruoyi.base.domain.*;
 import com.ruoyi.base.interact.CarCardSendService;
 import com.ruoyi.base.mapper.*;
@@ -477,6 +478,7 @@ public class ManWorkServiceImpl implements IManWorkService {
     public void delCardOneToMany(JSONObject jsonObject) {
         //获取要删除的车卡
         String carCarNo = (String) jsonObject.get("carCardNo");
+        String carCarNoDel=(String) jsonObject.get("carCardNo");
         //删除车卡的工单信息
         String workNo = (String) jsonObject.get("workNo");
         ManWork workInfo = workMapper.selectManWorkByworkNo(workNo);
@@ -542,6 +544,9 @@ public class ManWorkServiceImpl implements IManWorkService {
         carCardVO.setCardNo(String.valueOf(workInfo.getWorkNo()));
         carCardVO.setCardType(2);
         pool.threadPoolTaskExecutor().execute(() -> carCardSendService.downSendUnbindCarCard(carCardVO));
+        // 工单解绑车卡
+        //pool.threadPoolTaskExecutor().execute(() -> carCardSendService.downSendUnbindCarCard(carCarNoDel));
+
     }
 
 
@@ -593,8 +598,22 @@ public class ManWorkServiceImpl implements IManWorkService {
         }
     }
 
+//    @Override
+//    public List<workCarBo> selectManWork(String workNo, String date) {
+//        return manWorkMapper.selectManWork(workNo,date);
+//    }
+
     @Override
-    public List<workCarBo> selectManWork(String workNo, String date) {
-        return manWorkMapper.selectManWork(workNo,date);
+    public List<WorkCarBo> selectManWork(String workNo, String date,Integer workType) {
+        List<WorkCarBo> workCarBos = manWorkMapper.selectManWorkNew(workNo, date,workType);
+        if(workCarBos.size()>0){
+            for(WorkCarBo bo:workCarBos){
+                List<FactoryWorkBO> factoryWorkList = manFactoryMapper.listByWorkNoAndDate(bo.getWorkNo(), date, 1);
+                if(factoryWorkList.size()>0){
+                    bo.setFactoryWorkBOList(factoryWorkList);
+                }
+            }
+        }
+        return workCarBos;
     }
 }
