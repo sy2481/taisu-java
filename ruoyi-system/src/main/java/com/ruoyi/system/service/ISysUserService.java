@@ -2,6 +2,7 @@ package com.ruoyi.system.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.system.bo.CentMemberBo;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -251,6 +252,12 @@ public interface ISysUserService
      * 從中心庫同步
      * @return
      */
+    //public int syncCent();
+
+    /**
+     * 從中心庫增加數據
+     * @return
+     */
     public int syncCent();
 
     /**
@@ -265,8 +272,12 @@ public interface ISysUserService
      * @param list
      * @return
      */
-    public int syncCentByEmp(List<SysUser> list,boolean forceUpdate);
+    //public int syncCentByEmp(List<SysUser> list,boolean forceUpdate);
 
-
-
+    /**
+     * 從中心庫同步
+     *
+     * @return
+     */
+    public int syncCentByPage(List<CentMemberBo> memberBoList, List<SysUser> oldList);
 }

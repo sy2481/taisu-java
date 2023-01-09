@@ -1,5 +1,8 @@
 package com.ruoyi.system.bo;
 
+import ch.qos.logback.classic.pattern.SyslogStartConverter;
+import com.ruoyi.common.core.domain.entity.SysUser;
+
 import java.io.Serializable;
 
 /**
@@ -7,7 +10,9 @@ import java.io.Serializable;
  */
 public class CentMemberBo implements Serializable {
 
+    private String empNo;
     private String idCard;
+    private String userName;
     private String name;
     private String sex;
     private String mobile;
@@ -20,12 +25,28 @@ public class CentMemberBo implements Serializable {
     private String workOrderNo;
 
 
+    public String getEmpNo() {
+        return empNo;
+    }
+
+    public void setEmpNo(String empNo) {
+        this.empNo = empNo;
+    }
+
     public String getIdCard() {
         return idCard;
     }
 
     public void setIdCard(String idCard) {
         this.idCard = idCard;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getName() {
@@ -91,4 +112,44 @@ public class CentMemberBo implements Serializable {
     public void setWorkOrderNo(String workOrderNo) {
         this.workOrderNo = workOrderNo;
     }
+
+    /**
+     * 轉為用戶
+     * @param memberBo
+     * @param sysUser
+     * @return
+     */
+    public static SysUser transToSysUser(CentMemberBo memberBo,SysUser sysUser){
+        sysUser.setEmpNo(memberBo.getEmpNo());
+        sysUser.setIdCard(memberBo.getIdCard());
+        sysUser.setUserName(memberBo.getUserName());
+        sysUser.setNickName(memberBo.getName());
+        sysUser.setSex(memberBo.getSex());
+        sysUser.setPhonenumber(memberBo.getMobile());
+        sysUser.setFamilyAddress(memberBo.getAddress());
+        sysUser.setCarId(memberBo.getLicensePlate());
+        sysUser.setFace(memberBo.getFace());
+        return sysUser;
+    }
+
+    /**
+     * 轉為用戶
+     * @param memberBo
+     * @param sysUser
+     * @return
+     */
+    public static CentMemberBo transFromSysUser(CentMemberBo memberBo,SysUser sysUser){
+        memberBo.setEmpNo(sysUser.getEmpNo());
+        memberBo.setIdCard(sysUser.getIdCard());
+        memberBo.setUserName(sysUser.getUserName());
+        memberBo.setName(sysUser.getNickName());
+        memberBo.setSex(sysUser.getSex());
+        memberBo.setMobile(sysUser.getPhonenumber());
+        memberBo.setAddress(sysUser.getFamilyAddress());
+        memberBo.setLicensePlate(sysUser.getCarId());
+        memberBo.setFace(sysUser.getFace());
+        return memberBo;
+    }
+
+
 }

@@ -32,10 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.validation.Validator;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -534,33 +531,33 @@ public class SysUserServiceImpl implements ISysUserService {
         String password = configService.selectConfigByKey("sys.user.initPassword");
         for (SysUser user : userList) {
             try {
-                if (StringUtils.isBlank(user.getEmpNo())){
+                if (StringUtils.isBlank(user.getEmpNo())) {
                     failureNum++;
                     failureMsg.append("<br/>" + failureNum + "、員工編號 " + user.getEmpNo() + " 不能為空");
                     continue;
                 }
                 // 验证是否存在这个用户
-                if (StringUtils.isNotBlank(user.getIdCard())){
+                if (StringUtils.isNotBlank(user.getIdCard())) {
                     SysUser u = userMapper.selectUserByIdCard(user.getIdCard());
-                    if (StringUtils.isNotNull(u)){
+                    if (StringUtils.isNotNull(u)) {
                         failureNum++;
                         failureMsg.append("<br/>" + failureNum + "、身份證號 " + user.getIdCard() + " 已存在");
                         continue;
                     }
                 }
-                if (StringUtils.isNotBlank(user.getEmpNo())){
+                if (StringUtils.isNotBlank(user.getEmpNo())) {
                     //根据用户编号查询
                     List<SysUser> sysUsers = userMapper.selectByEmpNo(user.getEmpNo());
-                    if (sysUsers.size() >0){
+                    if (sysUsers.size() > 0) {
                         failureNum++;
                         failureMsg.append("<br/>" + failureNum + "、員工編號 " + user.getEmpNo() + " 已存在");
                         continue;
                     }
                 }
                 //部門，根据部门名称查询
-                if (StringUtils.isNotBlank(user.getDeptName())){
+                if (StringUtils.isNotBlank(user.getDeptName())) {
                     List<SysDept> sysDepts = sysDeptMapper.selectDeptByName(user.getDeptName());
-                    if (sysDepts.size()>0){
+                    if (sysDepts.size() > 0) {
                         user.setDeptId(sysDepts.get(0).getDeptId());
                     }
                 }
@@ -582,7 +579,7 @@ public class SysUserServiceImpl implements ISysUserService {
             }
         }
         if (failureNum > 0) {
-            failureMsg.insert(0, "很抱歉，导入失败！共導入"+userList.size()+"條數據，共 " + failureNum + " 条数据格式不正确，错误如下：");
+            failureMsg.insert(0, "很抱歉，导入失败！共導入" + userList.size() + "條數據，共 " + failureNum + " 条数据格式不正确，错误如下：");
             throw new ServiceException(failureMsg.toString());
         } else {
             successMsg.insert(0, "恭喜您，数据已全部导入成功！共 " + successNum + " 条，数据如下：");
@@ -601,22 +598,22 @@ public class SysUserServiceImpl implements ISysUserService {
     @Override
     public int addUser() {
         List<ZhongUser> zhongUsers = zhongUserService.findAll();
-        if (zhongUsers.size()==0){
+        if (zhongUsers.size() == 0) {
             return 0;
         }
         zhongUsers.forEach(zhongUser -> {
-            if (zhongUser.getEmpNo()!=null){
+            if (zhongUser.getEmpNo() != null) {
                 String substring = zhongUser.getEmpNo().substring(0, 1);
-                if (substring.equals("C")||substring.equals("N")){
+                if (substring.equals("C") || substring.equals("N")) {
                     return;
                 }
                 //查询员工代号
                 SysUser byUserNo = userMapper.getByUserNo(zhongUser.getEmpNo());
-                if (byUserNo!=null){
+                if (byUserNo != null) {
                     return;
                 }
                 //添加
-                SysUser sysUser=new SysUser();
+                SysUser sysUser = new SysUser();
                 sysUser.setDeptId(zhongUser.getDeptId());
                 sysUser.setNickName(zhongUser.getNickName());
                 sysUser.setUserName(zhongUser.getNickName());
@@ -675,7 +672,7 @@ public class SysUserServiceImpl implements ISysUserService {
             sysUserCenter.setUserId(null);
             userMapper.insertUser(sysUserCenter);
 
-        }else{//有数据
+        } else {//有数据
             sysUserCenter.setFace(sysUser.getFace());
             userMapper.updateUser(sysUserCenter);
         }
@@ -683,21 +680,22 @@ public class SysUserServiceImpl implements ISysUserService {
 
     /**
      * 根据身份证获取
+     *
      * @param idCards 身份证号
      */
-    public Map<String,SysUser> getListByIdCards(List<String> idCards){
-        Map<String,SysUser> map=new HashMap<String ,SysUser>();
-        List<SysUser> list= userMapper.selectListFaceByIdCards(idCards);
-        for (SysUser item:list){
-            String key=item.getIdCard();
-            if(!map.containsKey(key)){
-                map.put(key,item);
+    public Map<String, SysUser> getListByIdCards(List<String> idCards) {
+        Map<String, SysUser> map = new HashMap<String, SysUser>();
+        List<SysUser> list = userMapper.selectListFaceByIdCards(idCards);
+        for (SysUser item : list) {
+            String key = item.getIdCard();
+            if (!map.containsKey(key)) {
+                map.put(key, item);
             }
         }
         return map;
     }
 
-    @Override
+    /*@Override
     @Transactional
     public int syncCent() {
         int result = 0;
@@ -716,22 +714,47 @@ public class SysUserServiceImpl implements ISysUserService {
 
         }while (sysUserList.size()>=pageSize);
         return result;
+    }*/
+
+    @Override
+    @Transactional
+    public int syncCent() {
+        int result = 0;
+        List<SysUser> oldList = userMapper.selectUserListAll(null);
+
+        //批量獲取
+        List<CentMemberBo> memberBoList = new ArrayList<>();
+        int pageNum = 1;
+        int pageSize = 1000;
+        String orderBy = "";
+        do {
+            memberBoList = syncCentEmpService.getListFromCentByPage(pageNum++, pageSize, orderBy, "");
+            //處理
+            result += this.syncCentByPage(memberBoList, oldList);
+
+
+        } while (memberBoList.size() >= pageSize);
+        return result;
     }
 
     @Override
     @Transactional
     public int syncCentByUserIds(Long[] userIds) {
         boolean forceUpdate = true;
-        List<SysUser> sysUserList = userMapper.selectSysUserListByIds(userIds);
-        return syncCentByEmp(sysUserList, forceUpdate);
+        List<SysUser> oldList = userMapper.selectSysUserListByIds(userIds);
+        List<String> empNos = oldList.stream().map(SysUser::getEmpNo).collect(Collectors.toList());
+        List<CentMemberBo> memberBoList = syncCentEmpService.getListFromCentByPage(1, 1000, "", StringUtils.join(empNos, ","));
+        //處理
+        return this.syncCentByPage(memberBoList, oldList);
     }
 
     /**
      * 從中心庫同步
+     *
      * @param list
      * @return
      */
-    public int syncCentByEmp(List<SysUser> list,boolean forceUpdate){
+    /*public int syncCentByEmp(List<SysUser> list, boolean forceUpdate) {
         int result = 0;
         List<SysUser> updateListEmp = new ArrayList<SysUser>();
         SysUser entityEmp = null;
@@ -739,7 +762,7 @@ public class SysUserServiceImpl implements ISysUserService {
         List<String> idNoList = list.stream().filter(x -> !StringUtils.isEmpty(x.getIdCard()))
                 .map(SysUser::getIdCard).collect(Collectors.toList());
 
-        Map<String, CentMemberBo> memberBoMap = syncCentEmpService.getListFromCent(StringUtils.join(idNoList,","));
+        Map<String, CentMemberBo> memberBoMap = syncCentEmpService.getListFromCent(StringUtils.join(idNoList, ","));
 
         for (SysUser item : list) {
             //不存在證件號，不更新
@@ -751,17 +774,17 @@ public class SysUserServiceImpl implements ISysUserService {
                 continue;
             }
             //是否更新數據
-            boolean updateInfo = this.isUpdateInfoFromCent(item,memberBo);
+            boolean updateInfo = this.isUpdateInfoFromCent(item, memberBo);
 
             if (updateInfo) {
                 entityEmp = new SysUser();
                 entityEmp.setUserId(item.getUserId());
                 entityEmp.setIdCard(item.getIdCard());
-                entityEmp.setUpdateBy(SecurityUtils.getUsername());
+                entityEmp.setUpdateBy(SecurityUtils.getUsernameDefaultSystem());
                 entityEmp.setUpdateTime(DateUtils.getNowDate());
 
                 if (updateInfo) {
-                    entityEmp=this.getSysUserByCentMemberBo(entityEmp,memberBo);
+                    entityEmp = CentMemberBo.transToSysUser(memberBo, entityEmp);
                 }
 
                 updateListEmp.add(entityEmp);
@@ -769,10 +792,10 @@ public class SysUserServiceImpl implements ISysUserService {
         }
 
         //維護人員表
-        /*if (updateListEmp.size() > 0) {
+        *//*if (updateListEmp.size() > 0) {
             List<BasePeople> peopleList = basePeopleService.transEmpToBasePeople(updateListEmp);
             result += basePeopleService.saveBasePeople(peopleList);
-        }*/
+        }*//*
 
         //內部人員
         if (updateListEmp.size() > 0) {
@@ -782,12 +805,12 @@ public class SysUserServiceImpl implements ISysUserService {
             }
         }
         return result;
-    }
+    }*/
 
     //是否从中心库更新基本信息（人脸除外）
     public boolean isUpdateInfoFromCent(SysUser oldVo, CentMemberBo memberBo) {
         SysUser newVo = new SysUser();
-        newVo = getSysUserByCentMemberBo(newVo, memberBo);
+        newVo = CentMemberBo.transToSysUser(memberBo, newVo);
 
         //不相等才更新
         if (!oldVo.toSyncCentCompareString().equals(newVo.toSyncCentCompareString())) {
@@ -797,15 +820,76 @@ public class SysUserServiceImpl implements ISysUserService {
         }
     }
 
-    //中心库人员转为内部人员数据
-    public SysUser getSysUserByCentMemberBo(SysUser newVo, CentMemberBo memberBo) {
-        newVo.setNickName(memberBo.getName());
-        newVo.setSex(memberBo.getSex());
-        newVo.setPhonenumber(memberBo.getMobile());
-        newVo.setFamilyAddress(memberBo.getAddress());
-        //newVo.setCarId(memberBo.getLicensePlate());
-        newVo.setFace(memberBo.getFace());
-        return newVo;
+    /**
+     * 從中心庫同步
+     *
+     * @return
+     */
+    public int syncCentByPage(List<CentMemberBo> memberBoList, List<SysUser> oldList) {
+        int result = 0;
+        List<SysUser> addList = new ArrayList<>();
+        List<SysUser> updateList = new ArrayList<SysUser>();
+        SysUser entity = null;
+
+        if (memberBoList == null) {
+            return result;
+        }
+
+        for (CentMemberBo memberBo : memberBoList) {
+            String key = memberBo.getEmpNo();
+            if (StringUtils.isEmpty(key)) {
+                continue;
+            }
+            List<SysUser> tmpList = oldList.stream()
+                    .filter(x -> Objects.equals(x.getEmpNo(), key))
+                    .collect(Collectors.toList());
+            boolean isAdd = true;
+            SysUser oldVo = new SysUser();
+            if (tmpList.size() > 0) {//修改
+                entity = tmpList.get(0);
+                BeanUtils.copyProperties(entity, oldVo);
+                isAdd = false;
+            } else {//新增
+                entity = new SysUser();
+                isAdd = true;
+            }
+            entity = CentMemberBo.transToSysUser(memberBo, entity);
+
+            if (isAdd) {
+                //新增數據默認隱藏
+                entity.setDisplayStatus("2");
+                addList.add(entity);
+            } else {
+                //是否更新數據
+                boolean updateInfo = this.isUpdateInfoFromCent(oldVo, memberBo);
+
+                if (updateInfo) {
+                    entity.setUserId(oldVo.getUserId());
+                    entity.setUpdateBy(SecurityUtils.getUsernameDefaultSystem());
+                    entity.setUpdateTime(DateUtils.getNowDate());
+
+                    if (updateInfo) {
+                        updateList.add(entity);
+                    }
+                }
+            }
+        }
+
+        if (addList.size() > 0) {
+            List<List<SysUser>> lists = BatisUtils.splitList(addList, 40);
+            for (List<SysUser> ls : lists) {
+                result += userMapper.batchInsertUserFromCent(ls);
+            }
+        }
+
+        //內部人員
+        if (updateList.size() > 0) {
+            List<List<SysUser>> lists = BatisUtils.splitList(updateList, 40);
+            for (List<SysUser> ls : lists) {
+                result += userMapper.batchUpdateUserFromCent(ls);
+            }
+        }
+        return result;
     }
 
 }
