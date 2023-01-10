@@ -1,8 +1,10 @@
 package com.ruoyi.system.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.bo.CentMemberBo;
 
+import java.util.List;
 import java.util.Map;
 
 public interface ISyncCentEmpService {
@@ -18,6 +20,10 @@ public interface ISyncCentEmpService {
      *
      * @return
      */
-    public Map<String, CentMemberBo> getListFromCent(String idCards);
+    //public Map<String, CentMemberBo> getListFromCent(String idCards);
+
+    //public Map<String, CentMemberBo> transToMap(JSONObject resObj);
+
+    public List<CentMemberBo> getListFromCentByPage(int pageNum, int pageSize, String orderBy,String empNos);
 
 }

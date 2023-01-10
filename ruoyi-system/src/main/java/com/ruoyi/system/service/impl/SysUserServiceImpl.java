@@ -32,10 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import javax.validation.Validator;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -726,6 +723,17 @@ public class SysUserServiceImpl implements ISysUserService {
         return syncCentByEmp(sysUserList, forceUpdate);
     }
 
+    @Override
+    @Transactional
+    public int syncCentByUserIdsNew(Long[] userIds) {
+        boolean forceUpdate = true;
+        List<SysUser> oldList = userMapper.selectSysUserListByIds(userIds);
+        List<String> empNos = oldList.stream().map(SysUser::getEmpNo).collect(Collectors.toList());
+        List<CentMemberBo> memberBoList = syncCentEmpService.getListFromCentByPage(1, 1000, "", StringUtils.join(empNos, ","));
+        //處理
+        return this.syncCentByPage(memberBoList, oldList);
+    }
+
     /**
      * 從中心庫同步
      * @param list
@@ -757,7 +765,7 @@ public class SysUserServiceImpl implements ISysUserService {
                 entityEmp = new SysUser();
                 entityEmp.setUserId(item.getUserId());
                 entityEmp.setIdCard(item.getIdCard());
-                entityEmp.setUpdateBy("system");
+                entityEmp.setUpdateBy(SecurityUtils.getUsername());
                 entityEmp.setUpdateTime(DateUtils.getNowDate());
 
                 if (updateInfo) {
@@ -797,6 +805,19 @@ public class SysUserServiceImpl implements ISysUserService {
         }
     }
 
+    //是否从中心库更新基本信息（人脸除外）
+    public boolean isUpdateInfoFromCentNew(SysUser oldVo, CentMemberBo memberBo) {
+        SysUser newVo = new SysUser();
+        newVo = CentMemberBo.transToSysUser(memberBo, newVo);
+
+        //不相等才更新
+        if (!oldVo.toSyncCentCompareString().equals(newVo.toSyncCentCompareString())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     //中心库人员转为内部人员数据
     public SysUser getSysUserByCentMemberBo(SysUser newVo, CentMemberBo memberBo) {
         newVo.setNickName(memberBo.getName());
@@ -806,6 +827,120 @@ public class SysUserServiceImpl implements ISysUserService {
         //newVo.setCarId(memberBo.getLicensePlate());
         newVo.setFace(memberBo.getFace());
         return newVo;
+    }
+
+    /**
+     * 從中心庫同步
+     *
+     * @return
+     */
+    public int syncCentByPage(List<CentMemberBo> memberBoList, List<SysUser> oldList) {
+        int result = 0;
+        List<SysUser> addList = new ArrayList<>();
+        List<SysUser> updateList = new ArrayList<SysUser>();
+        SysUser entity = null;
+
+        if (memberBoList == null) {
+            return result;
+        }
+
+        for (CentMemberBo memberBo : memberBoList) {
+            String key = memberBo.getEmpNo();
+            if (StringUtils.isEmpty(key)) {
+                continue;
+            }
+            List<SysUser> tmpList = oldList.stream()
+                    .filter(x -> Objects.equals(x.getEmpNo(), key))
+                    .collect(Collectors.toList());
+            boolean isAdd = true;
+            SysUser oldVo = new SysUser();
+            if (tmpList.size() > 0) {//修改
+                entity = tmpList.get(0);
+                BeanUtils.copyProperties(entity, oldVo);
+                isAdd = false;
+            } else {//新增
+                entity = new SysUser();
+                isAdd = true;
+            }
+            entity = CentMemberBo.transToSysUser(memberBo, entity);
+
+            if (isAdd) {
+                //新增數據默認隱藏
+                entity.setDisplayStatus("2");
+                addList.add(entity);
+            } else {
+                //是否更新數據
+                boolean updateInfo = this.isUpdateInfoFromCent(oldVo, memberBo);
+
+                if (updateInfo) {
+                    entity.setUserId(oldVo.getUserId());
+                    entity.setUpdateBy(SecurityUtils.getUsernameDefaultSystem());
+                    entity.setUpdateTime(DateUtils.getNowDate());
+
+                    if (updateInfo) {
+                        updateList.add(entity);
+                    }
+                }
+            }
+        }
+
+        if (addList.size() > 0) {
+            List<List<SysUser>> lists = BatisUtils.splitList(addList, 40);
+            for (List<SysUser> ls : lists) {
+                result += userMapper.batchInsertUserFromCent(ls);
+            }
+        }
+
+        //內部人員
+        if (updateList.size() > 0) {
+            List<List<SysUser>> lists = BatisUtils.splitList(updateList, 40);
+            for (List<SysUser> ls : lists) {
+                result += userMapper.batchUpdateUserFromCent(ls);
+            }
+        }
+        return result;
+    }
+
+    /*@Override
+    @Transactional
+    public int syncCent() {
+        int result = 0;
+        boolean forceUpdate = false;
+
+        //批量獲取
+        List<SysUser> sysUserList=new ArrayList<>();
+        int pageNum = 1;
+        int pageSize = 1000;
+        String orderBy="";
+        do {
+            PageHelper.startPage(pageNum++, pageSize, orderBy).setReasonable(true);
+            sysUserList = userMapper.selectUserList(new SysUser());
+            //處理廠商人員
+            result+=this.syncCentByEmp(sysUserList,forceUpdate);
+
+        }while (sysUserList.size()>=pageSize);
+        return result;
+    }*/
+
+    @Override
+    @Transactional
+    public int syncCent() {
+        int result = 0;
+        List<SysUser> oldList = userMapper.selectUserListAll(null);
+
+        //批量獲取
+        List<CentMemberBo> memberBoList = new ArrayList<>();
+        int pageNum = 1;
+        int pageSize = 1000;
+        String orderBy = "";
+        do {
+            memberBoList = syncCentEmpService.getListFromCentByPage(pageNum++, pageSize, orderBy, "");
+            //處理
+            result += this.syncCentByPage(memberBoList, oldList);
+
+
+        } while (memberBoList.size() >= pageSize);
+        return result;
     }
 
 }

@@ -219,6 +219,8 @@ SysUser extends BaseEntity
     private String emisStandardName;
     private String envSign; //環保標誌
 
+    private String[] empNos;
+
     public String getDeptName() {
         return deptName;
     }
@@ -706,6 +708,14 @@ SysUser extends BaseEntity
         this.envSign = envSign;
     }
 
+    public String[] getEmpNos() {
+        return empNos;
+    }
+
+    public void setEmpNos(String[] empNos) {
+        this.empNos = empNos;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
@@ -759,6 +769,9 @@ SysUser extends BaseEntity
      */
     public String toSyncCentCompareString(){
         return new ToStringBuilder(this,ToStringStyle.SIMPLE_STYLE)
+                .append("empNo",getEmpNo())
+                .append("idCard",getIdCard())
+                .append("userName",getUserName())
                 .append("nickName", getNickName())
                 .append("sex", getSex())
                 .append("phonenumber", getPhonenumber())

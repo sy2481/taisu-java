@@ -21,6 +21,8 @@ public interface SysUserMapper {
      */
     public List<SysUser> selectUserList(SysUser sysUser);
 
+    public List<SysUser> selectUserListAll(SysUser sysUser);
+
     /**
      * 根据条件分页查询已配用户角色列表
      *
@@ -194,6 +196,15 @@ public interface SysUserMapper {
      * @param list 用户信息
      * @return 结果
      */
+    public int batchInsertUserFromCent(@Param("list") List<SysUser> list);
+
+    /**
+     * 修改用户信息
+     *
+     * @param list 用户信息
+     * @return 结果
+     */
     public int batchUpdateUserFromCent(@Param("list") List<SysUser> list);
+
 
 }
