@@ -136,6 +136,7 @@ public class SyncCentEmpService implements ISyncCentEmpService {
                 String address = ZJFConverter.SimToTra(StringUtils.nvl(item.getString("familyAddress"), ""));
                 //String licensePlate=ZJFConverter.SimToTra(StringUtils.nvl(item.getString("carId"),""));
                 String face = item.getString("face");
+                Long sended=item.getLong("sended");
 
                 SysUser sysUser = new SysUser();
                 sysUser.setEmpNo(empNo);
@@ -146,8 +147,7 @@ public class SyncCentEmpService implements ISyncCentEmpService {
                 sysUser.setPhonenumber(mobile);
                 sysUser.setFamilyAddress(address);
                 sysUser.setFace(face);
-
-
+                sysUser.setSended(sended);
                 centMemberBo = new CentMemberBo();
                 centMemberBo = centMemberBo.transFromSysUser(centMemberBo, sysUser);
                 memberBoList.add(centMemberBo);

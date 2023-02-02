@@ -24,6 +24,15 @@ public class CentMemberBo implements Serializable {
     //施工單號
     private String workOrderNo;
 
+    private Long sended;
+
+    public Long getSended() {
+        return sended;
+    }
+
+    public void setSended(Long sended) {
+        this.sended = sended;
+    }
 
     public String getEmpNo() {
         return empNo;
@@ -129,6 +138,7 @@ public class CentMemberBo implements Serializable {
         sysUser.setFamilyAddress(memberBo.getAddress());
         sysUser.setCarId(memberBo.getLicensePlate());
         sysUser.setFace(memberBo.getFace());
+        sysUser.setSended(memberBo.getSended());
         return sysUser;
     }
 
@@ -148,6 +158,7 @@ public class CentMemberBo implements Serializable {
         memberBo.setAddress(sysUser.getFamilyAddress());
         memberBo.setLicensePlate(sysUser.getCarId());
         memberBo.setFace(sysUser.getFace());
+        memberBo.setSended(sysUser.getSended());
         return memberBo;
     }
 

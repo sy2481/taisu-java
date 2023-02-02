@@ -84,6 +84,18 @@ public class SysUserServiceImpl implements ISysUserService {
     }
 
     /**
+     * 根据条件分页查询用户列表
+     *
+     * @param user 用户信息
+     * @return 用户信息集合信息
+     */
+    @Override
+    @DataScope(deptAlias = "d", userAlias = "u")
+    public List<SysUser> selectUserListDisplay(SysUser user) {
+        return userMapper.selectUserListDisplay(user);
+    }
+
+    /**
      * 根据条件分页查询已分配用户角色列表
      *
      * @param user 用户信息
@@ -694,38 +706,19 @@ public class SysUserServiceImpl implements ISysUserService {
         return map;
     }
 
-    @Override
-    @Transactional
-    public int syncCent() {
-        int result = 0;
-        boolean forceUpdate = false;
 
-        //批量獲取
-        List<SysUser> sysUserList=new ArrayList<>();
-        int pageNum = 1;
-        int pageSize = 1000;
-        String orderBy="";
-        do {
-            PageHelper.startPage(pageNum++, pageSize, orderBy).setReasonable(true);
-            sysUserList = userMapper.selectUserList(new SysUser());
-            //處理廠商人員
-            result+=this.syncCentByEmp(sysUserList,forceUpdate);
 
-        }while (sysUserList.size()>=pageSize);
-        return result;
-    }
+//    @Override
+//    @Transactional
+//    public int syncCentByUserIds(Long[] userIds) {
+//        boolean forceUpdate = true;
+//        List<SysUser> sysUserList = userMapper.selectSysUserListByIds(userIds);
+//        return syncCentByEmp(sysUserList, forceUpdate);
+//    }
 
     @Override
     @Transactional
     public int syncCentByUserIds(Long[] userIds) {
-        boolean forceUpdate = true;
-        List<SysUser> sysUserList = userMapper.selectSysUserListByIds(userIds);
-        return syncCentByEmp(sysUserList, forceUpdate);
-    }
-
-    @Override
-    @Transactional
-    public int syncCentByUserIdsNew(Long[] userIds) {
         boolean forceUpdate = true;
         List<SysUser> oldList = userMapper.selectSysUserListByIds(userIds);
         List<String> empNos = oldList.stream().map(SysUser::getEmpNo).collect(Collectors.toList());
@@ -739,6 +732,7 @@ public class SysUserServiceImpl implements ISysUserService {
      * @param list
      * @return
      */
+    /**
     public int syncCentByEmp(List<SysUser> list,boolean forceUpdate){
         int result = 0;
         List<SysUser> updateListEmp = new ArrayList<SysUser>();
@@ -777,10 +771,10 @@ public class SysUserServiceImpl implements ISysUserService {
         }
 
         //維護人員表
-        /*if (updateListEmp.size() > 0) {
+        if (updateListEmp.size() > 0) {
             List<BasePeople> peopleList = basePeopleService.transEmpToBasePeople(updateListEmp);
             result += basePeopleService.saveBasePeople(peopleList);
-        }*/
+        }
 
         //內部人員
         if (updateListEmp.size() > 0) {
@@ -791,6 +785,7 @@ public class SysUserServiceImpl implements ISysUserService {
         }
         return result;
     }
+     ***/
 
     //是否从中心库更新基本信息（人脸除外）
     public boolean isUpdateInfoFromCent(SysUser oldVo, CentMemberBo memberBo) {

@@ -125,6 +125,11 @@ public class SysUserNewController extends BaseController {
         }
 
         IDcard.competeUserByIdcard(user);
+        if(user.getPlc()==null|| user.getPlc().length()==0){
+            user.setDisplayStatus("2");
+        }else {
+            user.setDisplayStatus("0");
+        }
         int userRow = userService.updateUser(user);
         if (userRow > 0) {
             SysUser sysUser = sysUserMapper.selectUserById(user.getUserId());
@@ -209,6 +214,7 @@ public class SysUserNewController extends BaseController {
             user.setPlc(factory.toString());
         }
         user.setCreateBy(getUsername());
+        user.setDisplayStatus("0");
         user.setPassword(SecurityUtils.encryptPassword(user.getPassword()));
 //        user.setPassword("");
         //先判断身份证格式

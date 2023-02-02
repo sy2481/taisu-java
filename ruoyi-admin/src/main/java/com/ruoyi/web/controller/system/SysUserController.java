@@ -112,8 +112,14 @@ public class SysUserController extends BaseController {
                 user.setDeptId(Long.valueOf(99999999L));
             }
         }
+        if (user.getEmpNo() != null && user.getEmpNo().length() >= 4) {
+            user.setDisplayStatus(null);
+        } else {
+            user.setDisplayStatus("0");
+        }
+
         startPage();
-        List<SysUser> list = userService.selectUserList(user);
+        List<SysUser> list = userService.selectUserListDisplay(user);
 
         list.forEach(sysUser -> {
             StringBuffer factoryName = new StringBuffer();
@@ -188,7 +194,7 @@ public class SysUserController extends BaseController {
             }
 
 
-            if (StringUtils.isNotBlank(sysUser.getPlc())){
+            if (StringUtils.isNotBlank(sysUser.getPlc())) {
                 String[] split = sysUser.getPlc().split(",");
                 List<Long> list = new ArrayList<>();
                 for (String s : split) {
@@ -223,7 +229,7 @@ public class SysUserController extends BaseController {
                 && UserConstants.NOT_UNIQUE.equals(userService.checkEmailUnique(user))) {
             return AjaxResult.error("新增用户'" + user.getUserName() + "'失败，邮箱账号已存在");
         }
-        if (StringUtils.isNotNull(user.getFactoryIdArray())&&user.getFactoryIdArray().length>0){
+        if (StringUtils.isNotNull(user.getFactoryIdArray()) && user.getFactoryIdArray().length > 0) {
             StringBuilder factory = new StringBuilder();
             for (int i = 0; i < user.getFactoryIdArray().length; i++) {
                 if (i == 0) {
@@ -235,7 +241,7 @@ public class SysUserController extends BaseController {
             user.setFactoryId(factory.toString());
         }
 
-        if (StringUtils.isNotNull(user.getPlcInfo())&&user.getPlcInfo().length>0){
+        if (StringUtils.isNotNull(user.getPlcInfo()) && user.getPlcInfo().length > 0) {
             StringBuilder factory = new StringBuilder();
             for (int i = 0; i < user.getPlcInfo().length; i++) {
                 if (i == 0) {
@@ -268,7 +274,6 @@ public class SysUserController extends BaseController {
         }
         return AjaxResult.error(user.getIdCard() + "身份证号已存在");
     }
-
 
 
     /**
@@ -404,35 +409,59 @@ public class SysUserController extends BaseController {
     /**
      * 删除用户
      */
+//    @PreAuthorize("@ss.hasPermi('system:user:remove')")
+//    @Log(title = "用户管理", businessType = BusinessType.DELETE)
+//    @DeleteMapping("/{userIds}")
+//    public AjaxResult remove(@PathVariable Long[] userIds) {
+//        if (ArrayUtils.contains(userIds, getUserId())) {
+//            return error("当前用户不能删除");
+//        }
+//        //判断是否还有车卡、定位卡的绑定
+//        for (int i = 0; i < userIds.length; i++) {
+//            SysUser sysUser = userService.selectUserById(userIds[i]);
+//            if (StringUtils.isNotBlank(sysUser.getCarCard())) {
+//                return error("员工车卡尚未解绑，不允许删除");
+//            }
+//            if (StringUtils.isNotBlank(sysUser.getPositionCardNo())) {
+//                return error("员工定位卡尚未解绑，不允许删除");
+//            }
+//        }
+//        for (int i = 0; i < userIds.length; i++) {
+//            //还需要同时解绑车牌
+//            SysUser sysUser = userService.selectUserById(userIds[i]);
+//            String idCard=sysUser.getIdCard();
+//            personBindService.deleteByIdCard(idCard);
+//
+//            String oldPlateNo = sysUser.getCarId();
+//            sysUser.setCarId(null);
+//            plateSendService.userPlateDiffSend(sysUser, oldPlateNo);
+//            personSendService.downSendDeletePerson(sysUser.getIdCard());
+//        }
+//        return toAjax(userService.deleteUserByIds(userIds));
+//    }
+
+    /**
+     * 删除用户
+     */
     @PreAuthorize("@ss.hasPermi('system:user:remove')")
     @Log(title = "用户管理", businessType = BusinessType.DELETE)
-    @DeleteMapping("/{userIds}")
-    public AjaxResult remove(@PathVariable Long[] userIds) {
-        if (ArrayUtils.contains(userIds, getUserId())) {
-            return error("当前用户不能删除");
-        }
-        //判断是否还有车卡、定位卡的绑定
-        for (int i = 0; i < userIds.length; i++) {
-            SysUser sysUser = userService.selectUserById(userIds[i]);
-            if (StringUtils.isNotBlank(sysUser.getCarCard())) {
-                return error("员工车卡尚未解绑，不允许删除");
-            }
-            if (StringUtils.isNotBlank(sysUser.getPositionCardNo())) {
-                return error("员工定位卡尚未解绑，不允许删除");
-            }
-        }
-        for (int i = 0; i < userIds.length; i++) {
-            //还需要同时解绑车牌
-            SysUser sysUser = userService.selectUserById(userIds[i]);
-            String idCard=sysUser.getIdCard();
-            personBindService.deleteByIdCard(idCard);
+    @DeleteMapping("/{userId}")
+    public AjaxResult remove(@PathVariable Long userId) {
+        SysUser user = userService.selectUserById(userId);
+        //添加通道
+        user.setPlc(null);
+        user.setDisplayStatus("2");
 
-            String oldPlateNo = sysUser.getCarId();
-            sysUser.setCarId(null);
-            plateSendService.userPlateDiffSend(sysUser, oldPlateNo);
-            personSendService.downSendDeletePerson(sysUser.getIdCard());
+        int userRow = userService.updateUser(user);
+        if (userRow > 0) {
+            SysUser sysUser = sysUserMapper.selectUserById(user.getUserId());
+            pool.threadPoolTaskExecutor().execute(() -> apiService.userBindHlkSubSysUserUpdate(sysUser));
+
+            //TODO 10-08 更新完照片数据同步到中心
+            //pool.threadPoolTaskExecutor().execute(() -> syncCenterService.centerUserUpdate(sysUser));
+            return toAjax(userRow);
         }
-        return toAjax(userService.deleteUserByIds(userIds));
+        return AjaxResult.error(user.getIdCard() + "身份证号已存在");
     }
 
     /**
@@ -615,12 +644,12 @@ public class SysUserController extends BaseController {
             sysUser.setUserId(empNo.getUserId());
             sysUserMapper.updateUserCarCard(sysUser);
             //删除车卡绑定人员信息
-            carCardBindService.deleteByPrimarykey(carCarNo,empNo.getIdCard());
+            carCardBindService.deleteByPrimarykey(carCarNo, empNo.getIdCard());
             //修改车卡状态为未绑定
             CarCard carCard = new CarCard();
             carCard.setCardCarNo(carCarNo);
-            int carCardCount =  carCardBindService.getCountByCarCardNo(carCarNo);
-            if (carCardCount == 0){
+            int carCardCount = carCardBindService.getCountByCarCardNo(carCarNo);
+            if (carCardCount == 0) {
                 carCard.setCardCarStatus("0");
             }
             carCard.setBindPlateNo(null);
@@ -724,7 +753,6 @@ public class SysUserController extends BaseController {
 //            return Response.error("添加失败");
 //        }
 //    }
-
     @PostMapping("/addCarCard")
     public Response addCarCard(@RequestBody String requestObj) {
         try {
@@ -829,7 +857,7 @@ public class SysUserController extends BaseController {
     public AjaxResult deleteFace(Long userId) {
         try {
             SysUser sysUser = userService.selectUserById(userId);
-            if (StringUtils.isNotBlank(sysUser.getIdCard())){
+            if (StringUtils.isNotBlank(sysUser.getIdCard())) {
                 personSendService.downSendDeletePersonOnlyFace(sysUser.getIdCard());
             }
             userService.deleteFaceByUserId(userId);

@@ -310,6 +310,7 @@ public class ApiFaceDataController {
             IDcard.competeUserByIdcard(sysUser);
             sysUser.setFace(facePicUrl);
             sysUserMapper.updateUser(sysUser);
+            sysUser.setSended(1L);
             //同时更新中心库-修改by-sunlj
             String empNo=sysUser.getEmpNo().toUpperCase();
             if(empNo.startsWith("PP")|| empNo.startsWith("N")) {

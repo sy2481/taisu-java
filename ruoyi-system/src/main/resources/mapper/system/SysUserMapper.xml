@@ -181,6 +181,63 @@
             AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE CHARINDEX(cast(#{deptId}
             as nvarchar),ancestors)>0))
         </if>
+
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+    </select>
+
+    <select id="selectUserListDisplay" parameterType="SysUser" resultMap="SysUserResult">
+        select u.user_id, u.dept_id, u.nick_name, u.user_name, u.email, u.avatar, u.phonenumber, u.password, u.sex,
+        u.plc,u.status, u.del_flag, u.login_ip, u.login_date,
+        u.create_by, u.create_time, u.remark, d.dept_name, d.leader,u.company_id, u.id_card, u.sn_num,u.family_address,
+        u.birthday, u.position_card_no, u.join_date, u.hik_card, u.factory_id, u.title, u.mng_mk, u.fct_dor_nm, u.fvid,
+        u.peison_id, u.age, u.face, u.face_id, u.emp_no,u.car_id, u.car_card, u.sended ,
+        u.emis_standard ,u.emis_standard_name ,u.env_sign,
+        d1.dept_name as factory_name
+        from sys_user u
+        left join sys_dept d on u.dept_id = d.dept_id
+
+        LEFT JOIN sys_user_role r ON u.user_id=r.user_id
+        LEFT JOIN sys_role e ON r.role_id=e.role_id
+        LEFT JOIN sys_dept d1 ON u.factory_id = CAST ( d1.dept_id AS VARCHAR )
+        where u.del_flag = '0'
+        <if test="roleId!= null ">
+            AND e.role_id= #{roleId}
+        </if>
+        <if test="sended!= null ">
+            AND u.sended= #{sended}
+        </if>
+        <if test="phonenumber != null and phonenumber != ''">
+            AND u.phonenumber like concat('%', #{phonenumber}, '%')
+        </if>
+        <if test="idCard != null and idCard != ''">
+            AND u.id_card like concat('%', #{idCard}, '%')
+        </if>
+        <if test="factoryId!= null and factoryId != ''">
+            AND u.factory_id = #{factoryId}
+        </if>
+        <if test="empNo!= null and empNo != ''">
+            AND u.emp_no like concat('%', #{empNo}, '%')
+        </if>
+        <if test="snNum!= null and snNum != ''">
+            AND u.sn_num like concat('%', #{snNum}, '%')
+        </if>
+        <if test="nickName != null and nickName != ''">
+            AND u.nick_name like concat('%', #{nickName}, '%')
+        </if>
+        <if test="factoryStr != null and factoryStr != ''">
+            AND d1.dept_name like concat('%', #{factoryStr}, '%')
+        </if>
+        <if test="displayStatus != null and displayStatus != ''">
+            and display_status =#{displayStatus}
+        </if>
+        <if test="existenceFace ==0">and (face !='' OR face IS NOT NULL)</if>
+        <if test="existenceFace ==1">and (face ='' OR face IS NULL)</if>
+        <if test="deptId != null and deptId != 0">
+            AND (u.dept_id = #{deptId} OR u.dept_id IN ( SELECT t.dept_id FROM sys_dept t WHERE CHARINDEX(cast(#{deptId}
+            as nvarchar),ancestors)>0))
+        </if>
+
         <!-- 数据范围过滤 -->
         ${params.dataScope}
     </select>
@@ -353,7 +410,7 @@
         <if test="positionCardNo != null and positionCardNo != ''">position_card_no,</if>
         <if test="snNum != null and snNum != ''">sn_num,,</if>
         <if test="joinDate != null and joinDate != ''">join_date,</if>
-        <if test="sended != null and sended != ''">sended,</if>
+        <if test="sended != null ">sended,</if>
         <if test="plc != null and plc != ''">plc,</if>
         <if test="displayStatus != null and displayStatus != ''">display_status,</if>
         create_time
@@ -381,7 +438,7 @@
         <if test="positionCardNo != null and positionCardNo != ''">#{positionCardNo},</if>
         <if test="snNum != null and snNum != ''">#{snNum},</if>
         <if test="joinDate != null and joinDate != ''">#{joinDate},</if>
-        <if test="sended != null and sended != ''">#{sended},</if>
+        <if test="sended != null ">#{sended},</if>
         <if test="plc != null and plc != ''">#{plc},</if>
         <if test="displayStatus != null and displayStatus != ''">#{displayStatus},</if>
         getdate()
@@ -415,10 +472,11 @@
             <if test="positionCardNo != null">position_card_no = #{positionCardNo},</if>
             <if test="snNum != null">sn_num = #{snNum},</if>
             <if test="joinDate != null and joinDate != ''">join_date = #{joinDate},</if>
-            <if test="sended != null and sended != ''">sended = #{sended},</if>
+            <if test="sended != null ">sended = #{sended},</if>
             <if test="emisStandard != null">emis_standard = #{emisStandard},</if>
             <if test="emisStandardName != null">emis_standard_name = #{emisStandardName},</if>
             <if test="envSign != null">env_sign = #{envSign},</if>
+            <if test="displayStatus != null and displayStatus != ''">display_status = #{displayStatus},</if>
             plc = #{plc},
             update_time = getdate()
         </set>
@@ -480,7 +538,7 @@
     <delete id="deleteFaceByUserId">
         update sys_user
         set face   = null,
-            sended = 0
+            sended = 8
         where user_id = #{userId}
     </delete>
 
@@ -548,7 +606,7 @@
             <if test="item.positionCardNo != null and item.positionCardNo != ''">position_card_no,</if>
             <if test="item.snNum != null and item.snNum != ''">sn_num,,</if>
             <if test="item.joinDate != null and item.joinDate != ''">join_date,</if>
-            <if test="item.sended != null and item.sended != ''">sended,</if>
+            <if test="item.sended != null ">sended,</if>
             <if test="item.plc != null and item.plc != ''">plc,</if>
             <if test="item.displayStatus != null and item.displayStatus != ''">display_status,</if>
             create_time
@@ -575,7 +633,7 @@
             <if test="item.positionCardNo != null and item.positionCardNo != ''">#{item.positionCardNo},</if>
             <if test="item.snNum != null and item.snNum != ''">#{item.snNum},</if>
             <if test="item.joinDate != null and item.joinDate != ''">#{item.joinDate},</if>
-            <if test="item.sended != null and item.sended != ''">#{item.sended},</if>
+            <if test="item.sended != null ">#{item.sended},</if>
             <if test="item.plc != null and item.plc != ''">#{item.plc},</if>
             <if test="item.displayStatus != null and item.displayStatus != ''">#{item.displayStatus},</if>
             getdate()
@@ -601,6 +659,7 @@
                 sex = #{item.sex},
                 family_address = #{item.familyAddress},
                 face = #{item.face},
+                sended=#{item.sended},
                 <if test="item.updateBy != null and item.updateBy != ''">update_by = #{item.updateBy},</if>
                 update_time = #{item.updateTime}
             </set>

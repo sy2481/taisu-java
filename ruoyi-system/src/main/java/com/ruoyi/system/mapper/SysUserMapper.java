@@ -21,6 +21,8 @@ public interface SysUserMapper {
      */
     public List<SysUser> selectUserList(SysUser sysUser);
 
+    public List<SysUser> selectUserListDisplay(SysUser sysUser);
+
     public List<SysUser> selectUserListAll(SysUser sysUser);
 
     /**

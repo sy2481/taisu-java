@@ -223,7 +223,7 @@ public class PingHandler extends TaskQueueHandler {
 
             switch (eqDevice.getEqType()) {
                 case "hik_equipment":
-                case "pcl_equipment":
+                case "plc_equipment":
                     flag = eqDeviceService.getPingStatus(eqDevice.getIp());
                     break;
                 default:
