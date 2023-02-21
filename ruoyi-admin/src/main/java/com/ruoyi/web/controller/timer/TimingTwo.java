@@ -16,7 +16,9 @@ import com.ruoyi.common.core.redis.RedisCache;
 import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.config.ThreadPoolConfig;
+import com.ruoyi.timer.domain.CarInfo;
 import com.ruoyi.timer.domain.Safetyman;
+import com.ruoyi.timer.service.CarInfoService;
 import com.ruoyi.timer.service.IDangerWorkService;
 import com.ruoyi.timer.service.ITimInOutLogService;
 import com.ruoyi.base.service.SafetycarService;
@@ -69,6 +71,9 @@ public class TimingTwo {
     private SafetycarService safetycarService;
 
     @Autowired
+    private CarInfoService carInfoService;
+
+    @Autowired
     private IPersonBindService personBindService;
 
     @Value("${scheduling.getFactoryMsgEnabled}")
@@ -90,19 +95,19 @@ public class TimingTwo {
     @Scheduled(cron = "0/90 * * * * ?")
     //@Scheduled(cron = "*/30 * * * * ?")
     private void getFactoryMsg() {
-        if(!getFactoryMsgEnabled){
+        if (!getFactoryMsgEnabled) {
             return;
         }
 
         try {
             OaMaxInfo oaMaxInfo = oaMaxInfoService.initOaMaxInfo(factoryCode, TsConstant.IN_OUT_LOG_TABLE);
             int maxId = Integer.valueOf(oaMaxInfo.getMaxId().toString());
-            Map<String, Object> sourceData = inOutLogService.getInOutLog(maxId,factoryCode);
-            List<WorkBo> aeWorkBo=new ArrayList<>();
+            Map<String, Object> sourceData = inOutLogService.getInOutLog(maxId, factoryCode);
+            List<WorkBo> aeWorkBo = new ArrayList<>();
             if (sourceData.get("newMaxId") != null && sourceData.get("workBos") != null) {
                 int newMaxId = Integer.valueOf(sourceData.get("newMaxId").toString());
                 List<WorkBo> inOutLogs = (List<WorkBo>) sourceData.get("workBos");
-                aeWorkBo=inOutLogs;
+                aeWorkBo = inOutLogs;
                 //厂商人员从中心库获取头像信息
                 workDataService.setFaceFromCenter(inOutLogs);
 
@@ -127,7 +132,7 @@ public class TimingTwo {
             if(DateUtils.getNowDate().compareTo(begRunTime)>=0){
 
             }*/
-            List<WorkBo> sourceDataExtend = inOutLogService.getInOutLogExtend(maxId,factoryCode);
+            List<WorkBo> sourceDataExtend = inOutLogService.getInOutLogExtend(maxId, factoryCode);
 
             for (WorkBo workBo : sourceDataExtend) {
                 //拿到每一个bo对象
@@ -137,12 +142,12 @@ public class TimingTwo {
                 workDataService.saveWorkBo(workBo);
             }
 
-            if(factoryCode.equals("PPC2A01")){
-                for(int i=0;i<aeWorkBo.size();i++){
-                    List<FactoryBo> aeFactoryBos=aeWorkBo.get(i).getFactoryBoList();
-                    if(aeFactoryBos.size()>0){
-                        for(int j=0;j<aeFactoryBos.size();j++){
-                            personBindService.updateFactoryName(aeFactoryBos.get(j).getIdCard(),aeFactoryBos.get(j).getFactoryName());
+            if (factoryCode.equals("PPC2A01")) {
+                for (int i = 0; i < aeWorkBo.size(); i++) {
+                    List<FactoryBo> aeFactoryBos = aeWorkBo.get(i).getFactoryBoList();
+                    if (aeFactoryBos.size() > 0) {
+                        for (int j = 0; j < aeFactoryBos.size(); j++) {
+                            personBindService.updateFactoryName(aeFactoryBos.get(j).getIdCard(), aeFactoryBos.get(j).getFactoryName());
                         }
                     }
                 }
@@ -156,7 +161,7 @@ public class TimingTwo {
 
     @Scheduled(cron = "10 1/5 * * * ? ")
     private void getDangerWork() {
-        if(!getDangerWorkEnabled){
+        if (!getDangerWorkEnabled) {
             return;
         }
 
@@ -204,15 +209,15 @@ public class TimingTwo {
 
     /**
      * 定时拉取核卡车辆
-     * */
+     */
 //    @Scheduled(cron = "0 0/5 * * * ? ")
     @Scheduled(cron = "0 0/5 * * * ? ")
-    public void getSaftCar(){
+    public void getSaftCar() {
         //获取核卡数据
         List<Safetyman> list = safetymanService.getCarList();
         System.out.println("list = " + list);
         //查询不为空,存入list,保存数据
-        if (!CollectionUtils.isEmpty(list)){
+        if (!CollectionUtils.isEmpty(list)) {
             /*
              * 将获取到的车辆信息截取部分信息存入
              * 存入之前判断是否存在
@@ -220,7 +225,7 @@ public class TimingTwo {
             BaseSafetycar baseSafetycar;
             for (Safetyman safetyman : list) {
                 BaseSafetycar exist = safetycarService.isExist(safetyman.getIpltlic());
-                if (exist == null){
+                if (exist == null) {
                     baseSafetycar = new BaseSafetycar();
                     baseSafetycar.setIdno(safetyman.getIdno());
                     baseSafetycar.setWorkName(safetyman.getNm());
@@ -230,6 +235,44 @@ public class TimingTwo {
                 }
             }
 //            safetycarService.insertCarlist(list);
+        }
+
+    }
+
+    /**
+     * 定时拉取核卡车辆
+     */
+//    @Scheduled(cron = "0 0/5 * * * ? ")
+    @Scheduled(cron = "0 3/5 * * * ? ")
+    public void getCarInfo() {
+        //获取核卡数据
+        List<BaseSafetycar> list = safetycarService.getSafetycarByNoCarType();
+        //查询不为空,存入list,保存数据
+        if (!CollectionUtils.isEmpty(list)) {
+            /*
+             * 将获取到的车辆信息截取部分信息存入
+             * 存入之前判断是否存在
+             * */
+            for (BaseSafetycar baseSafetycar : list) {
+                List<CarInfo> carInfos = carInfoService.getCarList(baseSafetycar.getIdno().substring(1));
+                if (carInfos != null && carInfos.size() > 0) {
+                    String carType = carInfos.get(0).getCarType();
+                    //S 1大车 B 2小车
+                    if (carType.equals("S")) {
+                        baseSafetycar.setCarType(1L);
+                        baseSafetycar.setCarTypeName("大車");
+                    } else {
+                        baseSafetycar.setCarType(2L);
+                        baseSafetycar.setCarTypeName("小車");
+                    }
+
+                } else {
+                    baseSafetycar.setCarType(2L);
+                    baseSafetycar.setCarTypeName("小車");
+                }
+                safetycarService.updateSafetyCarType(baseSafetycar);
+            }
+
         }
 
     }

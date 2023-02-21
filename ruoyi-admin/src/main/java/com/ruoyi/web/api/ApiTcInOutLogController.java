@@ -27,9 +27,13 @@ public class ApiTcInOutLogController extends BaseController {
     public Response setOutLog(@RequestBody TcInOutLog tcInOutLog) {
         try {
             System.out.println(tcInOutLog);
-            tcInOutLogService.insertTcInOutLog(tcInOutLog);
-            return Response.success("添加成功");
-        }catch (Exception e){
+            if (tcInOutLog.getIp() != null) {
+                tcInOutLogService.insertTcInOutLog(tcInOutLog);
+                return Response.success("添加成功");
+            } else {
+                return Response.success("不用添加");
+            }
+        } catch (Exception e) {
             e.printStackTrace();
             return Response.error(e.getMessage());
         }

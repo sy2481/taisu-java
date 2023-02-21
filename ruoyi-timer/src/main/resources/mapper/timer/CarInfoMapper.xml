@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.timer.mapper.CarInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.ruoyi.timer.domain.CarInfo">
+        <id property="carIdno" column="CarIdno" jdbcType="VARCHAR"/>
+        <result property="carType" column="CarType" jdbcType="VARCHAR"/>
+        <result property="carNm" column="CarNm" jdbcType="VARCHAR"/>
+        <result property="carIpltLic" column="CarIpltLic" jdbcType="VARCHAR"/>
+        <result property="carPz" column="CarPz" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        select CarIdno, CarType
+        from CarInfo
+    </sql>
+
+    <select id="getCarInfoList" resultMap="BaseResultMap">
+        select CarIdno,CarType from CarInfo
+        <where>
+            <if test="carId != null and carId != ''">
+            CarIdno like ('%'+ #{carId}+'%')
+            </if>
+        </where>
+    </select>
+</mapper>

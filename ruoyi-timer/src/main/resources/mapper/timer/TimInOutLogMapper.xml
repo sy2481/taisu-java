@@ -76,4 +76,7 @@
     <select id="getDangerData" resultMap="DangerMsgResult">
         SELECT * FROM V0NBRKX5 WHERE IPLTTM  &lt;= #{currentTime} and IPLTTM &gt; #{oldTime}
     </select>
+    <select id="getDangerDataNew" resultMap="DangerMsgResult">
+        SELECT * FROM V0NBRKX5 WHERE  OPLTTM ='*'
+    </select>
 </mapper>

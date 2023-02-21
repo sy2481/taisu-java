@@ -94,12 +94,12 @@ public class   Timing {
      */
 
 
-    @Scheduled(cron = "*/30 * * * * ?")
-    public void connectDatabase(){
-        SysJobLog sysJobLog=new SysJobLog();
-        sysJobLogMapper.selectSysJobLogList(sysJobLog);
-        System.out.println("鏈接成功");
-    }
+//    @Scheduled(cron = "*/30 * * * * ?")
+//    public void connectDatabase(){
+//        SysJobLog sysJobLog=new SysJobLog();
+//        sysJobLogMapper.selectSysJobLogList(sysJobLog);
+//        System.out.println("鏈接成功");
+//    }
 
 
 

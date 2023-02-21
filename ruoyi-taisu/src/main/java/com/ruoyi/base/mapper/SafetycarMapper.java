@@ -20,12 +20,14 @@ public interface SafetycarMapper {
 
     List<BaseSafetycar> getSafetycarByCarno(String carParam);
 
-
+    List<BaseSafetycar> getSafetycarByNoCarType();
 
 
     List<BaseSafetycar> selectSafetyCarList(BaseSafetycar safetyCar);
 
     int updateSafetyCar(BaseSafetycar safetyCar);
+
+    int updateSafetyCarType(BaseSafetycar safetyCar);
 
     /**
      * 查询车辆信息

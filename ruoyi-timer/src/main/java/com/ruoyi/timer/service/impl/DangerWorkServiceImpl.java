@@ -42,11 +42,12 @@ public class DangerWorkServiceImpl implements IDangerWorkService {
     @Override
     public List<WorkBo> dangerWorkData() {
         //有的话查sql，组装数据
-        Date today = DateUtils.parseDate(DateUtils.getDate());
-        Date nextDay = DateUtils.addDays(today, 1);
-        List<DangerWork> list = inOutLogMapper.getDangerData(
-                DateUtils.parseDateToStr(DateUtils.YYYYMMDDHHMMSS, today),
-                DateUtils.parseDateToStr(DateUtils.YYYYMMDDHHMMSS, nextDay));
+//        Date today = DateUtils.parseDate(DateUtils.getDate());
+//        Date nextDay = DateUtils.addDays(today, 1);
+//        List<DangerWork> list = inOutLogMapper.getDangerData(
+//                DateUtils.parseDateToStr(DateUtils.YYYYMMDDHHMMSS, today),
+//                DateUtils.parseDateToStr(DateUtils.YYYYMMDDHHMMSS, nextDay));
+        List<DangerWork> list=inOutLogMapper.getDangerDataNew();
         if (list == null || list.size() == 0) {
             return null;
         }

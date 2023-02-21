@@ -5,10 +5,7 @@ import com.ruoyi.base.domain.*;
 import com.ruoyi.base.mapper.ManBlackInfoMapper;
 import com.ruoyi.base.mapper.ManFactoryMapper;
 import com.ruoyi.base.mapper.ManWorkMapper;
-import com.ruoyi.base.service.IHikEquipmentService;
-import com.ruoyi.base.service.IInOutLogService;
-import com.ruoyi.base.service.IManBlackInfoService;
-import com.ruoyi.base.service.IPlcEquipmentService;
+import com.ruoyi.base.service.*;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
@@ -26,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -61,6 +59,9 @@ public class ApiInOutCheckController {
 
     @Autowired
     ISysConfigService sysConfigService;
+
+    @Autowired
+    SafetycarService safetycarService;
 
     //出
     private static final String OUT = "OUT";
@@ -390,4 +391,23 @@ public class ApiInOutCheckController {
 
     }
 
+    @ResponseBody
+    @GetMapping("/getCarType")
+    public Response getCarType(String plateNo) {
+        BaseSafetycar baseSafetycar = new BaseSafetycar();
+        baseSafetycar.setIdno(plateNo);
+        List<BaseSafetycar> baseSafetycars = safetycarService.selectSafetyCarList(baseSafetycar);
+        Long carType = 2L;
+        if (baseSafetycars != null) {
+             if(baseSafetycars.get(0).getCarType()!=null){
+                 carType=baseSafetycars.get(0).getCarType();
+             }
+        }
+//        HashMap<String, Object> resultObj = new HashMap<>();
+//        resultObj.put("carType", carType);
+        return Response.success(carType.toString());
+    }
+
 }
+
+

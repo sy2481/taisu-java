@@ -26,6 +26,9 @@ public interface SafetycarService {
      */
     List<BaseSafetycar> getSafetycarByCarno(String carParam);
 
+    List<BaseSafetycar> getSafetycarByNoCarType();
+
+
 //    /**
 //     * 插入拉取的车辆数据
 //     */
@@ -41,6 +44,8 @@ public interface SafetycarService {
      * 更新当日车辆信息
      */
     int updateSafetyCar(BaseSafetycar safetyCar);
+
+    int updateSafetyCarType(BaseSafetycar safetyCar);
 
     /**
      * 查询车辆信息

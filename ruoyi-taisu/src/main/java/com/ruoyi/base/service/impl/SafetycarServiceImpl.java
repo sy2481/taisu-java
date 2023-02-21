@@ -34,6 +34,10 @@ public class SafetycarServiceImpl implements SafetycarService {
         return safetycarMapper.getSafetycarByCarno(carParam);
     }
 
+    @Override
+    public List<BaseSafetycar> getSafetycarByNoCarType(){
+        return safetycarMapper.getSafetycarByNoCarType();
+    }
 
 
 
@@ -47,6 +51,12 @@ public class SafetycarServiceImpl implements SafetycarService {
     public int updateSafetyCar(BaseSafetycar safetyCar) {
         return safetycarMapper.updateSafetyCar(safetyCar);
     }
+
+    @Override
+    public int updateSafetyCarType(BaseSafetycar safetyCar) {
+        return safetycarMapper.updateSafetyCarType(safetyCar);
+    }
+
 
     /**
      * 查询车辆信息

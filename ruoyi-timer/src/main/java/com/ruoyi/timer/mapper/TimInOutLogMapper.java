@@ -22,6 +22,7 @@ public interface TimInOutLogMapper {
     List<TimInOutLog> getInOutLogOrderByAid(@Param("today") Date today, @Param("nextDay") Date nextDay);
 
     List<DangerWork> getDangerData(@Param("oldTime") String oldTime,@Param("currentTime")  String currentTime);
+    List<DangerWork> getDangerDataNew();
 
     List<TimInOutLog> getInOutLogEVA(@Param("today") String today, @Param("nextDay") String  nextDay,@Param("maxAid") Integer maxAid,@Param("factoryCode") String factory);
     List<TimInOutLog> getInOutLogExtendEVA(@Param("today") String today, @Param("nextDay") String nextDay,@Param("maxAid") Integer maxAid,@Param("factoryCode") String factory);

@@ -5,13 +5,13 @@
 <mapper namespace="com.ruoyi.base.mapper.SafetycarMapper">
 
     <resultMap id="BaseResultMap" type="com.ruoyi.base.domain.BaseSafetycar">
-            <id property="idno" column="idno" jdbcType="VARCHAR"/>
-            <result property="workName" column="work_name" jdbcType="VARCHAR"/>
-            <result property="ipLtLic" column="ip_lt_lic" jdbcType="VARCHAR"/>
-            <result property="pz" column="pz" jdbcType="VARCHAR"/>
+        <id property="idno" column="idno" jdbcType="VARCHAR"/>
+        <result property="workName" column="work_name" jdbcType="VARCHAR"/>
+        <result property="ipLtLic" column="ip_lt_lic" jdbcType="VARCHAR"/>
+        <result property="pz" column="pz" jdbcType="VARCHAR"/>
         <result property="decimalCode" column="decimal_code" jdbcType="VARCHAR"/>
-        <result property="carType" column="car_type"/>
-        <result property="carTypeName" column="car_type_name"/>
+        <result property="carType" column="car_type" jdbcType="BIGINT"/>
+        <result property="carTypeName" column="car_type_name" jdbcType="BIGINT"/>
 
     </resultMap>
 
@@ -20,21 +20,32 @@
     </sql>
 
     <insert id="insertCarlist">
-        insert into base_safetyCar (idno,work_name,ip_lt_lic,pz,car_type,car_type_name) values(#{idno},#{workName},#{ipLtLic},#{pz},#{carType},#{carTypeName});
+        insert into base_safetyCar (idno, work_name, ip_lt_lic, pz, car_type, car_type_name)
+        values (#{idno}, #{workName}, #{ipLtLic}, #{pz}, #{carType}, #{carTypeName});
     </insert>
 
     <select id="isExist" resultMap="BaseResultMap">
-        select * from base_safetyCar where ip_lt_lic = #{ipLtLic};
+        select *
+        from base_safetyCar
+        where ip_lt_lic = #{ipLtLic};
     </select>
 
     <select id="getSafetycarByCarno" resultMap="BaseResultMap">
-        select * from base_safetyCar where idno like concat('%', #{carParam}, '%') or decimal_code = #{carParam};
+        select *
+        from base_safetyCar
+        where idno like concat('%', #{carParam}, '%')
+           or decimal_code = #{carParam};
     </select>
 
-
+    <select id="getSafetycarByNoCarType" resultMap="BaseResultMap">
+        select *
+        from base_safetyCar
+        where car_type is null
+    </select>
 
     <sql id="selectBaseSafetycarVo">
-        select idno, work_name, ip_lt_lic, pz, decimal_code,car_type,car_type_name from base_safetyCar
+        select idno, work_name, ip_lt_lic, pz, decimal_code, car_type, car_type_name
+        from base_safetyCar
     </sql>
 
 
@@ -43,9 +54,13 @@
         <where>
             <if test="idno != null  and idno != ''">and idno like concat('%', #{idno}, '%')</if>
             <if test="workName != null  and workName != ''">and work_name like concat('%', #{workName}, '%')</if>
-            <if test="decimalCode != null  and decimalCode != ''">and decimal_code like concat('%', #{decimalCode}, '%')</if>
-            <if test="carType != null "> and car_type = #{carType}</if>
-            <if test="carTypeName != null  and carTypeName != ''"> and car_type_name like concat('%', #{carTypeName}, '%')</if>
+            <if test="decimalCode != null  and decimalCode != ''">and decimal_code like concat('%', #{decimalCode},
+                '%')
+            </if>
+            <if test="carType != null ">and car_type = #{carType}</if>
+            <if test="carTypeName != null  and carTypeName != ''">and car_type_name like concat('%', #{carTypeName},
+                '%')
+            </if>
         </where>
     </select>
 
@@ -57,15 +72,26 @@
         where ip_lt_lic = #{ipLtLic}
     </update>
 
+    <update id="updateSafetyCarType" parameterType="baseSafetycar">
+        update base_safetyCar
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="carType != null">car_type = #{carType},</if>
+            <if test="carTypeName != null">car_type_name = #{carTypeName},</if>
+        </trim>
+        where idno = #{idno}
+    </update>
+
     <select id="selectBaseSafetycarList" parameterType="BaseSafetycar" resultMap="BaseResultMap">
         <include refid="selectBaseSafetycarVo"/>
         <where>
-            <if test="workName != null  and workName != ''"> and work_name like concat('%', #{workName}, '%')</if>
-            <if test="ipLtLic != null  and ipLtLic != ''"> and ip_lt_lic = #{ipLtLic}</if>
-            <if test="pz != null  and pz != ''"> and pz = #{pz}</if>
-            <if test="decimalCode != null  and decimalCode != ''"> and decimal_code = #{decimalCode}</if>
-            <if test="carType != null "> and car_type = #{carType}</if>
-            <if test="carTypeName != null  and carTypeName != ''"> and car_type_name like concat('%', #{carTypeName}, '%')</if>
+            <if test="workName != null  and workName != ''">and work_name like concat('%', #{workName}, '%')</if>
+            <if test="ipLtLic != null  and ipLtLic != ''">and ip_lt_lic = #{ipLtLic}</if>
+            <if test="pz != null  and pz != ''">and pz = #{pz}</if>
+            <if test="decimalCode != null  and decimalCode != ''">and decimal_code = #{decimalCode}</if>
+            <if test="carType != null ">and car_type = #{carType}</if>
+            <if test="carTypeName != null  and carTypeName != ''">and car_type_name like concat('%', #{carTypeName},
+                '%')
+            </if>
         </where>
     </select>
 
@@ -109,7 +135,9 @@
     </update>
 
     <delete id="deleteBaseSafetycarByIdno" parameterType="String">
-        delete from base_safetyCar where idno = #{idno}
+        delete
+        from base_safetyCar
+        where idno = #{idno}
     </delete>
 
     <delete id="deleteBaseSafetycarByIdnos" parameterType="String">
