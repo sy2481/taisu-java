@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.HcHrWorkOrderMapper">
+    
+    <resultMap type="HcHrWorkOrder" id="HcHrWorkOrderResult">
+        <result property="id"    column="id"    />
+        <result property="vhNo"    column="vh_no"    />
+        <result property="dataFrom"    column="data_from"    />
+        <result property="facDorNm"    column="fac_dor_nm"    />
+        <result property="facNm"    column="fac_nm"    />
+        <result property="vhTime"    column="vh_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectHcHrWorkOrderVo">
+        select id, vh_no, data_from, fac_dor_nm, fac_nm, vh_time, create_by, create_time, update_by, update_time from hc_hr_work_order
+    </sql>
+
+    <select id="selectHcHrWorkOrderList" parameterType="HcHrWorkOrder" resultMap="HcHrWorkOrderResult">
+        <include refid="selectHcHrWorkOrderVo"/>
+        <where>  
+            <if test="vhNo != null  and vhNo != ''"> and vh_no like concat('%', #{vhNo}, '%')</if>
+            <if test="dataFrom != null  and dataFrom != ''"> and data_from = #{dataFrom}</if>
+            <if test="facDorNm != null  and facDorNm != ''"> and fac_dor_nm = #{facDorNm}</if>
+            <if test="facNm != null  and facNm != ''"> and fac_nm = #{facNm}</if>
+            <if test="vhTime != null "> and vh_time = #{vhTime}</if>
+            <if test="params.beginVhTime != null "> and vh_time &gt;= #{params.beginVhTime}</if>
+            <if test="params.endVhTime != null "> and vh_time &lt;= #{params.endVhTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectHcHrWorkOrderById" parameterType="Long" resultMap="HcHrWorkOrderResult">
+        <include refid="selectHcHrWorkOrderVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertHcHrWorkOrder" parameterType="HcHrWorkOrder">
+        insert into hc_hr_work_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="vhNo != null">vh_no,</if>
+            <if test="dataFrom != null">data_from,</if>
+            <if test="facDorNm != null">fac_dor_nm,</if>
+            <if test="facNm != null">fac_nm,</if>
+            <if test="vhTime != null">vh_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="vhNo != null">#{vhNo},</if>
+            <if test="dataFrom != null">#{dataFrom},</if>
+            <if test="facDorNm != null">#{facDorNm},</if>
+            <if test="facNm != null">#{facNm},</if>
+            <if test="vhTime != null">#{vhTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHcHrWorkOrder" parameterType="HcHrWorkOrder">
+        update hc_hr_work_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vhNo != null">vh_no = #{vhNo},</if>
+            <if test="dataFrom != null">data_from = #{dataFrom},</if>
+            <if test="facDorNm != null">fac_dor_nm = #{facDorNm},</if>
+            <if test="facNm != null">fac_nm = #{facNm},</if>
+            <if test="vhTime != null">vh_time = #{vhTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHcHrWorkOrderById" parameterType="Long">
+        delete from hc_hr_work_order where id = #{id}
+    </delete>
+
+    <delete id="deleteHcHrWorkOrderByIds" parameterType="String">
+        delete from hc_hr_work_order where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectHcHrWorkOrderListByVhNos" resultType="String" resultMap="HcHrWorkOrderResult">
+        <include refid="selectHcHrWorkOrderVo"/>
+        where vh_no in
+        <foreach item="vhNo" collection="array" open="(" separator="," close=")">
+            #{vhNo}
+        </foreach>
+    </select>
+
+    <insert id="batchInsertHcHrWorkOrder" useGeneratedKeys="false">
+        <foreach collection="list" item="item" separator=";">
+            insert into hc_hr_work_order
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="item.id != null">id,</if>
+                <if test="item.vhNo != null">vh_no,</if>
+                <if test="item.dataFrom != null">data_from,</if>
+                <if test="item.facDorNm != null">fac_dor_nm,</if>
+                <if test="item.facNm != null">fac_nm,</if>
+                <if test="item.vhTime != null">vh_time,</if>
+                <if test="item.createBy != null">create_by,</if>
+                <if test="item.createTime != null">create_time,</if>
+                <if test="item.updateBy != null">update_by,</if>
+                <if test="item.updateTime != null">update_time,</if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="item.id != null">#{item.id},</if>
+                <if test="item.vhNo != null">#{item.vhNo},</if>
+                <if test="item.dataFrom != null">#{item.dataFrom},</if>
+                <if test="item.facDorNm != null">#{item.facDorNm},</if>
+                <if test="item.facNm != null">#{item.facNm},</if>
+                <if test="item.vhTime != null">#{item.vhTime},</if>
+                <if test="item.createBy != null">#{item.createBy},</if>
+                <if test="item.createTime != null">#{item.createTime},</if>
+                <if test="item.updateBy != null">#{item.updateBy},</if>
+                <if test="item.updateTime != null">#{item.updateTime},</if>
+            </trim>
+        </foreach>
+    </insert>
+</mapper>

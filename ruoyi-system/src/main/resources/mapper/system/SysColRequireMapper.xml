@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysColRequireMapper">
+    
+    <resultMap type="SysColRequire" id="SysColRequireResult">
+        <result property="id"    column="id"    />
+        <result property="tableName"    column="table_name"    />
+        <result property="colName"    column="col_name"    />
+        <result property="colDisplay"    column="col_display"    />
+        <result property="isRequire"    column="is_require"    />
+    </resultMap>
+
+    <sql id="selectSysColRequireVo">
+        select id, table_name, col_name,col_display, is_require from sys_col_require
+    </sql>
+
+    <select id="selectSysColRequireList" parameterType="SysColRequire" resultMap="SysColRequireResult">
+        <include refid="selectSysColRequireVo"/>
+        <where>  
+            <if test="tableName != null  and tableName != ''"> and table_name like concat('%', #{tableName}, '%')</if>
+            <if test="colName != null  and colName != ''"> and col_name like concat('%', #{colName}, '%')</if>
+            <if test="colDisplay != null  and colDisplay != ''"> and col_display like concat('%', #{colDisplay}, '%')</if>
+            <if test="isRequire != null  and isRequire != ''"> and is_require = #{isRequire}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysColRequireById" parameterType="Long" resultMap="SysColRequireResult">
+        <include refid="selectSysColRequireVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertSysColRequire" parameterType="SysColRequire">
+        insert into sys_col_require
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="tableName != null">table_name,</if>
+            <if test="colName != null">col_name,</if>
+            <if test="colDisplay != null">col_display,</if>
+            <if test="isRequire != null">is_require,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="tableName != null">#{tableName},</if>
+            <if test="colName != null">#{colName},</if>
+            <if test="colDisplay != null">#{colDisplay},</if>
+            <if test="isRequire != null">#{isRequire},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysColRequire" parameterType="SysColRequire">
+        update sys_col_require
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="tableName != null">table_name = #{tableName},</if>
+            <if test="colName != null">col_name = #{colName},</if>
+            <if test="colDisplay != null">col_display = #{colDisplay},</if>
+            <if test="isRequire != null">is_require = #{isRequire},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysColRequireById" parameterType="Long">
+        delete from sys_col_require where id = #{id}
+    </delete>
+
+    <delete id="deleteSysColRequireByIds" parameterType="String">
+        delete from sys_col_require where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectSysColRequireListByTableNames" resultMap="SysColRequireResult">
+        <include refid="selectSysColRequireVo"/>
+        <where>
+            table_name in
+            <foreach item="tableName" collection="array" open="(" separator="," close=")">
+                #{tableName}
+            </foreach>
+        </where>
+    </select>
+
+    <select id="selectSysColRequireByTableCol" parameterType="SysColRequire" resultMap="SysColRequireResult">
+        <include refid="selectSysColRequireVo"/>
+        <where>
+            and table_name = #{tableName}
+            and col_name =  #{colName}
+            <if test="id != null  and id != ''"> and id != #{id}</if>
+        </where>
+    </select>
+</mapper>

@@ -86,8 +86,8 @@ public class InOutLog extends BaseEntity {
     @Excel(name = "車牌號")
     private String plateNo;
 
-    //0-員工，1-廠商
-    @Excel(name = "人員類型",readConverterExp = "0=員工,1=廠商")
+    //0-員工，1-廠商，2-危化
+    @Excel(name = "人員類型",readConverterExp = "0=員工,1=廠商,2=危化")
     private String personType;
     @Excel(name = "大門")
     private String gate;
@@ -117,6 +117,26 @@ public class InOutLog extends BaseEntity {
      * 操作人
      */
     private String operationName;
+
+
+    /**
+     * 出入押運人员姓名
+     */
+    @Excel(name = "押運人员姓名")
+    private String EscortName;
+
+    /**
+     * 出入押運人员身份证号
+     */
+    @Excel(name = "押運人员身份證號")
+    private String EscortIdCard;
+
+    /**
+     * 歷史車牌號-模糊匹配專用
+     */
+    @Excel(name = "歷史車牌號-模糊匹配專用")
+    private String CarPlateHistory;
+
 
     public Integer getValidType() {
         return validType;
@@ -381,5 +401,29 @@ public class InOutLog extends BaseEntity {
                 .append("factoryId", getFactoryId())
                 .append("logType", getLogType())
                 .toString();
+    }
+
+    public String getEscortName() {
+        return EscortName;
+    }
+
+    public void setEscortName(String escortName) {
+        EscortName = escortName;
+    }
+
+    public String getEscortIdCard() {
+        return EscortIdCard;
+    }
+
+    public void setEscortIdCard(String escortIdCard) {
+        EscortIdCard = escortIdCard;
+    }
+
+    public String getCarPlateHistory() {
+        return CarPlateHistory;
+    }
+
+    public void setCarPlateHistory(String carPlateHistory) {
+        CarPlateHistory = carPlateHistory;
     }
 }

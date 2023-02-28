@@ -580,4 +580,16 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils
         }
         return sb.toString();
     }
+
+    //判斷字符串是否都是中文
+    public static boolean checkChineseAll(String s) {
+        int n = 0;
+        for (int i = 0; i < s.length(); i++) {
+            n = (int) s.charAt(i);
+            if (!(19968 <= n && n < 40869)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

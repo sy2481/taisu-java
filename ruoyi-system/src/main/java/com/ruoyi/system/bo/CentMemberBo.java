@@ -23,6 +23,16 @@ public class CentMemberBo implements Serializable {
     private String projectNo;
     //施工單號
     private String workOrderNo;
+    //駕駛證照片
+    private String driverLicense;
+    //押運員許可證
+    private String escortLicense;
+    //生日
+    private String birthday;
+    //公司
+    private String company;
+
+
 
     private Long sended;
 
@@ -120,6 +130,38 @@ public class CentMemberBo implements Serializable {
 
     public void setWorkOrderNo(String workOrderNo) {
         this.workOrderNo = workOrderNo;
+    }
+
+    public String getDriverLicense() {
+        return driverLicense;
+    }
+
+    public void setDriverLicense(String driverLicense) {
+        this.driverLicense = driverLicense;
+    }
+
+    public String getEscortLicense() {
+        return escortLicense;
+    }
+
+    public void setEscortLicense(String escortLicense) {
+        this.escortLicense = escortLicense;
+    }
+
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
     }
 
     /**

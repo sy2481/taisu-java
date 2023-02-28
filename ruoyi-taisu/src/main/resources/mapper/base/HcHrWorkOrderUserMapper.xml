@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.HcHrWorkOrderUserMapper">
+    
+    <resultMap type="HcHrWorkOrderUser" id="HcHrWorkOrderUserResult">
+        <result property="id"    column="id"    />
+        <result property="vhNo"    column="vh_no"    />
+        <result property="nm"    column="nm"    />
+        <result property="ipltLic"    column="iplt_lic"    />
+        <result property="idNo"    column="id_no"    />
+        <result property="face"    column="face"    />
+        <result property="sex"    column="sex"    />
+        <result property="phone"    column="phone"    />
+        <result property="address"    column="address"    />
+        <result property="birthday"    column="birthday"    />
+        <result property="company"    column="company"    />
+        <result property="userType"    column="user_type"    />
+        <result property="userTypeName"    column="user_type_name"    />
+        <result property="license"    column="license"    />
+        <result property="carTsNo"    column="car_ts_no"    />
+        <result property="facDorNm"    column="fac_dor_nm"    />
+        <result property="facNm"    column="fac_nm"    />
+        <result property="dataFrom"    column="data_from"    />
+        <result property="driverLicense"    column="driver_license"    />
+        <result property="escortLicense"    column="escort_license"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="ipltTm"    column="iplt_tm"    />
+    </resultMap>
+
+    <sql id="selectHcHrWorkOrderUserVo">
+        select id, vh_no, nm, iplt_lic, id_no, face, sex, phone, address, birthday, company, user_type, user_type_name, license, car_ts_no, fac_dor_nm, fac_nm, data_from, driver_license, escort_license, create_by, create_time, update_by, update_time,iplt_tm from hc_hr_work_order_user
+    </sql>
+
+    <select id="selectHcHrWorkOrderUserList" parameterType="HcHrWorkOrderUser" resultMap="HcHrWorkOrderUserResult">
+        <include refid="selectHcHrWorkOrderUserVo"/>
+        <where>  
+            <if test="vhNo != null  and vhNo != ''"> and vh_no like concat('%', #{vhNo}, '%')</if>
+            <if test="nm != null  and nm != ''"> and nm like concat('%', #{nm}, '%')</if>
+            <if test="ipltLic != null  and ipltLic != ''"> and iplt_lic like concat('%', #{ipltLic}, '%')</if>
+            <if test="idNo != null  and idNo != ''"> and id_no like concat('%', #{idNo}, '%')</if>
+            <if test="face != null  and face != ''"> and face = #{face}</if>
+            <if test="sex != null "> and sex = #{sex}</if>
+            <if test="phone != null  and phone != ''"> and phone like concat('%', #{phone}, '%')</if>
+            <if test="address != null  and address != ''"> and address like concat('%', #{address}, '%')</if>
+            <if test="birthday != null "> and birthday = #{birthday}</if>
+            <if test="company != null  and company != ''"> and company like concat('%', #{company}, '%')</if>
+            <if test="userType != null "> and user_type = #{userType}</if>
+            <if test="userTypeName != null  and userTypeName != ''"> and user_type_name like concat('%', #{userTypeName}, '%')</if>
+            <if test="license != null  and license != ''"> and license like concat('%', #{license}, '%')</if>
+            <if test="carTsNo != null  and carTsNo != ''"> and car_ts_no like concat('%', #{carTsNo}, '%')</if>
+            <if test="facDorNm != null  and facDorNm != ''"> and fac_dor_nm = #{facDorNm}</if>
+            <if test="facNm != null  and facNm != ''"> and fac_nm = #{facNm}</if>
+            <if test="dataFrom != null  and dataFrom != ''"> and data_from = #{dataFrom}</if>
+            <if test="driverLicense != null  and driverLicense != ''"> and driver_license = #{driverLicense}</if>
+            <if test="escortLicense != null  and escortLicense != ''"> and escort_license = #{escortLicense}</if>
+            <if test="params.isFace != null  and params.isFace eq 'Y'.toString()"> and face is not null and face!=''</if>
+            <if test="params.isFace != null  and params.isFace eq 'N'.toString()"> and (face is null or face='')</if>
+            <if test="ipltTm != null "> and iplt_tm = #{ipltTm}</if>
+        </where>
+    </select>
+    
+    <select id="selectHcHrWorkOrderUserById" parameterType="Long" resultMap="HcHrWorkOrderUserResult">
+        <include refid="selectHcHrWorkOrderUserVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertHcHrWorkOrderUser" parameterType="HcHrWorkOrderUser">
+        insert into hc_hr_work_order_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="vhNo != null">vh_no,</if>
+            <if test="nm != null">nm,</if>
+            <if test="ipltLic != null">iplt_lic,</if>
+            <if test="idNo != null">id_no,</if>
+            <if test="face != null">face,</if>
+            <if test="sex != null">sex,</if>
+            <if test="phone != null">phone,</if>
+            <if test="address != null">address,</if>
+            <if test="birthday != null">birthday,</if>
+            <if test="company != null">company,</if>
+            <if test="userType != null">user_type,</if>
+            <if test="userTypeName != null">user_type_name,</if>
+            <if test="license != null">license,</if>
+            <if test="carTsNo != null">car_ts_no,</if>
+            <if test="facDorNm != null">fac_dor_nm,</if>
+            <if test="facNm != null">fac_nm,</if>
+            <if test="dataFrom != null">data_from,</if>
+            <if test="driverLicense != null">driver_license,</if>
+            <if test="escortLicense != null">escort_license,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="ipltTm != null">iplt_tm,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="vhNo != null">#{vhNo},</if>
+            <if test="nm != null">#{nm},</if>
+            <if test="ipltLic != null">#{ipltLic},</if>
+            <if test="idNo != null">#{idNo},</if>
+            <if test="face != null">#{face},</if>
+            <if test="sex != null">#{sex},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="address != null">#{address},</if>
+            <if test="birthday != null">#{birthday},</if>
+            <if test="company != null">#{company},</if>
+            <if test="userType != null">#{userType},</if>
+            <if test="userTypeName != null">#{userTypeName},</if>
+            <if test="license != null">#{license},</if>
+            <if test="carTsNo != null">#{carTsNo},</if>
+            <if test="facDorNm != null">#{facDorNm},</if>
+            <if test="facNm != null">#{facNm},</if>
+            <if test="dataFrom != null">#{dataFrom},</if>
+            <if test="driverLicense != null">#{driverLicense},</if>
+            <if test="escortLicense != null">#{escortLicense},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="ipltTm != null">#{ipltTm},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHcHrWorkOrderUser" parameterType="HcHrWorkOrderUser">
+        update hc_hr_work_order_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vhNo != null">vh_no = #{vhNo},</if>
+            <if test="nm != null">nm = #{nm},</if>
+            <if test="ipltLic != null">iplt_lic = #{ipltLic},</if>
+            <if test="idNo != null">id_no = #{idNo},</if>
+            <if test="face != null">face = #{face},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="birthday != null">birthday = #{birthday},</if>
+            <if test="company != null">company = #{company},</if>
+            <if test="userType != null">user_type = #{userType},</if>
+            <if test="userTypeName != null">user_type_name = #{userTypeName},</if>
+            <if test="license != null">license = #{license},</if>
+            <if test="carTsNo != null">car_ts_no = #{carTsNo},</if>
+            <if test="facDorNm != null">fac_dor_nm = #{facDorNm},</if>
+            <if test="facNm != null">fac_nm = #{facNm},</if>
+            <if test="dataFrom != null">data_from = #{dataFrom},</if>
+            <if test="driverLicense != null">driver_license = #{driverLicense},</if>
+            <if test="escortLicense != null">escort_license = #{escortLicense},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="ipltTm != null">iplt_tm = #{ipltTm},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHcHrWorkOrderUserById" parameterType="Long">
+        delete from hc_hr_work_order_user where id = #{id}
+    </delete>
+
+    <delete id="deleteHcHrWorkOrderUserByIds" parameterType="String">
+        delete from hc_hr_work_order_user where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectHcHrWorkOrderUserListByVhNos" resultMap="HcHrWorkOrderUserResult">
+        <include refid="selectHcHrWorkOrderUserVo"/>
+        where vh_no in
+        <foreach item="vhNo" collection="vhNos" open="(" separator="," close=")">
+            #{vhNo}
+        </foreach>
+    </select>
+
+    <insert id="batchInsertHcHrWorkOrderUser" useGeneratedKeys="false">
+        <foreach collection="list" item="item" separator=";">
+            insert into hc_hr_work_order_user
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="item.id != null">id,</if>
+                <if test="item.vhNo != null">vh_no,</if>
+                <if test="item.nm != null">nm,</if>
+                <if test="item.ipltLic != null">iplt_lic,</if>
+                <if test="item.idNo != null">id_no,</if>
+                <if test="item.face != null">face,</if>
+                <if test="item.sex != null">sex,</if>
+                <if test="item.phone != null">phone,</if>
+                <if test="item.address != null">address,</if>
+                <if test="item.birthday != null">birthday,</if>
+                <if test="item.company != null">company,</if>
+                <if test="item.userType != null">user_type,</if>
+                <if test="item.userTypeName != null">user_type_name,</if>
+                <if test="item.license != null">license,</if>
+                <if test="item.carTsNo != null">car_ts_no,</if>
+                <if test="item.facDorNm != null">fac_dor_nm,</if>
+                <if test="item.facNm != null">fac_nm,</if>
+                <if test="item.dataFrom != null">data_from,</if>
+                <if test="item.driverLicense != null">driver_license,</if>
+                <if test="item.escortLicense != null">escort_license,</if>
+                <if test="item.createBy != null">create_by,</if>
+                <if test="item.createTime != null">create_time,</if>
+                <if test="item.updateBy != null">update_by,</if>
+                <if test="item.updateTime != null">update_time,</if>
+                <if test="item.ipltTm != null">iplt_tm,</if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="item.id != null">#{item.id},</if>
+                <if test="item.vhNo != null">#{item.vhNo},</if>
+                <if test="item.nm != null">#{item.nm},</if>
+                <if test="item.ipltLic != null">#{item.ipltLic},</if>
+                <if test="item.idNo != null">#{item.idNo},</if>
+                <if test="item.face != null">#{item.face},</if>
+                <if test="item.sex != null">#{item.sex},</if>
+                <if test="item.phone != null">#{item.phone},</if>
+                <if test="item.address != null">#{item.address},</if>
+                <if test="item.birthday != null">#{item.birthday},</if>
+                <if test="item.company != null">#{item.company},</if>
+                <if test="item.userType != null">#{item.userType},</if>
+                <if test="item.userTypeName != null">#{item.userTypeName},</if>
+                <if test="item.license != null">#{item.license},</if>
+                <if test="item.carTsNo != null">#{item.carTsNo},</if>
+                <if test="item.facDorNm != null">#{item.facDorNm},</if>
+                <if test="item.facNm != null">#{item.facNm},</if>
+                <if test="item.dataFrom != null">#{item.dataFrom},</if>
+                <if test="item.driverLicense != null">#{item.driverLicense},</if>
+                <if test="item.escortLicense != null">#{item.escortLicense},</if>
+                <if test="item.createBy != null">#{item.createBy},</if>
+                <if test="item.createTime != null">#{item.createTime},</if>
+                <if test="item.updateBy != null">#{item.updateBy},</if>
+                <if test="item.updateTime != null">#{item.updateTime},</if>
+                <if test="item.ipltTm != null">#{item.ipltTm},</if>
+            </trim>
+        </foreach>
+    </insert>
+</mapper>

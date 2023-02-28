@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.HcHrWorkOrderCarMapper">
+    
+    <resultMap type="HcHrWorkOrderCar" id="HcHrWorkOrderCarResult">
+        <result property="id"    column="id"    />
+        <result property="vhNo"    column="vh_no"    />
+        <result property="nm"    column="nm"    />
+        <result property="idNo"    column="id_no"    />
+        <result property="ipltLic"    column="iplt_lic"    />
+        <result property="dpId"    column="dp_id"    />
+        <result property="ipltCarNo"    column="iplt_car_no"    />
+        <result property="facDorNm"    column="fac_dor_nm"    />
+        <result property="facNm"    column="fac_nm"    />
+        <result property="dirverIdNo"    column="dirver_id_no"    />
+        <result property="driverNm"    column="driver_nm"    />
+        <result property="carPhoto"    column="car_photo"    />
+        <result property="carColor"    column="car_color"    />
+        <result property="carType"    column="car_type"    />
+        <result property="carTypeName"    column="car_type_name"    />
+        <result property="vehicleLic"    column="vehicle_lic"    />
+        <result property="hcTransportCertNo"    column="hc_transport_cert_no"    />
+        <result property="emisStandard"    column="emis_standard"    />
+        <result property="emisStandardName"    column="emis_standard_name"    />
+        <result property="envSign"    column="env_sign"    />
+        <result property="ipltTm"    column="iplt_tm"    />
+        <result property="opltTm"    column="oplt_tm"    />
+        <result property="secIpltTm"    column="sec_iplt_tm"    />
+        <result property="secOpltTm"    column="sec_oplt_tm"    />
+        <result property="dataFrom"    column="data_from"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="issued"    column="issued"    />
+    </resultMap>
+
+    <sql id="selectHcHrWorkOrderCarVo">
+        select id, vh_no, nm, id_no, iplt_lic, dp_id, iplt_car_no, fac_dor_nm, fac_nm, dirver_id_no, driver_nm, car_photo, car_color, car_type, car_type_name, vehicle_lic, hc_transport_cert_no, emis_standard, emis_standard_name, env_sign, iplt_tm, oplt_tm,sec_iplt_tm, sec_oplt_tm, data_from, create_by, create_time, update_by, update_time,issued from hc_hr_work_order_car
+    </sql>
+
+    <select id="selectHcHrWorkOrderCarList" parameterType="HcHrWorkOrderCar" resultMap="HcHrWorkOrderCarResult">
+        <include refid="selectHcHrWorkOrderCarVo"/>
+        <where>  
+            <if test="vhNo != null  and vhNo != ''"> and vh_no like concat('%', #{vhNo}, '%')</if>
+            <if test="nm != null  and nm != ''"> and nm like concat('%', #{nm}, '%')</if>
+            <if test="idNo != null  and idNo != ''"> and id_no like concat('%', #{idNo}, '%')</if>
+            <if test="ipltLic != null  and ipltLic != ''"> and iplt_lic like concat('%', #{ipltLic}, '%')</if>
+            <if test="dpId != null  and dpId != ''"> and dp_id = #{dpId}</if>
+            <if test="ipltCarNo != null  and ipltCarNo != ''"> and iplt_car_no = #{ipltCarNo}</if>
+            <if test="facDorNm != null  and facDorNm != ''"> and fac_dor_nm = #{facDorNm}</if>
+            <if test="facNm != null  and facNm != ''"> and fac_nm = #{facNm}</if>
+            <if test="dirverIdNo != null  and dirverIdNo != ''"> and dirver_id_no like concat('%', #{dirverIdNo}, '%')</if>
+            <if test="driverNm != null  and driverNm != ''"> and driver_nm like concat('%', #{driverNm}, '%')</if>
+            <if test="carPhoto != null  and carPhoto != ''"> and car_photo = #{carPhoto}</if>
+            <if test="carColor != null  and carColor != ''"> and car_color = #{carColor}</if>
+            <if test="carType != null "> and car_type = #{carType}</if>
+            <if test="carTypeName != null  and carTypeName != ''"> and car_type_name like concat('%', #{carTypeName}, '%')</if>
+            <if test="vehicleLic != null  and vehicleLic != ''"> and vehicle_lic = #{vehicleLic}</if>
+            <if test="hcTransportCertNo != null  and hcTransportCertNo != ''"> and hc_transport_cert_no = #{hcTransportCertNo}</if>
+            <if test="emisStandard != null "> and emis_standard = #{emisStandard}</if>
+            <if test="emisStandardName != null  and emisStandardName != ''"> and emis_standard_name like concat('%', #{emisStandardName}, '%')</if>
+            <if test="envSign != null  and envSign != ''"> and env_sign = #{envSign}</if>
+            <if test="ipltTm != null "> and iplt_tm = #{ipltTm}</if>
+            <if test="opltTm != null "> and oplt_tm = #{opltTm}</if>
+            <if test="secIpltTm != null "> and sec_iplt_tm = #{secIpltTm}</if>
+            <if test="secOpltTm != null "> and sec_oplt_tm = #{secOpltTm}</if>
+            <if test="dataFrom != null  and dataFrom != ''"> and data_from = #{dataFrom}</if>
+            <if test="issued != null  and issued != ''"> and issued = #{issued}</if>
+        </where>
+    </select>
+    
+    <select id="selectHcHrWorkOrderCarById" parameterType="Long" resultMap="HcHrWorkOrderCarResult">
+        <include refid="selectHcHrWorkOrderCarVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertHcHrWorkOrderCar" parameterType="HcHrWorkOrderCar">
+        insert into hc_hr_work_order_car
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="vhNo != null">vh_no,</if>
+            <if test="nm != null">nm,</if>
+            <if test="idNo != null">id_no,</if>
+            <if test="ipltLic != null">iplt_lic,</if>
+            <if test="dpId != null">dp_id,</if>
+            <if test="ipltCarNo != null">iplt_car_no,</if>
+            <if test="facDorNm != null">fac_dor_nm,</if>
+            <if test="facNm != null">fac_nm,</if>
+            <if test="dirverIdNo != null">dirver_id_no,</if>
+            <if test="driverNm != null">driver_nm,</if>
+            <if test="carPhoto != null">car_photo,</if>
+            <if test="carColor != null">car_color,</if>
+            <if test="carType != null">car_type,</if>
+            <if test="carTypeName != null">car_type_name,</if>
+            <if test="vehicleLic != null">vehicle_lic,</if>
+            <if test="hcTransportCertNo != null">hc_transport_cert_no,</if>
+            <if test="emisStandard != null">emis_standard,</if>
+            <if test="emisStandardName != null">emis_standard_name,</if>
+            <if test="envSign != null">env_sign,</if>
+            <if test="ipltTm != null">iplt_tm,</if>
+            <if test="opltTm != null">oplt_tm,</if>
+            <if test="secIpltTm != null">sec_iplt_tm,</if>
+            <if test="secOpltTm != null">sec_oplt_tm,</if>
+            <if test="dataFrom != null">data_from,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="issued != null">issued,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="vhNo != null">#{vhNo},</if>
+            <if test="nm != null">#{nm},</if>
+            <if test="idNo != null">#{idNo},</if>
+            <if test="ipltLic != null">#{ipltLic},</if>
+            <if test="dpId != null">#{dpId},</if>
+            <if test="ipltCarNo != null">#{ipltCarNo},</if>
+            <if test="facDorNm != null">#{facDorNm},</if>
+            <if test="facNm != null">#{facNm},</if>
+            <if test="dirverIdNo != null">#{dirverIdNo},</if>
+            <if test="driverNm != null">#{driverNm},</if>
+            <if test="carPhoto != null">#{carPhoto},</if>
+            <if test="carColor != null">#{carColor},</if>
+            <if test="carType != null">#{carType},</if>
+            <if test="carTypeName != null">#{carTypeName},</if>
+            <if test="vehicleLic != null">#{vehicleLic},</if>
+            <if test="hcTransportCertNo != null">#{hcTransportCertNo},</if>
+            <if test="emisStandard != null">#{emisStandard},</if>
+            <if test="emisStandardName != null">#{emisStandardName},</if>
+            <if test="envSign != null">#{envSign},</if>
+            <if test="ipltTm != null">#{ipltTm},</if>
+            <if test="opltTm != null">#{opltTm},</if>
+            <if test="secIpltTm != null">#{secIpltTm},</if>
+            <if test="secOpltTm != null">#{secOpltTm},</if>
+            <if test="dataFrom != null">#{dataFrom},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="issued != null">#{issued},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHcHrWorkOrderCar" parameterType="HcHrWorkOrderCar">
+        update hc_hr_work_order_car
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vhNo != null">vh_no = #{vhNo},</if>
+            <if test="nm != null">nm = #{nm},</if>
+            <if test="idNo != null">id_no = #{idNo},</if>
+            <if test="ipltLic != null">iplt_lic = #{ipltLic},</if>
+            <if test="dpId != null">dp_id = #{dpId},</if>
+            <if test="ipltCarNo != null">iplt_car_no = #{ipltCarNo},</if>
+            <if test="facDorNm != null">fac_dor_nm = #{facDorNm},</if>
+            <if test="facNm != null">fac_nm = #{facNm},</if>
+            <if test="dirverIdNo != null">dirver_id_no = #{dirverIdNo},</if>
+            <if test="driverNm != null">driver_nm = #{driverNm},</if>
+            <if test="carPhoto != null">car_photo = #{carPhoto},</if>
+            <if test="carColor != null">car_color = #{carColor},</if>
+            <if test="carType != null">car_type = #{carType},</if>
+            <if test="carTypeName != null">car_type_name = #{carTypeName},</if>
+            <if test="vehicleLic != null">vehicle_lic = #{vehicleLic},</if>
+            <if test="hcTransportCertNo != null">hc_transport_cert_no = #{hcTransportCertNo},</if>
+            <if test="emisStandard != null">emis_standard = #{emisStandard},</if>
+            <if test="emisStandardName != null">emis_standard_name = #{emisStandardName},</if>
+            <if test="envSign != null">env_sign = #{envSign},</if>
+            <if test="ipltTm != null">iplt_tm = #{ipltTm},</if>
+            <if test="opltTm != null">oplt_tm = #{opltTm},</if>
+            <if test="secIpltTm != null">sec_iplt_tm = #{secIpltTm},</if>
+            <if test="secOpltTm != null">sec_oplt_tm = #{secOpltTm},</if>
+            <if test="dataFrom != null">data_from = #{dataFrom},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="issued != null">issued = #{issued},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHcHrWorkOrderCarById" parameterType="Long">
+        delete from hc_hr_work_order_car where id = #{id}
+    </delete>
+
+    <delete id="deleteHcHrWorkOrderCarByIds" parameterType="String">
+        delete from hc_hr_work_order_car where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectHcHrWorkOrderCarListByVhNos" resultMap="HcHrWorkOrderCarResult">
+        <include refid="selectHcHrWorkOrderCarVo"/>
+        where vh_no in
+        <foreach item="vhNo" collection="vhNos" open="(" separator="," close=")">
+            #{vhNo}
+        </foreach>
+    </select>
+
+    <insert id="batchInsertHcHrWorkOrderCar" useGeneratedKeys="false">
+        <foreach collection="list" item="item" separator=";">
+            insert into hc_hr_work_order_car
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="item.id != null">id,</if>
+                <if test="item.vhNo != null">vh_no,</if>
+                <if test="item.nm != null">nm,</if>
+                <if test="item.idNo != null">id_no,</if>
+                <if test="item.ipltLic != null">iplt_lic,</if>
+                <if test="item.dpId != null">dp_id,</if>
+                <if test="item.ipltCarNo != null">iplt_car_no,</if>
+                <if test="item.facDorNm != null">fac_dor_nm,</if>
+                <if test="item.facNm != null">fac_nm,</if>
+                <if test="item.dirverIdNo != null">dirver_id_no,</if>
+                <if test="item.driverNm != null">driver_nm,</if>
+                <if test="item.carPhoto != null">car_photo,</if>
+                <if test="item.carColor != null">car_color,</if>
+                <if test="item.carType != null">car_type,</if>
+                <if test="item.carTypeName != null">car_type_name,</if>
+                <if test="item.vehicleLic != null">vehicle_lic,</if>
+                <if test="item.hcTransportCertNo != null">hc_transport_cert_no,</if>
+                <if test="item.emisStandard != null">emis_standard,</if>
+                <if test="item.emisStandardName != null">emis_standard_name,</if>
+                <if test="item.envSign != null">env_sign,</if>
+                <if test="item.ipltTm != null">iplt_tm,</if>
+                <if test="item.opltTm != null">oplt_tm,</if>
+                <if test="item.secIpltTm != null">sec_iplt_tm,</if>
+                <if test="item.secOpltTm != null">sec_oplt_tm,</if>
+                <if test="item.dataFrom != null">data_from,</if>
+                <if test="item.createBy != null">create_by,</if>
+                <if test="item.createTime != null">create_time,</if>
+                <if test="item.updateBy != null">update_by,</if>
+                <if test="item.updateTime != null">update_time,</if>
+                <if test="item.issued != null">issued,</if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="item.id != null">#{item.id},</if>
+                <if test="item.vhNo != null">#{item.vhNo},</if>
+                <if test="item.nm != null">#{item.nm},</if>
+                <if test="item.idNo != null">#{item.idNo},</if>
+                <if test="item.ipltLic != null">#{item.ipltLic},</if>
+                <if test="item.dpId != null">#{item.dpId},</if>
+                <if test="item.ipltCarNo != null">#{item.ipltCarNo},</if>
+                <if test="item.facDorNm != null">#{item.facDorNm},</if>
+                <if test="item.facNm != null">#{item.facNm},</if>
+                <if test="item.dirverIdNo != null">#{item.dirverIdNo},</if>
+                <if test="item.driverNm != null">#{item.driverNm},</if>
+                <if test="item.carPhoto != null">#{item.carPhoto},</if>
+                <if test="item.carColor != null">#{item.carColor},</if>
+                <if test="item.carType != null">#{item.carType},</if>
+                <if test="item.carTypeName != null">#{item.carTypeName},</if>
+                <if test="item.vehicleLic != null">#{item.vehicleLic},</if>
+                <if test="item.hcTransportCertNo != null">#{item.hcTransportCertNo},</if>
+                <if test="item.emisStandard != null">#{item.emisStandard},</if>
+                <if test="item.emisStandardName != null">#{item.emisStandardName},</if>
+                <if test="item.envSign != null">#{item.envSign},</if>
+                <if test="item.ipltTm != null">#{item.ipltTm},</if>
+                <if test="item.opltTm != null">#{item.opltTm},</if>
+                <if test="item.secIpltTm != null">#{item.secIpltTm},</if>
+                <if test="item.secOpltTm != null">#{item.secOpltTm},</if>
+                <if test="item.dataFrom != null">#{item.dataFrom},</if>
+                <if test="item.createBy != null">#{item.createBy},</if>
+                <if test="item.createTime != null">#{item.createTime},</if>
+                <if test="item.updateBy != null">#{item.updateBy},</if>
+                <if test="item.updateTime != null">#{item.updateTime},</if>
+                <if test="item.issued != null">#{item.issued},</if>
+            </trim>
+        </foreach>
+    </insert>
+</mapper>

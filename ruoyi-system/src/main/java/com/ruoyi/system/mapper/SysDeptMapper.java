@@ -142,4 +142,12 @@ public interface SysDeptMapper
      * @return
      */
     public  List<SysDept> getPlantByBuildId(@Param("buildId")String buildId);
+
+    /**
+     * 根据部门編號查询信息
+     *
+     * @param deptNo 部门编号
+     * @return 部门信息
+     */
+    public SysDept selectDeptByDeptNo(String deptNo);
 }

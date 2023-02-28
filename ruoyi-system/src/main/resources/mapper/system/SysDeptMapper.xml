@@ -213,4 +213,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		where  build_id =#{buildId} and del_flag = '0'
 	</select>
 
+	<select id="selectDeptByDeptNo" parameterType="String" resultMap="SysDeptResult">
+		<include refid="selectDeptVo"/>
+		where dept_no = #{deptNo}
+	</select>
+
 </mapper>

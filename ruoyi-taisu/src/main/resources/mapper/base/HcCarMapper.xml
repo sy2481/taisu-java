@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.HcCarMapper">
+
+    <resultMap type="HcCar" id="HcCarResult">
+        <result property="id"    column="id"    />
+        <result property="nm"    column="nm"    />
+        <result property="idNo"    column="id_no"    />
+        <result property="carPhoto"    column="car_photo"    />
+        <result property="carColor"    column="car_color"    />
+        <result property="carType"    column="car_type"    />
+        <result property="carTypeName"    column="car_type_name"    />
+        <result property="vehicleLic"    column="vehicle_lic"    />
+        <result property="hcTransportCertNo"    column="hc_transport_cert_no"    />
+        <result property="emisStandard"    column="emis_standard"    />
+        <result property="emisStandardName"    column="emis_standard_name"    />
+        <result property="envSign"    column="env_sign"    />
+    </resultMap>
+
+    <sql id="selectHcCarVo">
+        select id, nm, id_no, car_photo, car_color, car_type, car_type_name, vehicle_lic, hc_transport_cert_no, emis_standard, emis_standard_name, env_sign from hc_car
+    </sql>
+
+    <select id="selectHcCarList" parameterType="HcCar" resultMap="HcCarResult">
+        <include refid="selectHcCarVo"/>
+        <where>
+            <if test="nm != null  and nm != ''"> and nm like concat('%', #{nm}, '%')</if>
+            <if test="idNo != null  and idNo != ''"> and id_no like concat('%', #{idNo}, '%')</if>
+            <if test="carPhoto != null  and carPhoto != ''"> and car_photo = #{carPhoto}</if>
+            <if test="carColor != null  and carColor != ''"> and car_color like concat('%', #{carColor}, '%')</if>
+            <if test="carType != null "> and car_type = #{carType}</if>
+            <if test="carTypeName != null  and carTypeName != ''"> and car_type_name like concat('%', #{carTypeName}, '%')</if>
+            <if test="vehicleLic != null  and vehicleLic != ''"> and vehicle_lic = #{vehicleLic}</if>
+            <if test="hcTransportCertNo != null  and hcTransportCertNo != ''"> and hc_transport_cert_no = #{hcTransportCertNo}</if>
+            <if test="emisStandard != null "> and emis_standard = #{emisStandard}</if>
+            <if test="emisStandardName != null  and emisStandardName != ''"> and emis_standard_name like concat('%', #{emisStandardName}, '%')</if>
+            <if test="envSign != null  and envSign != ''"> and env_sign = #{envSign}</if>
+        </where>
+    </select>
+
+    <select id="selectHcCarById" parameterType="Long" resultMap="HcCarResult">
+        <include refid="selectHcCarVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertHcCar" parameterType="HcCar">
+        insert into hc_car
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="nm != null">nm,</if>
+            <if test="idNo != null">id_no,</if>
+            <if test="carPhoto != null">car_photo,</if>
+            <if test="carColor != null">car_color,</if>
+            <if test="carType != null">car_type,</if>
+            <if test="carTypeName != null">car_type_name,</if>
+            <if test="vehicleLic != null">vehicle_lic,</if>
+            <if test="hcTransportCertNo != null">hc_transport_cert_no,</if>
+            <if test="emisStandard != null">emis_standard,</if>
+            <if test="emisStandardName != null">emis_standard_name,</if>
+            <if test="envSign != null">env_sign,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="nm != null">#{nm},</if>
+            <if test="idNo != null">#{idNo},</if>
+            <if test="carPhoto != null">#{carPhoto},</if>
+            <if test="carColor != null">#{carColor},</if>
+            <if test="carType != null">#{carType},</if>
+            <if test="carTypeName != null">#{carTypeName},</if>
+            <if test="vehicleLic != null">#{vehicleLic},</if>
+            <if test="hcTransportCertNo != null">#{hcTransportCertNo},</if>
+            <if test="emisStandard != null">#{emisStandard},</if>
+            <if test="emisStandardName != null">#{emisStandardName},</if>
+            <if test="envSign != null">#{envSign},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHcCar" parameterType="HcCar">
+        update hc_car
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="nm != null">nm = #{nm},</if>
+            <if test="idNo != null">id_no = #{idNo},</if>
+            <if test="carPhoto != null">car_photo = #{carPhoto},</if>
+            <if test="carColor != null">car_color = #{carColor},</if>
+            <if test="carType != null">car_type = #{carType},</if>
+            <if test="carTypeName != null">car_type_name = #{carTypeName},</if>
+            <if test="vehicleLic != null">vehicle_lic = #{vehicleLic},</if>
+            <if test="hcTransportCertNo != null">hc_transport_cert_no = #{hcTransportCertNo},</if>
+            <if test="emisStandard != null">emis_standard = #{emisStandard},</if>
+            <if test="emisStandardName != null">emis_standard_name = #{emisStandardName},</if>
+            <if test="envSign != null">env_sign = #{envSign},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHcCarById" parameterType="Long">
+        delete from hc_car where id = #{id}
+    </delete>
+
+    <delete id="deleteHcCarByIds" parameterType="String">
+        delete from hc_car where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectHcCarByIdNo" parameterType="String" resultMap="HcCarResult">
+        <include refid="selectHcCarVo"/>
+        where id_no like concat('%', #{idNo}, '%')
+    </select>
+
+    <select id="selectHcCarListByIdNos" parameterType="String" resultMap="HcCarResult">
+        <include refid="selectHcCarVo"/>
+        where id_no in
+        <foreach item="idNo" collection="array" open="(" separator="," close=")">
+            #{idNo}
+        </foreach>
+    </select>
+
+    <insert id="batchInsertHcCar" useGeneratedKeys="false">
+        <foreach collection="list" item="item" separator=";">
+            insert into hc_car
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="item.id != null">id,</if>
+                <if test="item.nm != null">nm,</if>
+                <if test="item.idNo != null">id_no,</if>
+                <if test="item.carPhoto != null">car_photo,</if>
+                <if test="item.carColor != null">car_color,</if>
+                <if test="item.carType != null">car_type,</if>
+                <if test="item.carTypeName != null">car_type_name,</if>
+                <if test="item.vehicleLic != null">vehicle_lic,</if>
+                <if test="item.hcTransportCertNo != null">hc_transport_cert_no,</if>
+                <if test="item.emisStandard != null">emis_standard,</if>
+                <if test="item.emisStandardName != null">emis_standard_name,</if>
+                <if test="item.envSign != null">env_sign,</if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="item.id != null">#{item.id},</if>
+                <if test="item.nm != null">#{item.nm},</if>
+                <if test="item.idNo != null">#{item.idNo},</if>
+                <if test="item.carPhoto != null">#{item.carPhoto},</if>
+                <if test="item.carColor != null">#{item.carColor},</if>
+                <if test="item.carType != null">#{item.carType},</if>
+                <if test="item.carTypeName != null">#{item.carTypeName},</if>
+                <if test="item.vehicleLic != null">#{item.vehicleLic},</if>
+                <if test="item.hcTransportCertNo != null">#{item.hcTransportCertNo},</if>
+                <if test="item.emisStandard != null">#{item.emisStandard},</if>
+                <if test="item.emisStandardName != null">#{item.emisStandardName},</if>
+                <if test="item.envSign != null">#{item.envSign},</if>
+            </trim>
+        </foreach>
+    </insert>
+
+    <update id="batchUpdateHcCar">
+        <foreach collection="list" item="item" separator=";">
+            update hc_car
+            <trim prefix="SET" suffixOverrides=",">
+                <if test="item.nm != null">nm = #{item.nm},</if>
+                <if test="item.idNo != null">id_no = #{item.idNo},</if>
+                <if test="item.carPhoto != null">car_photo = #{item.carPhoto},</if>
+                <if test="item.carColor != null">car_color = #{item.carColor},</if>
+                <if test="item.carType != null">car_type = #{item.carType},</if>
+                <if test="item.carTypeName != null">car_type_name = #{item.carTypeName},</if>
+                <if test="item.vehicleLic != null">vehicle_lic = #{item.vehicleLic},</if>
+                <if test="item.hcTransportCertNo != null">hc_transport_cert_no = #{item.hcTransportCertNo},</if>
+                <if test="item.emisStandard != null">emis_standard = #{emisStandard},</if>
+                <if test="item.emisStandardName != null">emis_standard_name = #{item.emisStandardName},</if>
+                <if test="item.envSign != null">env_sign = #{item.envSign},</if>
+            </trim>
+            where id = #{item.id}
+        </foreach>
+    </update>
+</mapper>

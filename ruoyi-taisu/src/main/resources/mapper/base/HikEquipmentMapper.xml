@@ -30,8 +30,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="deviceType"    column="device_type"    />
         <result property="plcCommand"    column="plc_command"    />
         <result property="deviceName"    column="device_name"    />
-        <result property="status"    column="status"    />
-        <result property="statusName"    column="status_name"    />
         <association property="carEquip"    column="car_device_id" javaType="HikEquipment" select="com.ruoyi.base.mapper.HikEquipmentMapper.selectHikEquipmentById" />
         <association property="personEquip"    column="person_device_id" javaType="HikEquipment" select="com.ruoyi.base.mapper.HikEquipmentMapper.selectHikEquipmentById" />
     </resultMap>
@@ -154,6 +152,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         from plc_hik where id = #{id}
     </select>
 
+    <select id="getPlcHik_CarByDeviceId" resultMap="PlcHikResult">
+        select id, plc_id, person_device_id, car_device_id, device_type, plc_command, device_name, create_time
+        from plc_hik where (person_device_id =#{deviceId} or car_device_id =#{deviceId}) and device_type =1
+    </select>
+
     <delete id="deletePlcHikById" parameterType="Long">
         delete from plc_hik where id = #{id}
     </delete>
@@ -220,6 +223,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="deviceType != null "> and device_type = #{deviceType}</if>
             <if test="subtitleMachineIp != null  and subtitleMachineIp != ''"> and subtitle_machine_ip = #{subtitleMachineIp}</if>
             <if test="equipmentUseType != null  and equipmentUseType != ''"> and equipment_use_type = #{equipmentUseType}</if>
+    </select>
+
+    <select id="selectHikEquipmentListHc" parameterType="HikEquipment" resultMap="HikEquipmentResult">
+        <include refid="selectHikEquipmentVo"/>
+        <where>
+            front_ip in (select ip from plc_equipment WHERE hazardous_chemicals=1)
+            and device_type=0
+        </where>
     </select>
 
 </mapper>

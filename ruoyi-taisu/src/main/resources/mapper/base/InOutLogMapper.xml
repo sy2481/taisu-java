@@ -29,13 +29,16 @@
         <result property="validType"    column="valid_type"    />
         <result property="operationTime"    column="operation_time"    />
         <result property="operationName"    column="operation_name"    />
+        <result property="escortName"    column="escort_name"    />
+        <result property="escortIdCard"    column="escort_id_card"    />
+        <result property="carPlateHistory"    column="car_plate_history"    />
     </resultMap>
 
     <sql id="selectInOutLogVo">
         select id, project_no, work_no, ip, area_name, project_name, factory_name,
                create_time, load_type, name, id_card, user_id, factory_id,
                log_type, plate_no, person_type, location_card_no, user_dept_name,
-               valid_type,operation_time,operation_name user_no,gate,dept_id
+               valid_type,operation_time,operation_name user_no,gate,dept_id, escort_name, escort_id_card,car_plate_history
         from in_out_log
     </sql>
 
@@ -67,6 +70,9 @@
                     #{item}
                 </foreach>
             </if>
+            <if test="escortName != null  and escortName != ''"> and escort_name like concat('%', #{escortName}, '%')</if>
+            <if test="escortIdCard != null  and escortIdCard != ''"> and escort_id_card = #{escortIdCard}</if>
+            <if test="carPlateHistory != null  and carPlateHistory != ''"> and car_plate_history = #{carPlateHistory}</if>
         </where>
         order by create_time desc
     </select>
@@ -102,6 +108,9 @@
             <if test="validType != null">valid_type,</if>
             <if test="operationTime != null">operation_time,</if>
             <if test="operationName != null">operation_name,</if>
+            <if test="escortName != null">escort_name,</if>
+            <if test="escortIdCard != null">escort_id_card,</if>
+            <if test="carPlateHistory != null">car_plate_history,</if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">#{id},</if>
@@ -127,6 +136,9 @@
             <if test="validType != null">#{validType},</if>
             <if test="operationTime != null">#{operationTime},</if>
             <if test="operationName != null">#{operationName},</if>
+            <if test="escortName != null">#{escortName},</if>
+            <if test="escortIdCard != null">#{escortIdCard},</if>
+            <if test="carPlateHistory != null">#{carPlateHistory},</if>
         </trim>
     </insert>
 
@@ -156,6 +168,9 @@
             <if test="validType != null">valid_type = #{validType},</if>
             <if test="operationTime != null">operation_time = #{operationTime},</if>
             <if test="operationName != null">operation_name = #{operationName},</if>
+            <if test="escortName != null">escort_name = #{escortName},</if>
+            <if test="escortIdCard != null">escort_id_card = #{escortIdCard},</if>
+            <if test="carPlateHistory != null">car_plate_history = #{carPlateHistory},</if>
         </trim>
         where id = #{id}
     </update>

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.HcWorkOrderAuthMapper">
+
+    <resultMap type="HcWorkOrderAuth" id="HcWorkOrderAuthResult">
+        <result property="id"    column="id"    />
+        <result property="vhNo"    column="vh_no"    />
+        <result property="plcId"    column="plc_id"    />
+        <result property="plcIp"    column="plc_ip"    />
+        <result property="personDeviceId"    column="person_device_id"    />
+        <result property="personDeviceIp"    column="person_device_ip"    />
+        <result property="carDeviceId"    column="car_device_id"    />
+        <result property="carDeviceIp"    column="car_device_ip"    />
+        <result property="inOutMode"    column="in_out_mode"    />
+        <result property="carNo"    column="car_no"    />
+        <result property="carNoHistory"    column="car_no_history"    />
+        <result property="driverIdCard"    column="driver_id_card"    />
+        <result property="driverName"    column="driver_name"    />
+        <result property="escortIdCard"    column="escort_id_card"    />
+        <result property="escortName"    column="escort_name"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectHcWorkOrderAuthVo">
+        select id, vh_no, plc_id, plc_ip, person_device_id, person_device_ip, car_device_id, car_device_ip, in_out_mode, car_no, car_no_history, driver_id_card, driver_name, escort_id_card, escort_name, update_time from hc_work_order_auth
+    </sql>
+
+    <select id="selectHcWorkOrderAuthList" parameterType="HcWorkOrderAuth" resultMap="HcWorkOrderAuthResult">
+        <include refid="selectHcWorkOrderAuthVo"/>
+        <where>
+            <if test="vhNo != null  and vhNo != ''"> and vh_no = #{vhNo}</if>
+            <if test="plcId != null "> and plc_id = #{plcId}</if>
+            <if test="plcIp != null  and plcIp != ''"> and plc_ip = #{plcIp}</if>
+            <if test="personDeviceId != null "> and person_device_id = #{personDeviceId}</if>
+            <if test="personDeviceIp != null  and personDeviceIp != ''"> and person_device_ip = #{personDeviceIp}</if>
+            <if test="carDeviceId != null "> and car_device_id = #{carDeviceId}</if>
+            <if test="carDeviceIp != null  and carDeviceIp != ''"> and car_device_ip = #{carDeviceIp}</if>
+            <if test="inOutMode != null  and inOutMode != ''"> and in_out_mode = #{inOutMode}</if>
+            <if test="carNo != null  and carNo != ''"> and car_no = #{carNo}</if>
+            <if test="carNoHistory != null  and carNoHistory != ''"> and car_no_history = #{carNoHistory}</if>
+            <if test="driverIdCard != null  and driverIdCard != ''"> and driver_id_card = #{driverIdCard}</if>
+            <if test="driverName != null  and driverName != ''"> and driver_name like concat('%', #{driverName}, '%')</if>
+            <if test="escortIdCard != null  and escortIdCard != ''"> and escort_id_card = #{escortIdCard}</if>
+            <if test="escortName != null  and escortName != ''"> and escort_name like concat('%', #{escortName}, '%')</if>
+        </where>
+    </select>
+
+    <select id="selectHcWorkOrderAuthById" parameterType="Long" resultMap="HcWorkOrderAuthResult">
+        <include refid="selectHcWorkOrderAuthVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectHcWorkOrderAuthByPersonDeviceIp" parameterType="String" resultMap="HcWorkOrderAuthResult">
+        <include refid="selectHcWorkOrderAuthVo"/>
+        where person_device_ip = #{personDeviceIp}
+    </select>
+
+
+    <insert id="insertHcWorkOrderAuth" parameterType="HcWorkOrderAuth">
+        insert into hc_work_order_auth
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="vhNo != null">vh_no,</if>
+            <if test="plcId != null">plc_id,</if>
+            <if test="plcIp != null">plc_ip,</if>
+            <if test="personDeviceId != null">person_device_id,</if>
+            <if test="personDeviceIp != null">person_device_ip,</if>
+            <if test="carDeviceId != null">car_device_id,</if>
+            <if test="carDeviceIp != null">car_device_ip,</if>
+            <if test="inOutMode != null">in_out_mode,</if>
+            <if test="carNo != null">car_no,</if>
+            <if test="carNoHistory != null">car_no_history,</if>
+            <if test="driverIdCard != null">driver_id_card,</if>
+            <if test="driverName != null">driver_name,</if>
+            <if test="escortIdCard != null">escort_id_card,</if>
+            <if test="escortName != null">escort_name,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="vhNo != null">#{vhNo},</if>
+            <if test="plcId != null">#{plcId},</if>
+            <if test="plcIp != null">#{plcIp},</if>
+            <if test="personDeviceId != null">#{personDeviceId},</if>
+            <if test="personDeviceIp != null">#{personDeviceIp},</if>
+            <if test="carDeviceId != null">#{carDeviceId},</if>
+            <if test="carDeviceIp != null">#{carDeviceIp},</if>
+            <if test="inOutMode != null">#{inOutMode},</if>
+            <if test="carNo != null">#{carNo},</if>
+            <if test="carNoHistory != null">#{carNoHistory},</if>
+            <if test="driverIdCard != null">#{driverIdCard},</if>
+            <if test="driverName != null">#{driverName},</if>
+            <if test="escortIdCard != null">#{escortIdCard},</if>
+            <if test="escortName != null">#{escortName},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateHcWorkOrderAuth" parameterType="HcWorkOrderAuth">
+        update hc_work_order_auth
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vhNo != null">vh_no = #{vhNo},</if>
+            <if test="plcId != null">plc_id = #{plcId},</if>
+            <if test="plcIp != null">plc_ip = #{plcIp},</if>
+            <if test="personDeviceId != null">person_device_id = #{personDeviceId},</if>
+            <if test="personDeviceIp != null">person_device_ip = #{personDeviceIp},</if>
+            <if test="carDeviceId != null">car_device_id = #{carDeviceId},</if>
+            <if test="carDeviceIp != null">car_device_ip = #{carDeviceIp},</if>
+            <if test="inOutMode != null">in_out_mode = #{inOutMode},</if>
+            <if test="carNo != null">car_no = #{carNo},</if>
+            <if test="carNoHistory != null">car_no_history = #{carNoHistory},</if>
+            <if test="driverIdCard != null">driver_id_card = #{driverIdCard},</if>
+            <if test="driverName != null">driver_name = #{driverName},</if>
+            <if test="escortIdCard != null">escort_id_card = #{escortIdCard},</if>
+            <if test="escortName != null">escort_name = #{escortName},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHcWorkOrderAuthById" parameterType="Long">
+        delete from hc_work_order_auth where id = #{id}
+    </delete>
+
+    <delete id="deleteHcWorkOrderAuthByPLCId" parameterType="Long">
+        delete from hc_work_order_auth where plc_id = #{plcId}
+    </delete>
+
+    <delete id="deleteHcWorkOrderAuthByIds" parameterType="String">
+        delete from hc_work_order_auth where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

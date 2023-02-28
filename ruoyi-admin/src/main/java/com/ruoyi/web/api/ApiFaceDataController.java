@@ -3,14 +3,10 @@ package com.ruoyi.web.api;
 import com.alibaba.fastjson.JSONObject;
 import com.ruoyi.base.bo.FactoryWorkBO;
 import com.ruoyi.base.bo.WorkCarBo;
-import com.ruoyi.base.domain.BaseCar;
-import com.ruoyi.base.domain.ManBlackInfo;
-import com.ruoyi.base.domain.ManFactory;
+import com.ruoyi.base.domain.*;
 import com.ruoyi.base.interact.HlkFaceCheckUtil;
 import com.ruoyi.base.mapper.ManFactoryMapper;
-import com.ruoyi.base.service.IBaseCarService;
-import com.ruoyi.base.service.IManBlackInfoService;
-import com.ruoyi.base.service.IManWorkService;
+import com.ruoyi.base.service.*;
 import com.ruoyi.base.service.impl.ApiService;
 import com.ruoyi.base.service.impl.ManFactoryServiceImpl;
 import com.ruoyi.base.utils.HttpUtils;
@@ -29,14 +25,15 @@ import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.web.api.basic.Response;
 import com.ruoyi.web.api.bo.EmployeeBO;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -72,6 +69,16 @@ public class ApiFaceDataController {
     private IManBlackInfoService manBlackInfoService;
     @Autowired
     private IBaseCarService baseCarService;
+    @Autowired
+    private IHcWorkOrderCarService hcWorkOrderCarService;
+    @Autowired
+    private IHcWorkOrderUserService hcWorkOrderUserService;
+    @Autowired
+    private IHcUserService hcUserService;
+    @Autowired
+    private IHcWorkOrderService hcWorkOrderService;
+    @Autowired
+    private IHcCarService hcCarService;
     /**
      * 中心库地址
      */
@@ -146,6 +153,31 @@ public class ApiFaceDataController {
                     return Response.builder().code(1).data(face).build();
                 }
             }
+            //循环压缩
+            if (file.getSize() > 1024 * 100) {
+                fileUrl = ImgFileTools.compressionLessByGoogle(RuoYiConfig.getProfile(), fileUrl, 100);
+            }
+            System.out.println("profile:++" + fileUrl);
+
+            return Response.builder().code(0).data(fileUrl).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Response.error("上傳錯誤，請稍後再試。");
+    }
+
+    //除了人臉的人員圖片，比如司機駕照、押運員許可證等
+    @ResponseBody
+    @RequestMapping("/uploadUserImg")
+    public Response uploadUserImg(MultipartFile file) {
+        try {
+            if (file.getSize() == 0) {
+                return Response.error("圖片不存在，請重新上傳");
+            }
+            // 返回：/profile/face/2022/03/06/原文件名_20220306102949A001.png
+            // 图片全路径为： http://localhost:8080 + fileUrl
+            String fileUrl = FileUploadUtils.upload(RuoYiConfig.getProfile() + "/user", file);
+
             //循环压缩
             if (file.getSize() > 1024 * 100) {
                 fileUrl = ImgFileTools.compressionLessByGoogle(RuoYiConfig.getProfile(), fileUrl, 100);
@@ -592,5 +624,133 @@ public class ApiFaceDataController {
         return Response.builder().code(0).data(baseCar).build();
     }
 
+
+    //TODO   新危化流程
+
+    @ResponseBody
+    @ApiOperation("危化公众号根据车牌号查询")
+    @PostMapping ("/hcQueryByIdNo")
+    public AjaxResult hcQueryByIdNo(String idNo) {
+        try {
+            if (StringUtils.isBlank(idNo)) {
+                return AjaxResult.error("車牌號不允許為空！");
+            }
+            //根據車牌號查詢
+            List<HcWorkOrderCar> hcWorkOrderCars = hcWorkOrderCarService.selectHcWorkOrderCarByIdNo(idNo);
+            return AjaxResult.success(hcWorkOrderCars);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResult.error("查詢出錯，請稍後再試！");
+    }
+
+    @ResponseBody
+    @ApiOperation("危化查询详情")
+    @PostMapping("/hcQueryDetails")
+    public AjaxResult hcQueryDetails(Long id) {
+        try {
+            return AjaxResult.success(hcWorkOrderCarService.hcQueryDetails(id));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResult.error("查詢出錯，請稍後再試！");
+    }
+
+    @ResponseBody
+    @ApiOperation("物流通道根據車牌號查詢明細")
+    @PostMapping("/hcQueryDetailByIdNo")
+    public AjaxResult hcQueryDetailByIdNo(String idNo) {
+        try {
+            return AjaxResult.success(hcWorkOrderCarService.hcQueryDetailByIdNo(idNo));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResult.error("查詢出錯，請稍後再試！");
+    }
+
+    @ResponseBody
+    @ApiOperation("危化新增车辆司机详情")
+    @PostMapping("/hcAddDetails")
+    public AjaxResult hcAddDetails(@RequestBody HcWorkOrderCar hcWorkOrderCar) {
+        try {
+            return AjaxResult.success(hcWorkOrderCarService.saveHcWorkOrderCarForH5(hcWorkOrderCar));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AjaxResult.error(e.getMessage());
+        }
+        //return AjaxResult.error("查詢出錯，請稍後再試！");
+    }
+
+    @ResponseBody
+    @ApiOperation("危化新增车辆押运员详情")
+    @PostMapping("/hcAddEscort")
+    public AjaxResult hcAddEscort(@RequestBody HcWorkOrderUser hcWorkOrderUser) {
+        try {
+            return AjaxResult.success(hcWorkOrderCarService.updateHcWorkOrderUserForH5(hcWorkOrderUser));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return AjaxResult.error(e.getMessage());
+        }
+        //return AjaxResult.error("查詢出錯，請稍後再試！");
+    }
+
+    @ResponseBody
+    @ApiOperation("危化查询人员详情")
+    @PostMapping("/queryHcUserByIdNo")
+    public AjaxResult queryHcUserByIdNo(String idNo) {
+        try {
+            if (StringUtils.isBlank(idNo)) {
+                return AjaxResult.error("身份证不允許為空！");
+            }
+            //先從中心庫獲取數據
+            List<String> idNoList=new ArrayList<>();
+            idNoList.add(idNo);
+            hcUserService.syncCentByHcUser(idNoList,true);
+            HcUser hcUser = hcUserService.selectHcUserByIdNo(idNo);
+            if(hcUser!=null){
+                return AjaxResult.success(hcUser);
+            }else{
+                return AjaxResult.error("暫無查詢到人員信息");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResult.error("查詢出錯，請稍後再試！");
+    }
+
+    @ResponseBody
+    @ApiOperation("危化查询車輛详情")
+    @PostMapping("/queryHcCarByIdNo")
+    public AjaxResult queryHcCarByIdNo(String idNo) {
+        try {
+            if (StringUtils.isBlank(idNo)) {
+                return AjaxResult.error("車牌不允許為空！");
+            }
+            HcCar hcCar = hcCarService.selectHcCarByIdNo(idNo);
+            return AjaxResult.success(hcCar);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResult.error("查詢出錯，請稍後再試！");
+    }
+
+    @ResponseBody
+    @ApiOperation("危化工單車輛详情")
+    @PostMapping("/queryHcWorkOrderCarByVhNoIdNo")
+    public AjaxResult queryHcWorkOrderCarByVhNoIdNo(String vhNo,String idNo) {
+        try {
+            if (StringUtils.isBlank(vhNo)) {
+                return AjaxResult.error("工單號不允許為空！");
+            }
+            if (StringUtils.isBlank(idNo)) {
+                return AjaxResult.error("車牌不允許為空！");
+            }
+            List<HcWorkOrderCar> hcWorkOrderCarList = hcWorkOrderCarService.selectHcWorkOrderCarListByVhNoIdNo(vhNo,idNo);
+            return AjaxResult.success(hcWorkOrderCarList);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return AjaxResult.error("查詢出錯，請稍後再試！");
+    }
 
 }

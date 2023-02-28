@@ -358,4 +358,24 @@ public class SysDeptServiceImpl implements ISysDeptService
     {
         return getChildList(list, t).size() > 0;
     }
+
+    /**
+     * 獲取部門的廠區
+     *
+     * @param dept
+     * @return
+     */
+    @Override
+    public SysDept getPlantByDept(SysDept dept) {
+        if (dept != null) {
+            if (dept.getPlant() != null && dept.getPlant() == 0) {
+                return dept;
+            } else {
+                SysDept parentDept = deptMapper.selectDeptById(dept.getParentId());
+                return getPlantByDept(parentDept);
+            }
+        } else {
+            return null;
+        }
+    }
 }

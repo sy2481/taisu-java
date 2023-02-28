@@ -8,6 +8,7 @@ import com.ruoyi.base.interact.LocationCardSendService;
 import com.ruoyi.base.interact.PersonSendService;
 import com.ruoyi.base.interact.UserJurisdiction;
 import com.ruoyi.base.mapper.*;
+import com.ruoyi.base.service.IHikEquipmentService;
 import com.ruoyi.base.service.IPersonBindService;
 import com.ruoyi.base.service.SafetycarService;
 import com.ruoyi.base.utils.HttpUtils;
@@ -37,6 +38,8 @@ import org.springframework.util.CollectionUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author shiva   2022/3/7 17:38
@@ -45,7 +48,7 @@ import java.util.List;
 @Service
 public class ApiService {
 
-    private  final Logger logger = LoggerFactory.getLogger(ManFactoryServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(ManFactoryServiceImpl.class);
 
     @Value("${server.port}")
     private String port;
@@ -70,6 +73,10 @@ public class ApiService {
     private CardRecordMapper cardRecordMapper;
     @Autowired
     private InOutLogMapper inOutLogMapper;
+    @Autowired
+    private InOutLogPerilousMapper inOutLogPerilousMapper;
+    @Autowired
+    private IHikEquipmentService hikEquipmentService;
     @Autowired
     private EquipmentMapper equipmentMapper;
     @Autowired
@@ -97,6 +104,12 @@ public class ApiService {
 
     @Autowired
     private SysUserMapper sysUserMapper;
+
+
+    @Autowired
+    private HcWorkOrderCarMapper hcWorkOrderCarMapper;
+    @Autowired
+    private HcWorkOrderUserMapper hcWorkOrderUserMapper;
 
     /* 人员查询相关方法 *********************************************************************************************************************/
 
@@ -276,7 +289,7 @@ public class ApiService {
         personBind.setSn(locateCard.getSnNum());
         personBind.setIdCard(bindUser.getIdCard());
         personBind.setName(ZJFConverter.SimToTra(bindUser.getNickName()));
-        logger.info("ZJFConverter.SimToTrabindUse"+bindUser.getNickName());
+        logger.info("ZJFConverter.SimToTrabindUse" + bindUser.getNickName());
         personBind.setMobile(bindUser.getPhonenumber());
         personBind.setSex(bindUser.getSex());
         personBind.setFace(bindUser.getFace());
@@ -639,7 +652,7 @@ public class ApiService {
             //根据ip获取设备
 //            if (equipment.getFrontIp() != null) {
 //                PlcEquipment plcEquipment = plcRedisUtils.getPlcEquipment(equipment.getFrontIp());
-                //根据设备获取厂区编号
+            //根据设备获取厂区编号
 //                if (plcEquipment != null) {
 //                    SysDept dept = sysDeptMapper.selectDeptById(plcEquipment.getPlantAreaId());
 //                    fctDorNm = dept != null ? dept.getDeptNo() : "";
@@ -650,11 +663,17 @@ public class ApiService {
             //然后还要往旧数据库插入数据；
             //车道信息补全
             TcInOutLog tcInOutLogCar = null;
-            logger.info("equipmentIp"+equipmentIp);
+            logger.info("equipmentIp" + equipmentIp);
             System.out.println("logType : " + logType);
             if (carParam != null) {
                 //获取到车辆信息
-                List<BaseSafetycar> safetycarlist = safetycarService.getSafetycarByCarno(carParam);
+                String searchCar = "";
+                if (carParam.length() == 10) {
+                    searchCar = carParam;
+                } else {
+                    searchCar = carParam.substring(1);
+                }
+                List<BaseSafetycar> safetycarlist = safetycarService.getSafetycarByCarno(searchCar);
                 if (!CollectionUtils.isEmpty(safetycarlist)) {
                     BaseSafetycar baseSafetycar = safetycarlist.get(0);
                     String CarIdNo = baseSafetycar.getIpLtLic() + baseSafetycar.getPz();
@@ -721,6 +740,111 @@ public class ApiService {
 
     }
 
+
+    /**
+     * @param logType         0-入场，1-离场
+     * @param idCardNo        身份证号
+     * @param equipmentIp     设备IP
+     * @param carParam        車牌號或車卡
+     * @param idCardNo2       押運員身份證號
+     * @param CarPlateHistory 歷史車牌號-模糊匹配專用
+     */
+    @Transactional(readOnly = false)
+    public void inOutLogInsertCarForHC(String idCardNo, String equipmentIp, String logType, String carParam, String idCardNo2, String CarPlateHistory) {
+        // 第一位，出入，0-入场，1-离场
+        // 第二位，0-員工、1-廠商、2-車輛、3-危化   因為不用反寫舊數據庫  所以不需要第二位
+        String FullLogType = logType + "3";
+        //region 生成进出记录
+        InOutLog log = new InOutLog();
+        log.setIp(equipmentIp);
+        log.setPlateNo(carParam);
+        log.setCarPlateHistory(CarPlateHistory);
+        //道路類型
+        log.setLoadType(carParam == null ? "0" : "1");
+        log.setCreateTime(new Date());
+        log.setPersonType("2");
+        log.setFactoryId(null);
+        log.setProjectNo(null);
+        log.setProjectName(null);
+
+        //獲取本廠所有的工單人員
+        HcWorkOrderUser searchForHcWorkOrderUser = new HcWorkOrderUser();
+        searchForHcWorkOrderUser.setFacDorNm(factoryCode);
+        List<HcWorkOrderUser> hcWorkOrderUserList = hcWorkOrderUserMapper.selectHcWorkOrderUserList(searchForHcWorkOrderUser);
+        //司机
+        List<HcWorkOrderUser> hcWorkOrderUser_Driver = hcWorkOrderUserList.stream().filter(g -> Objects.equals(g.getIdNo(), idCardNo)).collect(Collectors.toList());
+        if (hcWorkOrderUser_Driver.size() > 0) {
+            log.setIdCard(idCardNo);
+            log.setName(hcWorkOrderUser_Driver.get(0).getNm());
+        }
+        //押运员
+        List<HcWorkOrderUser> hcWorkOrderUser_Escort = hcWorkOrderUserList.stream().filter(g -> Objects.equals(g.getIdNo(), idCardNo2)).collect(Collectors.toList());
+        if (hcWorkOrderUser_Escort.size() > 0) {
+            log.setIdCard(idCardNo);
+            log.setName(hcWorkOrderUser_Escort.get(0).getEscortLicense());
+            log.setFactoryName(hcWorkOrderUser_Escort.get(0).getCompany());
+            log.setWorkNo(hcWorkOrderUser_Escort.get(0).getVhNo());
+        }
+        log.setLogType(FullLogType);
+        competeLogFromEquipment(log, equipmentIp);
+        //生成进出记录
+        inOutLogMapper.insertInOutLog(log);
+        //endregion
+
+        //region 同步生成危化进出记录 2023-2-7 新危化通道逻辑重制
+        InOutLogPerilous inOutLogPerilousData = new InOutLogPerilous();
+        inOutLogPerilousData.setIp(log.getIp());
+        inOutLogPerilousData.setAreaName(log.getAreaName());
+        inOutLogPerilousData.setCreateTime(log.getCreateTime());
+        inOutLogPerilousData.setIdCard(log.getIdCard());
+        inOutLogPerilousData.setCarNo(log.getPlateNo());
+        inOutLogPerilousData.setLogType((Integer.parseInt(logType) + 1));
+        inOutLogPerilousData.setDeptId(log.getDeptId());
+        inOutLogPerilousData.setCheckType("車牌+人臉");
+//            inOutLogPerilousData.setDeviceName(log.getDeviceName());
+        inOutLogPerilousData.setValidType(log.getValidType());
+        inOutLogPerilousData.setOperationTime(new Date());
+        inOutLogPerilousData.setOperationName(log.getOperationName());
+        inOutLogPerilousData.setEscortIdCard(log.getEscortIdCard());
+        inOutLogPerilousData.setCarPlateHistory(CarPlateHistory);
+        //根据Ip查询海康设备
+        List<HikEquipment> equipments = hikEquipmentService.findByIp(log.getIp());
+        if (equipments != null && equipments.size() > 0) {
+            HikEquipment hikEquipment = equipments.get(0);
+            inOutLogPerilousData.setDeviceName(hikEquipment.getName());
+        } else {
+            PlcEquipment plcEquipment = plcRedisUtils.getPlcEquipment(log.getIp());
+            if (plcEquipment != null) {
+                inOutLogPerilousData.setDeviceName(plcEquipment.getName());
+            }
+        }
+        inOutLogPerilousMapper.insertInOutLogPerilous(inOutLogPerilousData);
+        //endregion
+
+        //region 更新工單表的數據
+        HcWorkOrderCar hcWorkOrderCar = new HcWorkOrderCar();
+        hcWorkOrderCar.setVhNo(log.getWorkNo());
+        hcWorkOrderCar.setFacDorNm(factoryCode);
+        List<HcWorkOrderCar> ThisHCWorkOrderCarList = hcWorkOrderCarMapper.selectHcWorkOrderCarList(hcWorkOrderCar);
+        if (ThisHCWorkOrderCarList.size() > 0) {
+            HcWorkOrderCar ThisHcWorkOrderCar = ThisHCWorkOrderCarList.get(0);
+            if (Objects.equals(logType, "0")) {
+                //入廠就更新 二道門的入場時間
+                ThisHcWorkOrderCar.setSecIpltTm(new Date());
+                hcWorkOrderCarMapper.updateHcWorkOrderCar(ThisHcWorkOrderCar);
+            } else if (Objects.equals(logType, "1")) {
+                //出廠就更新 二道門的出場時間
+                ThisHcWorkOrderCar.setSecOpltTm(new Date());
+                hcWorkOrderCarMapper.updateHcWorkOrderCar(ThisHcWorkOrderCar);
+            } else {
+                //未知的方向
+            }
+        }
+        //endregion
+
+    }
+
+
     @Transactional(readOnly = false)
     public void inOutLogInsertCarForShipment(String idCardNo, String locationCardNo, String equipmentIp, String logType, String carParam) {
         //预备拿一下回写数据库的编号
@@ -778,7 +902,7 @@ public class ApiService {
             //然后还要往旧数据库插入数据；
             //车道信息补全
             TcInOutLog tcInOutLogCar = null;
-            logger.info("equipmentIp"+equipmentIp);
+            logger.info("equipmentIp" + equipmentIp);
             System.out.println("logType : " + logType);
             if (carParam != null) {
                 //获取到车辆信息
@@ -981,7 +1105,7 @@ public class ApiService {
                 continue;
             }
             //修改人脸照片并下发
-            if (StringUtils.isNotBlank(factory.getFace()) && StringUtils.isNotBlank(factory.getIdCard()) &&  factory.getSended()==8) {
+            if (StringUtils.isNotBlank(factory.getFace()) && StringUtils.isNotBlank(factory.getIdCard()) && factory.getSended() == 8) {
                 try {
                     //身份证号、照片都有了，组装信息，然后下发
                     PersonVO personVO = competeByFactory(factory);
@@ -1279,7 +1403,7 @@ public class ApiService {
     public void userBindHlkSubSysUser(SysUser user) {
         //身份证、照片不为空，就可以下发了
 
-        System.out.println(user.getFace()+"---->"+user.getIdCard());
+        System.out.println(user.getFace() + "---->" + user.getIdCard());
         if (StringUtils.isBlank(user.getFace()) || StringUtils.isBlank(user.getIdCard())) {
             return;
         }
@@ -1290,11 +1414,11 @@ public class ApiService {
 
         //判断人员信息是不是已经下发过了
         //8 曾經下發過信息 人臉刪除
-        System.out.println("user.getSended()--->"+user.getSended());
+        System.out.println("user.getSended()--->" + user.getSended());
         if (user.getSended() != null && 8 == user.getSended()) {
             System.out.println("8 == user.getSended()");
 //            //已经下发过了，需要调用照片更新
-            resultCode = personSendService.updateUserOnlyFace(user.getIdCard(), HttpUtils.requestUrlToBase64("http://127.0.0.1:" + port +"/ruoyi-admin"+ user.getFace()));
+            resultCode = personSendService.updateUserOnlyFace(user.getIdCard(), HttpUtils.requestUrlToBase64("http://127.0.0.1:" + port + "/ruoyi-admin" + user.getFace()));
 //            //更新海康权限
             PersonVO personVO = new PersonVO();
             personVO.setAuthIsAll(false);
@@ -1325,8 +1449,7 @@ public class ApiService {
 ////            }
 //
             personSendService.updateHikAuthsSysyUser(personVO);
-        }
-        else if (user.getSended() != null && 0 == user.getSended()) {
+        } else if (user.getSended() != null && 0 == user.getSended()) {
             System.out.println("0 == user.getSended()");
             //还没下发过，下发新的内部人员
             //内部员工信息
@@ -1334,7 +1457,7 @@ public class ApiService {
             requestVo.setAuthIsAll(false);
             requestVo.setDeviceNos(userJurisdiction.getCodeByUserNew(user));
             //拿到人脸Base64编码
-            String faceBase64 = HttpUtils.requestUrlToBase64("http://127.0.0.1:" + port+"/ruoyi-admin" + user.getFace());
+            String faceBase64 = HttpUtils.requestUrlToBase64("http://127.0.0.1:" + port + "/ruoyi-admin" + user.getFace());
             requestVo.setFaceBase64Str(faceBase64);
             requestVo.setJobNo(user.getEmpNo());
             requestVo.setOrderSn(null);
@@ -1368,7 +1491,7 @@ public class ApiService {
             resultCode = personSendService.downSendPersonInfoRequestForSubSysUser(requestVo);
         }
         //判断人员信息是不是已经下发过了
-       else if (user.getSended() != null && 1 == user.getSended()) {
+        else if (user.getSended() != null && 1 == user.getSended()) {
             //已经下发过了，需要调用照片更新
             System.out.println("1 == user.getSended()");
             //resultCode = personSendService.updateUserFace(user.getIdCard(), HttpUtils.requestUrlToBase64("http://127.0.0.1:" + port +"/ruoyi-admin"+ user.getFace()));
@@ -1401,7 +1524,7 @@ public class ApiService {
     public void userBindHlkSubSysUserUpdate(SysUser user) {
         //身份证、照片不为空，就可以下发了
 
-        System.out.println(user.getFace()+"---->"+user.getIdCard());
+        System.out.println(user.getFace() + "---->" + user.getIdCard());
 //        if (StringUtils.isBlank(user.getFace()) || StringUtils.isBlank(user.getIdCard())) {
 //            return;
 //        }
@@ -1489,7 +1612,7 @@ public class ApiService {
 //            resultCode = personSendService.downSendPersonInfoRequestForSubSysUser(requestVo);
 //        }
         //判断人员信息是不是已经下发过了
-         if (user.getSended() != null && 1 == user.getSended()) {
+        if (user.getSended() != null && 1 == user.getSended()) {
             //已经下发过了，需要调用照片更新
             System.out.println("1 == user.getSended()");
             //resultCode = personSendService.updateUserFace(user.getIdCard(), HttpUtils.requestUrlToBase64("http://127.0.0.1:" + port +"/ruoyi-admin"+ user.getFace()));

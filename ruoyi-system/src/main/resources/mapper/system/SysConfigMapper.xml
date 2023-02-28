@@ -58,6 +58,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			</if>
 		</where>
     </select>
+    <select id="selectHCConfigList" parameterType="SysConfig" resultMap="SysConfigResult">
+        <include refid="selectConfigVo" />
+        where
+        config_key like 'sys.hc.%'
+    </select>
 
     <select id="checkConfigKeyUnique" parameterType="String" resultMap="SysConfigResult">
         select TOP 1 config_id, config_name, config_key, config_value, config_type, create_by, create_time, update_by, update_time, remark
@@ -109,5 +114,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         	#{configId}
         </foreach>
     </delete>
+
+    <select id="selectConfigs" parameterType="string" resultMap="SysConfigResult">
+        <include refid="selectConfigVo"/> where config_key in
+        <foreach item="confiKey" collection="array" open="(" separator="," close=")">
+            #{confiKey}
+        </foreach>
+    </select>
 
 </mapper>

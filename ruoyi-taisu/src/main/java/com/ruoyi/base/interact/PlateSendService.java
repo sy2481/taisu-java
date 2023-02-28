@@ -172,7 +172,7 @@ public class PlateSendService {
     }
 
 
-    private void downSendCarMsg(CarVO carVO) {
+    public void downSendCarMsg(CarVO carVO) {
         String json = JSONObject.toJSONString(carVO);
         String resultStr = HttpUtils.sendJsonPost(host + "/hik/car", json);
     }

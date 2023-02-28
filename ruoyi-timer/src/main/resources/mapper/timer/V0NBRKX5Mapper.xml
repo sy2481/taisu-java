@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.timer.mapper.V0NBRKX5Mapper">
+    
+    <resultMap type="V0NBRKX5" id="V0NBRKX5Result">
+        <result property="vhno"    column="VHNO"    />
+        <result property="nm"    column="NM"    />
+        <result property="ipltlic"    column="IPLTLIC"    />
+        <result property="idno"    column="IDNO"    />
+        <result property="dpid"    column="DPID"    />
+        <result property="ipltcarno"    column="IPLTCARNO"    />
+        <result property="ipltwgt"    column="IPLTWGT"    />
+        <result property="opltwgt"    column="OPLTWGT"    />
+        <result property="iplttm"    column="IPLTTM"    />
+        <result property="oplttm"    column="OPLTTM"    />
+        <result property="kdnm"    column="KDNM"    />
+    </resultMap>
+
+    <sql id="selectV0NBRKX5Vo">
+        select VHNO, NM, IPLTLIC, IDNO, DPID, IPLTCARNO, IPLTWGT, OPLTWGT, IPLTTM, OPLTTM, KDNM from V0NBRKX5
+    </sql>
+
+    <select id="selectV0NBRKX5List" parameterType="V0NBRKX5" resultMap="V0NBRKX5Result">
+        <include refid="selectV0NBRKX5Vo"/>
+        <where>  
+            <if test="vhno != null  and vhno != ''"> and VHNO = #{vhno}</if>
+            <if test="nm != null  and nm != ''"> and NM = #{nm}</if>
+            <if test="ipltlic != null  and ipltlic != ''"> and IPLTLIC = #{ipltlic}</if>
+            <if test="dpid != null  and dpid != ''"> and DPID = #{dpid}</if>
+            <if test="ipltcarno != null  and ipltcarno != ''"> and IPLTCARNO = #{ipltcarno}</if>
+            <if test="ipltwgt != null  and ipltwgt != ''"> and IPLTWGT = #{ipltwgt}</if>
+            <if test="opltwgt != null  and opltwgt != ''"> and OPLTWGT = #{opltwgt}</if>
+            <if test="iplttm != null  and iplttm != ''"> and IPLTTM = #{iplttm}</if>
+            <if test="oplttm != null  and oplttm != ''"> and OPLTTM = #{oplttm}</if>
+            <if test="kdnm != null  and kdnm != ''"> and KDNM = #{kdnm}</if>
+            <if test="params.isAdd != null  and params.isAdd eq 'Y'.toString()"> and OPLTTM = '*'</if>
+            <if test="params.isAdd != null  and params.isAdd eq 'N'.toString()"> and OPLTTM != '*'</if>
+        </where>
+    </select>
+
+</mapper>

@@ -9,6 +9,7 @@ import com.ruoyi.base.service.*;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.DateUtils;
+
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.domain.SysConfig;
 import com.ruoyi.system.mapper.SysUserMapper;
@@ -55,13 +56,13 @@ public class ApiInOutCheckController {
     private IInOutLogService inOutLogService;
 
     @Autowired
-    IManBlackInfoService manBlackInfoService;
+    private IManBlackInfoService manBlackInfoService;
 
     @Autowired
-    ISysConfigService sysConfigService;
+    private ISysConfigService sysConfigService;
 
     @Autowired
-    SafetycarService safetycarService;
+    private SafetycarService safetycarService;
 
     //出
     private static final String OUT = "OUT";

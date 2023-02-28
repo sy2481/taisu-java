@@ -6,6 +6,10 @@ import com.ruoyi.base.service.SafetycarService;
 import com.ruoyi.base.service.impl.ApiService;
 import com.ruoyi.common.core.domain.entity.SysDictData;
 import com.ruoyi.common.utils.StringUtils;
+import com.ruoyi.system.domain.SysColRequire;
+import com.ruoyi.system.domain.SysConfig;
+import com.ruoyi.system.service.ISysColRequireService;
+import com.ruoyi.system.service.ISysConfigService;
 import com.ruoyi.system.service.ISysDictTypeService;
 import com.ruoyi.web.api.basic.Response;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 数据查询接口
@@ -30,6 +36,10 @@ public class ApiQueryController {
     private SafetycarService safetycarService;
     @Autowired
     private ISysDictTypeService dictTypeService;
+    @Autowired
+    private ISysConfigService sysConfigService;
+    @Autowired
+    private ISysColRequireService sysColRequireService;
 
     /**
      * 根据⻋牌号、⻋卡查询⼈员信息
@@ -146,6 +156,55 @@ public class ApiQueryController {
             }
 
             return Response.builder().code(0).data(result).build();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Response.error("查詢出錯，請稍後再試！");
+    }
+
+    /**
+     * 根据定位卡编号查询⼈员信息
+     * 根据定位卡编号，返回⼈员信息，和上一个一样
+     */
+    @ResponseBody
+    @GetMapping("/sysConfig/{configKey}")
+    public Response sysConfig(@PathVariable String configKey) {
+        try {
+            SysConfig result = sysConfigService.selectSysConfigByKey(configKey);
+
+            return Response.builder().code(0).data(result).build();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Response.error("查詢出錯，請稍後再試！");
+    }
+
+    /**
+     * 根據配置編號獲取配置
+     *
+     */
+    @ResponseBody
+    @GetMapping("/sysConfigs/{configKey}")
+    public Response sysConfigs(@PathVariable String[] configKey) {
+        try {
+            List<SysConfig> sysConfigs = sysConfigService.selectSysConfigByKeys(configKey);
+
+            return Response.builder().code(0).data(sysConfigs).build();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Response.error("查詢出錯，請稍後再試！");
+    }
+
+    /**
+     * 根據配置名獲取字段必填配置
+     */
+    @ResponseBody
+    @GetMapping("/sysColRequires/{tableNames}")
+    public Response sysColRequires(@PathVariable String[] tableNames) {
+        try {
+            Map<String,Map> sysColRequireMap = sysColRequireService.selectSysColRequireMap(tableNames);
+            return Response.builder().code(0).data(sysColRequireMap).build();
         }catch (Exception e) {
             e.printStackTrace();
         }

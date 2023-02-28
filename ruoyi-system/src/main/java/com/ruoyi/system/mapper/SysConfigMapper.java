@@ -27,6 +27,13 @@ public interface SysConfigMapper
     public List<SysConfig> selectConfigList(SysConfig config);
 
     /**
+     * 查询危化参数配置信息對象集
+     *
+     * @return 参数配置集合
+     */
+    public List<SysConfig> selectHCConfigList();
+
+    /**
      * 根据键名查询参数配置信息
      * 
      * @param configKey 参数键名
@@ -65,4 +72,12 @@ public interface SysConfigMapper
      * @return 结果
      */
     public int deleteConfigByIds(Long[] configIds);
+
+    /**
+     * 查询多个参数配置信息
+     *
+     * @param config 多个参数配置信息
+     * @return 参数配置信息
+     */
+    public List<SysConfig> selectConfigs(String[] config);
 }

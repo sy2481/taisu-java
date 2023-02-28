@@ -136,4 +136,11 @@ public interface ISysDeptService
      * @return
      */
     public  List<SysDept> getPlantByBuildId(String buildId);
+
+    /**
+     * 獲取部門的廠區
+     * @param dept
+     * @return
+     */
+    public SysDept getPlantByDept(SysDept dept);
 }

@@ -132,6 +132,64 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils
     }
 
     /**
+     * 獲取某一天的00:00:00秒
+     *
+     * @param date
+     * @return
+     */
+    public static Date getDayBeginTime(Date date) {
+        Date result = null;
+        if (date == null) {
+            return null;
+        }
+        String str = parseDateToStr("yyyy-MM-dd", date) + " 00:00:00";
+        try {
+            result = DateUtils.parseDate(str, "yyyy-MM-dd HH:mm:ss");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
+     * 獲取某一天的23:59:59秒
+     *
+     * @param date
+     * @return
+     */
+    public static Date getDayEndTime(Date date) {
+        Date result = null;
+        if (date == null) {
+            return null;
+        }
+        String str = parseDateToStr("yyyy-MM-dd", date) + " 23:59:59";
+        try {
+            result = DateUtils.parseDate(str, "yyyy-MM-dd HH:mm:ss");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    /**
+     * 獲取當天的00:00:00秒
+     *
+     * @return
+     */
+    public static Date getToDayBeginTime() {
+        return DateUtils.getDayBeginTime(DateUtils.getNowDate());
+    }
+
+    /**
+     * 獲取當天的23:59:59秒
+     *
+     * @return
+     */
+    public static Date getToDayEndTime() {
+        return DateUtils.getDayEndTime(DateUtils.getNowDate());
+    }
+
+    /**
      * 计算两个时间差
      */
     public static String getDatePoor(Date endDate, Date nowDate)

@@ -1,6 +1,7 @@
 package com.ruoyi.common.utils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -115,6 +116,68 @@ public class BatisUtils {
             str = "," + str + ",";
         }
         return str;
+    }
+
+    /**
+     * 處理車牌
+     *
+     * @param license
+     * @return
+     */
+    public static String dealLicense(String license) {
+        //轉繁體+大寫+去空格
+        if (!StringUtils.isEmpty(license)) {
+            license = ZJFConverter.SimToTra(license);
+            license = license.toUpperCase();
+            license = license.trim();
+            return license;
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * 從身份證獲取生日
+     *
+     * @param idNo
+     * @return
+     */
+    public static Date getBirthFromIdNo(String idNo) {
+        Date birth = null;
+        if (!StringUtils.isEmpty(idNo)) {
+            if (idNo.length() >= 18) {
+                String birthStr = idNo.substring(6, 14);
+                birth = DateUtils.parseDate(birthStr.substring(0, 4) + "-" + birthStr.substring(4, 6) + "-" + birthStr.substring(6));
+            }
+        }
+
+        return birth;
+    }
+
+    /**
+     * 從身份證獲取性別
+     *
+     * @param idNo
+     * @return
+     */
+    public static long getSexFromIdNo(String idNo) {
+        long sex = 3;
+        int gender = 0;
+        if (!StringUtils.isEmpty(idNo)) {
+            if (idNo.length() >= 18) {
+                //如果身份证号18位，取身份证号倒数第二位
+                char c = idNo.charAt(idNo.length() - 2);
+                gender = Integer.parseInt(String.valueOf(c));
+            }
+        }
+        if (gender == 0) {
+            sex = 3l;//未知
+        } else if (gender % 2 == 1) {
+            sex = 1l;//男
+        } else {
+            sex = 2l;//女
+        }
+        return sex;
     }
 
     public static void main(String[] args) {

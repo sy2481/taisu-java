@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.HcUserMapper">
+
+    <resultMap type="HcUser" id="HcUserResult">
+        <result property="id"    column="id"    />
+        <result property="nm"    column="nm"    />
+        <result property="idNo"    column="id_no"    />
+        <result property="face"    column="face"    />
+        <result property="centFace"    column="cent_face"    />
+        <result property="sex"    column="sex"    />
+        <result property="phone"    column="phone"    />
+        <result property="address"    column="address"    />
+        <result property="birthday"    column="birthday"    />
+        <result property="company"    column="company"    />
+        <result property="facDorNm"    column="fac_dor_nm"    />
+        <result property="facNm"    column="fac_nm"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="driverLicense"    column="driver_license"    />
+        <result property="escortLicense"    column="escort_license"    />
+        <result property="tsNo"    column="ts_no"    />
+    </resultMap>
+
+    <sql id="selectHcUserVo">
+        select id, nm, id_no, face, cent_face, sex, phone, address, birthday, company,fac_dor_nm, fac_nm, create_by, create_time, update_by, update_time,driver_license, escort_license,ts_no from hc_user
+    </sql>
+
+    <select id="selectHcUserList" parameterType="HcUser" resultMap="HcUserResult">
+        <include refid="selectHcUserVo"/>
+        <where>
+            <if test="nm != null  and nm != ''"> and nm like concat('%', #{nm}, '%')</if>
+            <if test="idNo != null  and idNo != ''"> and id_no like concat('%', #{idNo}, '%')</if>
+            <if test="face != null  and face != ''"> and face = #{face}</if>
+            <if test="centFace != null  and centFace != ''"> and cent_face = #{centFace}</if>
+            <if test="sex != null "> and sex = #{sex}</if>
+            <if test="phone != null  and phone != ''"> and phone like concat('%', #{phone}, '%')</if>
+            <if test="address != null  and address != ''"> and address like concat('%', #{address}, '%')</if>
+            <if test="birthday != null "> and birthday = #{birthday}</if>
+            <if test="company != null  and company != ''"> and company = #{company}</if>
+            <if test="facDorNm != null  and facDorNm != ''"> and fac_dor_nm = #{facDorNm}</if>
+            <if test="facNm != null  and facNm != ''"> and fac_nm = #{facNm}</if>
+            <if test="driverLicense != null  and driverLicense != ''"> and driver_license like concat('%', #{driverLicense}, '%')</if>
+            <if test="escortLicense != null  and escortLicense != ''"> and escort_license like concat('%', #{escortLicense}, '%')</if>
+            <if test="tsNo != null  and tsNo != ''"> and ts_no = #{tsNo}</if>
+        </where>
+    </select>
+
+    <select id="selectHcUserById" parameterType="Long" resultMap="HcUserResult">
+        <include refid="selectHcUserVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertHcUser" parameterType="HcUser">
+        insert into hc_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="nm != null">nm,</if>
+            <if test="idNo != null">id_no,</if>
+            <if test="face != null">face,</if>
+            <if test="centFace != null">cent_face,</if>
+            <if test="sex != null">sex,</if>
+            <if test="phone != null">phone,</if>
+            <if test="address != null">address,</if>
+            <if test="birthday != null">birthday,</if>
+            <if test="company != null">company,</if>
+            <if test="facDorNm != null">fac_dor_nm,</if>
+            <if test="facNm != null">fac_nm,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="driverLicense != null">driver_license,</if>
+            <if test="escortLicense != null">escort_license,</if>
+            <if test="tsNo != null">ts_no,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="nm != null">#{nm},</if>
+            <if test="idNo != null">#{idNo},</if>
+            <if test="face != null">#{face},</if>
+            <if test="centFace != null">#{centFace},</if>
+            <if test="sex != null">#{sex},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="address != null">#{address},</if>
+            <if test="birthday != null">#{birthday},</if>
+            <if test="company != null">#{company},</if>
+            <if test="facDorNm != null">#{facDorNm},</if>
+            <if test="facNm != null">#{facNm},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="driverLicense != null">#{driverLicense},</if>
+            <if test="escortLicense != null">#{escortLicense},</if>
+            <if test="tsNo != null">#{tsNo},</if>
+         </trim>
+    </insert>
+
+    <update id="updateHcUser" parameterType="HcUser">
+        update hc_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="nm != null">nm = #{nm},</if>
+            <if test="idNo != null">id_no = #{idNo},</if>
+            <if test="face != null">face = #{face},</if>
+            <if test="centFace != null">cent_face = #{centFace},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="address != null">address = #{address},</if>
+            <if test="birthday != null">birthday = #{birthday},</if>
+            <if test="company != null">company = #{company},</if>
+            <if test="facDorNm != null">fac_dor_nm = #{facDorNm},</if>
+            <if test="facNm != null">fac_nm = #{facNm},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="driverLicense != null">driver_license = #{driverLicense},</if>
+            <if test="escortLicense != null">escort_license = #{escortLicense},</if>
+            <if test="tsNo != null">ts_no = #{tsNo},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteHcUserById" parameterType="Long">
+        delete from hc_user where id = #{id}
+    </delete>
+
+    <delete id="deleteHcUserByIds" parameterType="String">
+        delete from hc_user where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectHcUserByIdNo" parameterType="String" resultMap="HcUserResult">
+        <include refid="selectHcUserVo"/>
+        where id_no =#{idNo}
+    </select>
+
+    <insert id="batchInsertHcUser" useGeneratedKeys="false">
+        <foreach collection="list" item="item" separator=";">
+            insert into hc_user
+            <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="item.nm != null">nm,</if>
+                <if test="item.idNo != null">id_no,</if>
+                <if test="item.face != null">face,</if>
+                <if test="item.centFace != null">cent_face,</if>
+                <if test="item.sex != null">sex,</if>
+                <if test="item.phone != null">phone,</if>
+                <if test="item.address != null">address,</if>
+                <if test="item.birthday != null">birthday,</if>
+                <if test="item.company != null">company,</if>
+                <if test="item.facDorNm != null">fac_dor_nm,</if>
+                <if test="item.facNm != null">fac_nm,</if>
+                <if test="item.createBy != null">create_by,</if>
+                <if test="item.createTime != null">create_time,</if>
+                <if test="item.updateBy != null">update_by,</if>
+                <if test="item.updateTime != null">update_time,</if>
+                <if test="item.driverLicense != null">driver_license,</if>
+                <if test="item.escortLicense != null">escort_license,</if>
+                <if test="item.tsNo != null">ts_no,</if>
+            </trim>
+            <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="item.nm != null">#{item.nm},</if>
+                <if test="item.idNo != null">#{item.idNo},</if>
+                <if test="item.face != null">#{item.face},</if>
+                <if test="item.centFace != null">#{item.centFace},</if>
+                <if test="item.sex != null">#{item.sex},</if>
+                <if test="item.phone != null">#{item.phone},</if>
+                <if test="item.address != null">#{item.address},</if>
+                <if test="item.birthday != null">#{item.birthday},</if>
+                <if test="item.company != null">#{item.company},</if>
+                <if test="item.facDorNm != null">#{item.facDorNm},</if>
+                <if test="item.facNm != null">#{item.facNm},</if>
+                <if test="item.createBy != null">#{item.createBy},</if>
+                <if test="item.createTime != null">#{item.createTime},</if>
+                <if test="item.updateBy != null">#{item.updateBy},</if>
+                <if test="item.updateTime != null">#{item.updateTime},</if>
+                <if test="item.driverLicense != null">#{item.driverLicense},</if>
+                <if test="item.escortLicense != null">#{item.escortLicense},</if>
+                <if test="item.tsNo != null">#{item.tsNo},</if>
+            </trim>
+        </foreach>
+    </insert>
+
+    <update id="batchUpdateHcUser">
+        <foreach collection="list" item="item" separator=";">
+            update hc_user
+            <trim prefix="SET" suffixOverrides=",">
+                <if test="item.nm != null">nm = #{item.nm},</if>
+                <if test="item.idNo != null">id_no = #{item.idNo},</if>
+                <if test="item.face != null">face = #{item.face},</if>
+                <if test="item.centFace != null">cent_face = #{item.centFace},</if>
+                <if test="item.sex != null">sex = #{item.sex},</if>
+                <if test="item.phone != null">phone = #{item.phone},</if>
+                <if test="item.address != null">address = #{item.address},</if>
+                <if test="item.birthday != null">birthday = #{item.birthday},</if>
+                <if test="item.company != null">company = #{item.company},</if>
+                <if test="item.facDorNm != null">fac_dor_nm = #{item.facDorNm},</if>
+                <if test="item.facNm != null">fac_nm = #{item.facNm},</if>
+                <if test="item.createBy != null">create_by = #{item.createBy},</if>
+                <if test="item.createTime != null">create_time = #{item.createTime},</if>
+                <if test="item.updateBy != null">update_by = #{item.updateBy},</if>
+                <if test="item.updateTime != null">update_time = #{item.updateTime},</if>
+                <if test="item.driverLicense != null">driver_license = #{item.driverLicense},</if>
+                <if test="item.escortLicense != null">escort_license = #{item.escortLicense},</if>
+                <if test="item.tsNo != null">ts_no = #{item.tsNo},</if>
+            </trim>
+            where id = #{item.id}
+        </foreach>
+    </update>
+
+    <select id="selectHcUserListByIdNos" parameterType="String" resultMap="HcUserResult">
+        <include refid="selectHcUserVo"/>
+        where id_no in
+        <foreach item="idNo" collection="array" open="(" separator="," close=")">
+            #{idNo}
+        </foreach>
+    </select>
+</mapper>

@@ -27,6 +27,13 @@ public interface ISysConfigService
     public String selectConfigByKey(String configKey);
 
     /**
+     * 查询危化参数配置信息對象集
+     *
+     * @return 参数键值
+     */
+    public List<SysConfig> selectHCConfigList();
+
+    /**
      * 获取验证码开关
      * 
      * @return true开启，false关闭
@@ -86,4 +93,19 @@ public interface ISysConfigService
      * @return 结果
      */
     public String checkConfigKeyUnique(SysConfig config);
+
+    /**
+     * 根据键名查询参数配置信息
+     *
+     * @param configKey 参数键名
+     * @return 参数键值
+     */
+    public SysConfig selectSysConfigByKey(String configKey);
+    /**
+     * 根据键名查询参数配置信息
+     *
+     * @param configKey 参数键名
+     * @return 参数键值
+     */
+    public List<SysConfig> selectSysConfigByKeys(String[] configKey);
 }

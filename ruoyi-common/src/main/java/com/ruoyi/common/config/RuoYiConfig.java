@@ -34,6 +34,8 @@ public class RuoYiConfig
     /** 验证码类型 */
     private static String captchaType;
 
+    private static String appl;
+
     /**
      * 机器标识
      */
@@ -147,5 +149,13 @@ public class RuoYiConfig
     public static String getUploadPath()
     {
         return getProfile() + "/upload";
+    }
+
+    public static String getAppl() {
+        return appl;
+    }
+
+    public static void setAppl(String appl) {
+        RuoYiConfig.appl = appl;
     }
 }

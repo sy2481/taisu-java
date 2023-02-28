@@ -131,4 +131,28 @@ public class SysConfigController extends BaseController
         configService.resetConfigCache();
         return AjaxResult.success();
     }
+
+
+    /**
+     * 查询危化参数配置信息對象集
+     */
+    @GetMapping(value = "/getHCConfigList")
+    public AjaxResult getHCConfigList() {
+        return AjaxResult.success(configService.selectHCConfigList());
+    }
+
+
+    /**
+     * 修改是否開啓開始營業参数配置
+     */
+    @PreAuthorize("@ss.hasPermi('system:config:edit_HC')")
+    @Log(title = "参数管理", businessType = BusinessType.UPDATE)
+    @PutMapping("/edit_HC")
+    public AjaxResult edit_HC(@Validated @RequestBody SysConfig config) {
+        if (UserConstants.NOT_UNIQUE.equals(configService.checkConfigKeyUnique(config))) {
+            return AjaxResult.error("修改参数'" + config.getConfigName() + "'失败，参数键名已存在");
+        }
+        config.setUpdateBy(getUsername());
+        return toAjax(configService.updateConfig(config));
+    }
 }

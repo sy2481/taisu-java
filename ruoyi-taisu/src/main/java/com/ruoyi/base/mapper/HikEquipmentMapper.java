@@ -67,6 +67,8 @@ public interface HikEquipmentMapper {
 
     PlcHik getPlcHilRelation(Long id);
 
+    List<PlcHik> getPlcHik_CarByDeviceId(@Param("deviceId")Long DeviceId);
+
     //插入中间表
     void insertPlcHik(PlcHik plcHik);
 
@@ -87,4 +89,12 @@ public interface HikEquipmentMapper {
      * @return HIK 海康設備
      */
     List<HikEquipment> selectHikEquipmentNotBindList(HikEquipment hikEquipment);
+
+    /**
+     * 查询HIK 海康设备列表
+     *
+     * @param hikEquipment HIK 海康设备
+     * @return HIK 海康设备集合
+     */
+    public List<HikEquipment> selectHikEquipmentListHc(HikEquipment hikEquipment);
 }

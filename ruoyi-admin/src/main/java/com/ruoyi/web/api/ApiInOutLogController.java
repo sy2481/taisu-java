@@ -43,6 +43,30 @@ public class ApiInOutLogController {
         return Response.error("插入出錯，請稍後再試！");
     }
 
+    /**
+     * 新危化进出记录接⼝
+     * @param logType 0-入场，1-离场
+     * @param idCardNo 身份证号
+     * @param equipmentIp 设备IP
+     * @param carParam 車牌號或車卡
+     * @param idCardNo2 押運員身份證號
+     * @param CarPlateHistory 歷史車牌號
+     */
+    @ResponseBody
+    @GetMapping("/inOutLogInsertCarForHC")
+    public Response inOutLogInsertCarForHC(String idCardNo, String equipmentIp, String logType, String carParam
+            ,String idCardNo2,String CarPlateHistory) {
+        try {
+            //危化逻辑
+            apiService.inOutLogInsertCarForHC(idCardNo, equipmentIp, logType, carParam,idCardNo2,CarPlateHistory);
+
+            return Response.builder().code(0).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Response.error("插入出錯，請稍後再試！");
+    }
+
     @ResponseBody
     @GetMapping("/inOutLogInsertForShipment")
     public Response inOutLogInsertForShipment(String idCardNo, String locationCardNo, String equipmentIp, String logType, String carParam) {

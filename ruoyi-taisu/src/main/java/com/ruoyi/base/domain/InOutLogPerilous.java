@@ -74,6 +74,16 @@ public class InOutLogPerilous extends BaseEntity
      * 操作人
      */
     private String operationName;
+    /**
+     * 押运员身份ID
+     */
+    @Excel(name = "押运员身份ID")
+    private String escortIdCard;
+    /**
+     * 歷史車牌號-模糊匹配專用
+     */
+    @Excel(name = "歷史車牌號-模糊匹配專用")
+    private String CarPlateHistory;
 
     public Integer getValidType() {
         return validType;
@@ -204,5 +214,21 @@ public class InOutLogPerilous extends BaseEntity
                 .append("checkType", getCheckType())
                 .append("deviceName", getDeviceName())
                 .toString();
+    }
+
+    public String getEscortIdCard() {
+        return escortIdCard;
+    }
+
+    public void setEscortIdCard(String escortIdCard) {
+        this.escortIdCard = escortIdCard;
+    }
+
+    public String getCarPlateHistory() {
+        return CarPlateHistory;
+    }
+
+    public void setCarPlateHistory(String carPlateHistory) {
+        CarPlateHistory = carPlateHistory;
     }
 }
