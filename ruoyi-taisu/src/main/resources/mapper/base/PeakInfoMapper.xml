@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.PeakInfoMapper">
+
+    <resultMap type="PeakInfo" id="PeakInfoResult">
+        <result property="id"    column="id"    />
+        <result property="peakType"    column="peak_type"    />
+        <result property="peakCount"    column="peak_count"    />
+    </resultMap>
+
+    <sql id="selectPeakInfoVo">
+        select id, peak_type, peak_count from peak_info
+    </sql>
+
+    <select id="selectPeakInfoList" parameterType="PeakInfo" resultMap="PeakInfoResult">
+        <include refid="selectPeakInfoVo"/>
+        <where>
+            <if test="peakType != null  and peakType != ''"> and peak_type = #{peakType}</if>
+            <if test="peakCount != null "> and peak_count = #{peakCount}</if>
+        </where>
+    </select>
+
+    <select id="selectPeakInfoById" parameterType="Long" resultMap="PeakInfoResult">
+        <include refid="selectPeakInfoVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertPeakInfo" parameterType="PeakInfo">
+        insert into peak_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="peakType != null">peak_type,</if>
+            <if test="peakCount != null">peak_count,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="peakType != null">#{peakType},</if>
+            <if test="peakCount != null">#{peakCount},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePeakInfo" parameterType="PeakInfo">
+        update peak_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="peakType != null">peak_type = #{peakType},</if>
+            <if test="peakCount != null">peak_count = #{peakCount},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    <update id="clearPeakInfo">
+        update peak_info set peak_count=0
+    </update>
+
+
+    <delete id="deletePeakInfoById" parameterType="Long">
+        delete from peak_info where id = #{id}
+    </delete>
+
+    <delete id="deletePeakInfoByIds" parameterType="String">
+        delete from peak_info where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

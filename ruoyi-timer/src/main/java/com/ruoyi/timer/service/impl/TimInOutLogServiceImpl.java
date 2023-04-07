@@ -58,6 +58,26 @@ public class TimInOutLogServiceImpl implements ITimInOutLogService {
     }
 
     @Override
+    public List<TimInOutLog> getInOutLogBasicData(Integer maxId,String factoryCode) {
+        //Map<String, Object> result = new HashMap<String, Object>();
+        Integer newMaxId = maxId;
+        List<WorkBo> workBos = new ArrayList<>();
+        Date today = DateUtils.parseDate(DateUtils.getDate());
+        Date nextDay = DateUtils.addDays(today, 1);
+
+        //拿到全部的当天记录
+        List<TimInOutLog> allLogs=null;
+        if(factoryCode.equals("PPC8601")) {
+            allLogs = timInOutLogMapper.getInOutLogEVA(DateUtils.parseDateToStr(DateUtils.YYYYMMDDHHMMSS1, today),  DateUtils.parseDateToStr(DateUtils.YYYYMMDDHHMMSS1, nextDay), maxId, factoryCode);
+        }
+        else{
+            allLogs= timInOutLogMapper.getInOutLog(today, nextDay, maxId, factoryCode);
+        }
+
+        return allLogs;
+    }
+
+    @Override
     public List<WorkBo> getInOutLogExtend(Integer maxId,String factoryCode){
         List<WorkBo> workBos = new ArrayList<>();
         Date today = DateUtils.parseDate(DateUtils.getDate());

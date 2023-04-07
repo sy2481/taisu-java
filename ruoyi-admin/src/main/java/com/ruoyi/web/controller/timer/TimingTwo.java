@@ -3,13 +3,11 @@ package com.ruoyi.web.controller.timer;
 import com.ruoyi.base.bo.FactoryBo;
 import com.ruoyi.base.bo.FactoryWorkBO;
 import com.ruoyi.base.bo.WorkBo;
-import com.ruoyi.base.domain.BaseSafetycar;
-import com.ruoyi.base.domain.OaMaxInfo;
+import com.ruoyi.base.domain.*;
 import com.ruoyi.base.interact.PlateSendService;
-import com.ruoyi.base.service.IManFactoryService;
-import com.ruoyi.base.service.IOaMaxInfoService;
-import com.ruoyi.base.service.IPersonBindService;
+import com.ruoyi.base.service.*;
 import com.ruoyi.base.service.impl.ApiService;
+import com.ruoyi.base.service.impl.InOutLogBasicDataServiceImpl;
 import com.ruoyi.base.service.impl.WorkDataService;
 import com.ruoyi.common.constant.TsConstant;
 import com.ruoyi.common.core.redis.RedisCache;
@@ -17,12 +15,11 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.config.ThreadPoolConfig;
 import com.ruoyi.timer.domain.CarInfo;
+import com.ruoyi.timer.domain.MrVw11er0;
 import com.ruoyi.timer.domain.Safetyman;
-import com.ruoyi.timer.service.CarInfoService;
-import com.ruoyi.timer.service.IDangerWorkService;
-import com.ruoyi.timer.service.ITimInOutLogService;
-import com.ruoyi.base.service.SafetycarService;
-import com.ruoyi.timer.service.SafetymanService;
+import com.ruoyi.timer.domain.TimInOutLog;
+import com.ruoyi.timer.mapper.MrVw11er0Mapper;
+import com.ruoyi.timer.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -81,7 +78,26 @@ public class TimingTwo {
 
     @Value("${scheduling.getDangerWorkEnabled}")
     private boolean getDangerWorkEnabled;
+    @Value("${scheduling.getCarTypeEnable}")
+    private boolean getCarTypeEnable;
 
+    @Value("${scheduling.getFactoryEnabled}")
+    private boolean getFactoryEnabled;
+
+    @Autowired
+    private InOutLogBasicDataService inOutLogBasicDataService;
+
+    @Autowired
+    private MrVw11er0Service mrVw11er0Service;
+
+    @Autowired
+    private BaseErpService baseErpService;
+
+    @Autowired
+    private InOutUserStatusService inOutUserStatusService;
+
+    @Autowired
+    private PeakInfoService peakInfoService;
 
     /**
      * 厂区编号
@@ -159,6 +175,101 @@ public class TimingTwo {
         }
     }
 
+    @Scheduled(cron = "0/20 * * * * ?")
+    //@Scheduled(cron = "*/30 * * * * ?")
+    private void getFactoryInOutLog() {
+        if (!getFactoryEnabled) {
+            return;
+        }
+        try {
+            OaMaxInfo oaMaxInfo = oaMaxInfoService.initOaMaxInfo(factoryCode, TsConstant.IN_OUT_LOG_TABLE_DATA);
+            int maxId = Integer.valueOf(oaMaxInfo.getMaxId().toString());
+            List<TimInOutLog> sourceData = inOutLogService.getInOutLogBasicData(maxId, factoryCode);
+            if (sourceData != null && sourceData.size() > 0) {
+                for (TimInOutLog data : sourceData) {
+                    InOutLogBasicData inOutLogBasicData = new InOutLogBasicData();
+                    inOutLogBasicData.setAid(data.getAid().longValue());
+                    inOutLogBasicData.setWorkTime(data.getDatetime());
+                    inOutLogBasicData.setAreaNo(data.getAreano());
+                    inOutLogBasicData.setIp(data.getIp());
+                    inOutLogBasicData.setVhNo(data.getVhno());
+                    inOutLogBasicData.setEgNo(data.getEgno());
+                    inOutLogBasicData.setEgName(data.getEgnm());
+                    inOutLogBasicData.setOprEnvt(data.getOprenvt21());
+                    inOutLogBasicData.setIdno(data.getIdno());
+                    inOutLogBasicData.setName(data.getNm());
+                    inOutLogBasicData.setIpltLic(data.getIpltlic());
+                    inOutLogBasicData.setPz(data.getPz());
+                    inOutLogBasicData.setTkVnd(data.getTkvnd());
+                    inOutLogBasicData.setBeginTime(data.getBegtime());
+                    inOutLogBasicData.setEndTime(data.getEndtime());
+                    inOutLogBasicData.setInTime(data.getIntime());
+                    inOutLogBasicData.setInspector(data.getInspector());
+                    inOutLogBasicData.setMark(data.getMk());
+                    inOutLogBasicData.setProfsId(data.getProfsid());
+                    inOutLogBasicData.setFctDoorNm(data.getFctdornm());
+                    inOutLogBasicData.setInOrOutFlag(0);
+                    inOutLogBasicDataService.insertInOutLogBasicData(inOutLogBasicData);
+                }
+                oaMaxInfo.setMaxId(Long.valueOf(sourceData.get(0).getAid()));
+                oaMaxInfoService.updateOaMaxInfo(oaMaxInfo);
+            }
+        } catch (Exception e) {
+
+        }
+    }
+
+    @Scheduled(cron = "0 */1  * * * ?")
+    private void getFactoryERP() {
+
+        int base = baseErpService.selectCount();
+        int mrVw = mrVw11er0Service.selectMrVw11er0Count();
+        if (mrVw != base) {
+            List<MrVw11er0> mrVw11er0List = mrVw11er0Service.selectMrVw11er0AllList();
+            if (mrVw11er0List != null && mrVw11er0List.size() > 0) {
+                for (MrVw11er0 mrVw11er0 : mrVw11er0List) {
+                    BaseErp baseErp = new BaseErp();
+                    baseErp.setVhNo(mrVw11er0.getVhno());
+                    List<BaseErp> baseErps = baseErpService.selectBaseErpList(baseErp);
+                    if (baseErps != null && baseErps.size() > 0) {
+
+                    } else {
+                        BaseErp newBaseErp = new BaseErp();
+                        newBaseErp.setVhNo(mrVw11er0.getVhno());
+                        newBaseErp.setAplDp(mrVw11er0.getApldp());
+                        newBaseErp.setEgNm(mrVw11er0.getEgnm());
+                        newBaseErp.setEgNo(mrVw11er0.getEgno());
+                        newBaseErp.setCnstNum(mrVw11er0.getCnstnum());
+                        newBaseErp.setCnstSite(mrVw11er0.getCnstsite());
+                        newBaseErp.setTkVnd(mrVw11er0.getTkvnd());
+                        newBaseErp.setTkVndSafBos(mrVw11er0.getTkvndsafbos());
+                        newBaseErp.setCnstType(mrVw11er0.getCnsttype15());
+                        newBaseErp.setCnstTime(mrVw11er0.getCnsttime19());
+                        newBaseErp.setOprEnvt(mrVw11er0.getOprenvt21());
+                        newBaseErp.setTaskMaster(mrVw11er0.getTaskmaster22());
+                        newBaseErp.setInspector(mrVw11er0.getInspector23());
+                        newBaseErp.setMlType(mrVw11er0.getMltype());
+                        newBaseErp.setSafetyManMk(mrVw11er0.getSafetymanmk());
+                        newBaseErp.setIpltDatTm(mrVw11er0.getIpltdattm());
+                        newBaseErp.setOpltDatTm(mrVw11er0.getOpltdattm());
+                        newBaseErp.setJbcont(mrVw11er0.getJbcont());
+                        newBaseErp.setPtnm(mrVw11er0.getPtnm());
+                        newBaseErp.setStartwork(mrVw11er0.getStartwork());
+                        newBaseErp.setJsa(mrVw11er0.getJsa());
+                        baseErpService.insertBaseErp(newBaseErp);
+                    }
+                }
+            }
+        }
+    }
+
+    @Scheduled(cron = "0 5 0 * * ?")
+    private void deleteFactoryERP() {
+        baseErpService.deleteBaseErpByVhNo();
+        peakInfoService.clearPeakInfo();
+    }
+
+
     @Scheduled(cron = "10 1/5 * * * ? ")
     private void getDangerWork() {
         if (!getDangerWorkEnabled) {
@@ -215,7 +326,7 @@ public class TimingTwo {
     public void getSaftCar() {
         //获取核卡数据
         List<Safetyman> list = safetymanService.getCarList();
-        System.out.println("list = " + list);
+        //System.out.println("list = " + list);
         //查询不为空,存入list,保存数据
         if (!CollectionUtils.isEmpty(list)) {
             /*
@@ -243,8 +354,11 @@ public class TimingTwo {
      * 定时拉取核卡车辆
      */
 //    @Scheduled(cron = "0 0/5 * * * ? ")
-    @Scheduled(cron = "0 3/5 * * * ? ")
+    @Scheduled(cron = "0 3/10 * * * ? ")
     public void getCarInfo() {
+        if (!getCarTypeEnable) {
+            return;
+        }
         //获取核卡数据
         List<BaseSafetycar> list = safetycarService.getSafetycarByNoCarType();
         //查询不为空,存入list,保存数据
@@ -275,6 +389,72 @@ public class TimingTwo {
 
         }
 
+    }
+
+    @Scheduled(cron = "0 */1 * * * ? ")
+    public void getPeakNum() {
+        if (!getCarTypeEnable) {
+            Integer personInNum = inOutLogBasicDataService.selectPersonInNum();
+            Integer carInNum = inOutLogBasicDataService.selectCarInNum();
+            Integer manFactoryInNum = inOutLogBasicDataService.selectPersonInNum();
+            PeakInfo peakInfo = new PeakInfo();
+            peakInfo.setPeakType("peakPerson");
+            List<PeakInfo> list = peakInfoService.selectPeakInfoList(peakInfo);
+            if (list != null && list.size() > 0) {
+                PeakInfo personPeakInfo = list.get(0);
+                if (personInNum + manFactoryInNum > personPeakInfo.getPeakCount()) {
+                    personPeakInfo.setPeakCount(personInNum + manFactoryInNum);
+                    peakInfoService.updatePeakInfo(personPeakInfo);
+                }
+            } else {
+                PeakInfo insertPeakInfo = new PeakInfo();
+                insertPeakInfo.setPeakType("peakPerson");
+                insertPeakInfo.setPeakCount(personInNum + manFactoryInNum);
+                peakInfoService.insertPeakInfo(insertPeakInfo);
+            }
+//            PeakInfo personPeakInfo = peakInfoService.selectPeakInfoList(peakInfo).get(0);
+//            if (personPeakInfo == null) {
+//                PeakInfo insertPeakInfo = new PeakInfo();
+//                insertPeakInfo.setPeakType("peakPerson");
+//                insertPeakInfo.setPeakCount(personInNum + manFactoryInNum);
+//                peakInfoService.insertPeakInfo(insertPeakInfo);
+//            } else {
+//                if (personInNum + manFactoryInNum > personPeakInfo.getPeakCount()) {
+//                    personPeakInfo.setPeakCount(personInNum + manFactoryInNum);
+//                    peakInfoService.updatePeakInfo(personPeakInfo);
+//                }
+//            }
+            peakInfo = new PeakInfo();
+            peakInfo.setPeakType("peakCar");
+            list = peakInfoService.selectPeakInfoList(peakInfo);
+            if (list != null && list.size() > 0) {
+                PeakInfo carPeakInfo = list.get(0);
+                if (carInNum > carPeakInfo.getPeakCount()) {
+                    carPeakInfo.setPeakCount(carInNum);
+                    peakInfoService.updatePeakInfo(carPeakInfo);
+                }
+            } else {
+                PeakInfo insertPeakInfo = new PeakInfo();
+                insertPeakInfo.setPeakType("peakCar");
+                insertPeakInfo.setPeakCount(carInNum);
+                peakInfoService.insertPeakInfo(insertPeakInfo);
+            }
+
+//            peakInfo = new PeakInfo();
+//            peakInfo.setPeakType("peakCar");
+//            PeakInfo carPeakInfo = peakInfoService.selectPeakInfoList(peakInfo).get(0);
+//            if (carPeakInfo == null) {
+//                PeakInfo insertPeakInfo = new PeakInfo();
+//                insertPeakInfo.setPeakType("peakCar");
+//                insertPeakInfo.setPeakCount(carInNum);
+//            } else {
+//                if (carInNum > carPeakInfo.getPeakCount()) {
+//                    carPeakInfo.setPeakCount(carInNum);
+//                    peakInfoService.updatePeakInfo(carPeakInfo);
+//                }
+//            }
+
+        }
     }
 
 }

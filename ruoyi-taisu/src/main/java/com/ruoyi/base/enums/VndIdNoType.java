@@ -12,8 +12,9 @@ import com.alibaba.fastjson.JSONObject;
 public enum VndIdNoType
 {
     MAN(1,"人"),
-    CAR_LIC(2,"有牌車"),
-    CAR_NOLIC(3,"無牌車");
+    CAR(2,"車");
+//    CAR_LIC(2,"有牌車"),
+//    CAR_NOLIC(3,"無牌車");
 
     private long code;
     private String name;

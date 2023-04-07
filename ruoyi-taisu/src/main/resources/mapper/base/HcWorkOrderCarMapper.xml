@@ -77,7 +77,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where id = #{id}
     </select>
 
-    <insert id="insertHcWorkOrderCar" parameterType="HcWorkOrderCar">
+    <insert id="insertHcWorkOrderCar" parameterType="HcWorkOrderCar" useGeneratedKeys="true" keyProperty="id">
         insert into hc_work_order_car
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">id,</if>
@@ -332,7 +332,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectHcWorkOrderCarListToHr" resultMap="HcWorkOrderCarResult">
         <include refid="selectHcWorkOrderCarVo"/>
         <where>
-            and oplt_tm IS NOT NULL
+            and oplt_tm IS NOT NULL and oplt_tm &lt; #{opltTm}
         </where>
     </select>
 

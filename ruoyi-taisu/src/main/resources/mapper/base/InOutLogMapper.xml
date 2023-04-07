@@ -199,4 +199,19 @@
     <update id="removeLog">
         UPDATE  in_out_log SET valid_type= 1 , operation_name=#{operationName},operation_time= GETDATE()  WHERE id=#{id}
     </update>
+
+    <select id="selectExceptionInOutLogList" resultMap="InOutLogResult">
+        select * from in_out_log where create_time &gt;= #{startTime} and create_time  &lt;  #{endTime}
+    </select>
+
+
+    <select id="selectPersonListByTime" resultType="java.util.HashMap">
+        select distinct(id_card) as idCard, name,person_type as personType,user_no as userNo  from in_out_log where create_time &gt;= #{startTime} and create_time  &lt;  #{endTime} and id_card is not null
+    </select>
+
+    <select id="selectPersonListByIdcardAndTime" resultMap="InOutLogResult">
+        select * from in_out_log where id_card=#{icCard}
+                                   and create_time &gt;= #{startTime}
+                                   and create_time  &lt;  #{endTime} order by create_time asc
+    </select>
 </mapper>

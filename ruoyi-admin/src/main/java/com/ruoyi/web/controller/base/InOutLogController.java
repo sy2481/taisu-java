@@ -2,6 +2,7 @@ package com.ruoyi.web.controller.base;
 
 import com.ruoyi.base.domain.InOutLog;
 import com.ruoyi.base.service.IInOutLogService;
+import com.ruoyi.base.vo.SelectExceptionInOutLogListVO;
 import com.ruoyi.common.annotation.Log;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.core.domain.AjaxResult;
@@ -10,6 +11,7 @@ import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.system.service.ISysDeptService;
+import com.ruoyi.web.api.dto.SelectExceptionInOutLogListDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -115,6 +117,17 @@ public class InOutLogController extends BaseController
     @GetMapping(value = "removeLog")
     public AjaxResult removeLog(@RequestParam Long id) {
         return toAjax(inOutLogService.removeLog(id));
+    }
+
+    /**
+     * 查询错误的进出记录列表
+     */
+    @PreAuthorize("@ss.hasPermi('base:log:list')")
+    @PostMapping("/selectExceptionInOutLogList")
+    public TableDataInfo selectExceptionInOutLogList(@RequestBody SelectExceptionInOutLogListDTO selectExceptionInOutLogListDTO)
+    {
+        List<SelectExceptionInOutLogListVO> list = inOutLogService.selectExceptionInOutLogList(selectExceptionInOutLogListDTO.getStartTime());
+        return getDataTable(list);
     }
 
 }

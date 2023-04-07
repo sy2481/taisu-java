@@ -107,7 +107,7 @@ public class PlateSendService {
                 carVO.setCarType(0);
                 carVO.setCarSn(user.getIdCard());
                 carVO.setCarNumber(plateNo);
-                carVO.setAuths(userJurisdiction.getCodeByUser(user));
+                carVO.setAuths(userJurisdiction.getCarDeviceCodeByUser(user));
                 carVO.setAuthIsAll(false);
                 downSendCarMsg(carVO);
             }

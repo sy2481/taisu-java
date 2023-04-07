@@ -16,11 +16,13 @@ import com.ruoyi.system.mapper.SysConfigMapper;
 import com.ruoyi.system.mapper.SysDeptMapper;
 import com.ruoyi.system.service.ISysConfigService;
 import com.spreada.utils.chinese.ZHConverter;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.jsf.FacesContextUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -179,7 +181,8 @@ public class HCPassagewayServiceImpl implements IHCPassagewayService {
         //region 車輛計數
         if (ctrl_ParkingSpaceCount) {
             List<HcWorkOrderCar> hcWorkOrderCarList_Parking = hcWorkOrderCarList.stream().filter(g ->
-                    g.getSecIpltTm() != null && g.getSecOpltTm() == null
+                    (g.getSecIpltTm() != null && g.getSecOpltTm() == null)||
+                            (g.getSecIpltTm()!=null&&g.getSecOpltTm()!=null&&g.getSecIpltTm().getTime()>g.getSecOpltTm().getTime())
             ).collect(Collectors.toList());
 
             int ParkingCarCount = (int) hcWorkOrderCarList_Parking.stream().map(HcWorkOrderCar::getIdNo).distinct().count();
@@ -213,12 +216,16 @@ public class HCPassagewayServiceImpl implements IHCPassagewayService {
             String DealContentTip =param.getContent().trim().substring(0,1);
             String DealContent =param.getContent().trim().substring(1);
             //region 車牌號驗證流程
+            Date nowTime = new Date();
+            SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd 23:59:59");
             List<HcWorkOrderCar> hcWorkOrderCarList_Basic = hcWorkOrderCarList.stream().filter(g ->
 //                    Objects.equals(param.getContent(), g.getIdNo())
                     g.getIdNo().contains(DealContent)
                     //&& g.getSecOpltTm() == null   原有判断去掉  二道门可以自由出入
+                    //&&g.getOpltTm() == null
                     //还要加一个一道门的出场时间为空的判断
-                    && g.getOpltTm() == null
+                    //2023-2-24 王工反馈需要调整为:1.二道门出厂时间为空  或  2.二道门出厂时间非空时,那天还是可以出去)
+                    && (g.getSecOpltTm() == null||(g.getSecOpltTm() != null&& nowTime.getTime()<=DateUtils.parseDate(ft.format(g.getSecOpltTm())).getTime()))
             ).collect(Collectors.toList());
 
             //region 判斷車牌號是否存在于工單車List中
@@ -229,7 +236,9 @@ public class HCPassagewayServiceImpl implements IHCPassagewayService {
                         CarPlateList.contains(g.getIdNo().substring(1))
                         //&& g.getSecOpltTm() == null   原有判断去掉  二道门可以自由出入
                         //还要加一个一道门的出场时间为空的判断
-                                && g.getOpltTm() == null
+                        //&& g.getOpltTm() == null
+                        //2023-2-24 王工反馈需要调整为:1.二道门出厂时间为空  或  2.二道门出厂时间非空时,那天还是可以出去)
+                        && (g.getSecOpltTm() == null||(g.getSecOpltTm() != null&& nowTime.getTime()<=DateUtils.parseDate(ft.format(g.getSecOpltTm())).getTime()))
                 ).collect(Collectors.toList());
                 if (hcWorkOrderCarList_MatchRule.size() == 0) {
                     //未匹配到有效車牌號(已模糊匹配),請聯繫管理員確認是否存在進出權限

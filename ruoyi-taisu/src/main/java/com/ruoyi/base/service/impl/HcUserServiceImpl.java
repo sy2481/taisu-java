@@ -159,21 +159,37 @@ public class HcUserServiceImpl implements IHcUserService {
      * @return
      */
     @Override
+//    public VndIdNoType checkIdNoType(String idNo) {
+//        //長度大於等於10為人卡（考慮到台胞證）
+//        //長度小於10，首字符是中文的是有牌車，否則就是無牌車
+//        if (StringUtils.isEmpty(idNo)) {
+//            return VndIdNoType.CAR_NOLIC;//算無牌車
+//        }
+//
+//        if (idNo.length() >= 10) {
+//            return VndIdNoType.MAN;
+//        } else {
+//            if (StringUtils.checkChineseAll(idNo.substring(0, 1))) {
+//                return VndIdNoType.CAR_LIC;
+//            } else {
+//                return VndIdNoType.CAR_NOLIC;
+//            }
+//        }
+//    }
     public VndIdNoType checkIdNoType(String idNo) {
-        //長度大於等於10為人卡（考慮到台胞證）
-        //長度小於10，首字符是中文的是有牌車，否則就是無牌車
+        //首字符是數字或字母的的是人，否則是車
+        // 考慮首個字符是？，所以不採用判斷首字符是漢字的方式判斷
         if (StringUtils.isEmpty(idNo)) {
-            return VndIdNoType.CAR_NOLIC;//算無牌車
+            return null;
         }
-
-        if (idNo.length() >= 10) {
+        String s=idNo.substring(0, 1);
+        if(StringUtils.checkNumber(s)){
             return VndIdNoType.MAN;
-        } else {
-            if (StringUtils.checkChineseAll(idNo.substring(0, 1))) {
-                return VndIdNoType.CAR_LIC;
-            } else {
-                return VndIdNoType.CAR_NOLIC;
-            }
+        }
+        else if(StringUtils.checkBeginWithLetter(s)){
+            return VndIdNoType.MAN;
+        }else{
+            return VndIdNoType.CAR;
         }
     }
 

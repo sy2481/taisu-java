@@ -19,22 +19,25 @@ import java.util.List;
  *
  * @author ruoyi
  */
-public class
-SysUser extends BaseEntity
-{
+public class SysUser extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    /** 用户ID */
+    /**
+     * 用户ID
+     */
 //    @Excel(name = "員工卡號", cellType = ColumnType.NUMERIC, prompt = "員工卡號")
     private Long userId;
 
 
-
-    /** 員工編號 */
+    /**
+     * 員工編號
+     */
     @Excel(name = "員工編號")
     private String empNo;
 
-    /** 部门ID */
+    /**
+     * 部门ID
+     */
     //@Excel(name = "部門編號", type = Excel.Type.IMPORT)
     private Long deptId;
 
@@ -42,98 +45,146 @@ SysUser extends BaseEntity
     @Excel(name = "部門名稱")
     private String deptName;
 
-    /** 用户昵称 */
+    /**
+     * 用户昵称
+     */
     @Excel(name = "員工姓名")
     private String nickName;
 
-    /** 用户性别 */
+    /**
+     * 用户性别
+     */
     @Excel(name = "性別", readConverterExp = "0=男,1=女,2=未知")
     private String sex;
 
-    /** 身份證 */
+    /**
+     * 身份證
+     */
     @Excel(name = "身份證號", cellType = ColumnType.STRING, prompt = "身份證號")
     private String idCard;
 
-    /** 手机号码 */
+    /**
+     * 手机号码
+     */
     @Excel(name = "手機號碼")
     private String phonenumber;
-    /** 家庭住址 */
+    /**
+     * 家庭住址
+     */
     @Excel(name = "家庭住址", cellType = ColumnType.STRING, prompt = "家庭住址")
     private String familyAddress;
 
-    /**車卡*/
+    /**
+     * 車卡
+     */
     @Excel(name = "車卡")
     private String carCard;
 
-    /** 車牌*/
+    /**
+     * 車牌
+     */
     @Excel(name = "車牌")
     private String carId;
 
 
-
-
-    /** 用户账号 */
+    /**
+     * 用户账号
+     */
     private String userName;
 
 
-    /** 用户邮箱 */
+    /**
+     * 用户邮箱
+     */
 //    @Excel(name = "員工郵箱")
     private String email;
 
 
-
-
-
-    /** 用户头像 */
+    /**
+     * 用户头像
+     */
     private String avatar;
 
-    /** 密码 */
+    /**
+     * 密码
+     */
     private String password;
 
-    /** 盐加密 */
+    /**
+     * 盐加密
+     */
     private String salt;
 
-    /** 帐号状态（0正常 1停用） */
+    /**
+     * 帐号状态（0正常 1停用）
+     */
 //    @Excel(name = "帐号状态", readConverterExp = "0=正常,1=停用")
     private String status;
 
-    /** 删除标志（0代表存在 2代表删除） */
+    /**
+     * 删除标志（0代表存在 2代表删除）
+     */
     private String delFlag;
 
-    /** 最后登录IP */
+    /**
+     * 最后登录IP
+     */
 //    @Excel(name = "最后登录IP", type = Type.EXPORT)
     private String loginIp;
 
-    /** 最后登录时间 */
+    /**
+     * 最后登录时间
+     */
 //    @Excel(name = "最后登录时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss", type = Type.EXPORT)
     private Date loginDate;
 
-    /** 部门对象 */
+    /**
+     * 部门对象
+     */
 //    @Excels({
 //        @Excel(name = "部门名称", targetAttr = "deptName", type = Type.EXPORT),
 //        @Excel(name = "部门负责人", targetAttr = "leader", type = Type.EXPORT)
 //    })
     private SysDept dept;
 
-    /** 角色对象 */
+    /**
+     * 角色对象
+     */
     private List<SysRole> roles;
 
-    /** 角色组 */
+    /**
+     * 角色组
+     */
     private Long[] roleIds;
 
-    /** 岗位组 */
+    /**
+     * 岗位组
+     */
     private Long[] postIds;
 
-    /** 角色ID */
+    /**
+     * 角色ID
+     */
     private Long roleId;
 
     //是否已经下发到设备
     private Long sended;
 
     /************smallbeans -- 同步所需字段 *************/
-    /** 是否隐藏 0 代表显示 2 代表隐藏*/
+    /**
+     * 是否隐藏 0 代表显示 2 代表隐藏
+     */
     private String displayStatus;
 
+//    private Integer inOrOutFlag;
+//
+//    public Integer getInOrOutFlag() {
+//        return inOrOutFlag;
+//    }
+//
+//    public void setInOrOutFlag(Integer inOrOutFlag) {
+//        this.inOrOutFlag = inOrOutFlag;
+//    }
 //    /** AE厂同步状态 0 代表同步 2 代表未同步*/
 //    private String aeSync;
 
@@ -152,7 +203,8 @@ SysUser extends BaseEntity
 //    public void setAeSync(String aeSync) {
 //        this.aeSync = aeSync;
 //    }
-/************根据原台塑原DB增加的字段*************/
+
+    /************根据原台塑原DB增加的字段*************/
 
     public Long getSended() {
         return sended;
@@ -162,26 +214,44 @@ SysUser extends BaseEntity
         this.sended = sended;
     }
 
-    /** 公司代號 */
+    /**
+     * 公司代號
+     */
     private String companyId;
 
-    /** 生日 */
+    /**
+     * 生日
+     */
 //    @Excel(name = "生日", width = 30, dateFormat = "yyyy-MM-dd")
     private String birthday;
-    /** 定位卡編號 */
+    /**
+     * 定位卡編號
+     */
     //@Excel(name = "定位卡編號", cellType = ColumnType.STRING, prompt = "定位卡編號")
     private String positionCardNo;
-    /** 入職日期 */
+    /**
+     * 入職日期
+     */
     private String joinDate;
-    /** 海康卡號 */
+    /**
+     * 海康卡號
+     */
     private String hikCard;
-    /** 職稱 */
+    /**
+     * 職稱
+     */
     private String title;
-    /** 管理員注記 */
+    /**
+     * 管理員注記
+     */
     private String mngMk;
-    /** 廠門代號 */
+    /**
+     * 廠門代號
+     */
     private String fctDorNm;
-    /** 廠區代號 */
+    /**
+     * 廠區代號
+     */
     private String factoryId;
     private String factoryName;
 
@@ -192,17 +262,29 @@ SysUser extends BaseEntity
      */
     private Long[] plcInfo;
 
-    /** 廠區信息 */
+    /**
+     * 廠區信息
+     */
     private SysDept factory;
-    /** 靜脈ID */
+    /**
+     * 靜脈ID
+     */
     private String fvid;
-    /** 海康personId */
+    /**
+     * 海康personId
+     */
     private String peisonId;
-    /** 年齡 */
+    /**
+     * 年齡
+     */
     private String age;
-    /** 人臉圖片 */
+    /**
+     * 人臉圖片
+     */
     private String face;
-    /** 海康人臉id */
+    /**
+     * 海康人臉id
+     */
     private String faceId;
 
 
@@ -238,7 +320,6 @@ SysUser extends BaseEntity
     }
 
 
-
     public String getPlc() {
         return plc;
     }
@@ -262,6 +343,7 @@ SysUser extends BaseEntity
     public void setPlcInfo(Long[] plcInfo) {
         this.plcInfo = plcInfo;
     }
+
     public String getFactoryName() {
         return factoryName;
     }
@@ -269,6 +351,7 @@ SysUser extends BaseEntity
     public void setFactoryName(String factoryName) {
         this.factoryName = factoryName;
     }
+
     public Long[] getFactoryIdArray() {
         return factoryIdArray;
     }
@@ -284,6 +367,7 @@ SysUser extends BaseEntity
     public void setExistenceFace(Integer existenceFace) {
         this.existenceFace = existenceFace;
     }
+
     public String getCarCard() {
         return carCard;
     }
@@ -464,223 +548,181 @@ SysUser extends BaseEntity
         this.empNo = empNo;
     }
 
-    public SysUser()
-    {
+    public SysUser() {
 
     }
 
-    public SysUser(Long userId)
-    {
+    public SysUser(Long userId) {
         this.userId = userId;
     }
 
-    public Long getUserId()
-    {
+    public Long getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId)
-    {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public boolean isAdmin()
-    {
+    public boolean isAdmin() {
         return isAdmin(this.userId);
     }
 
-    public static boolean isAdmin(Long userId)
-    {
+    public static boolean isAdmin(Long userId) {
         return userId != null && 1L == userId;
     }
 
-    public Long getDeptId()
-    {
+    public Long getDeptId() {
         return deptId;
     }
 
-    public void setDeptId(Long deptId)
-    {
+    public void setDeptId(Long deptId) {
         this.deptId = deptId;
     }
 
     @Xss(message = "用户昵称不能包含脚本字符")
     @Size(min = 0, max = 30, message = "用户昵称长度不能超过30个字符")
-    public String getNickName()
-    {
+    public String getNickName() {
         return nickName;
     }
 
-    public void setNickName(String nickName)
-    {
+    public void setNickName(String nickName) {
         this.nickName = nickName;
     }
 
     @Xss(message = "用户账号不能包含脚本字符")
 //    @NotBlank(message = "用户账号不能为空")
     @Size(min = 0, max = 30, message = "用户账号长度不能超过30个字符")
-    public String getUserName()
-    {
+    public String getUserName() {
         return userName;
     }
 
-    public void setUserName(String userName)
-    {
+    public void setUserName(String userName) {
         this.userName = userName;
     }
 
     @Email(message = "邮箱格式不正确")
     @Size(min = 0, max = 50, message = "邮箱长度不能超过50个字符")
-    public String getEmail()
-    {
+    public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email)
-    {
+    public void setEmail(String email) {
         this.email = email;
     }
 
     @Size(min = 0, max = 11, message = "手机号码长度不能超过11个字符")
-    public String getPhonenumber()
-    {
+    public String getPhonenumber() {
         return phonenumber;
     }
 
-    public void setPhonenumber(String phonenumber)
-    {
+    public void setPhonenumber(String phonenumber) {
         this.phonenumber = phonenumber;
     }
 
-    public String getSex()
-    {
+    public String getSex() {
         return sex;
     }
 
-    public void setSex(String sex)
-    {
+    public void setSex(String sex) {
         this.sex = sex;
     }
 
-    public String getAvatar()
-    {
+    public String getAvatar() {
         return avatar;
     }
 
-    public void setAvatar(String avatar)
-    {
+    public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
 
     @JsonIgnore
     @JsonProperty
-    public String getPassword()
-    {
+    public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password)
-    {
+    public void setPassword(String password) {
         this.password = password;
     }
 
-    public String getSalt()
-    {
+    public String getSalt() {
         return salt;
     }
 
-    public void setSalt(String salt)
-    {
+    public void setSalt(String salt) {
         this.salt = salt;
     }
 
-    public String getStatus()
-    {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(String status)
-    {
+    public void setStatus(String status) {
         this.status = status;
     }
 
-    public String getDelFlag()
-    {
+    public String getDelFlag() {
         return delFlag;
     }
 
-    public void setDelFlag(String delFlag)
-    {
+    public void setDelFlag(String delFlag) {
         this.delFlag = delFlag;
     }
 
-    public String getLoginIp()
-    {
+    public String getLoginIp() {
         return loginIp;
     }
 
-    public void setLoginIp(String loginIp)
-    {
+    public void setLoginIp(String loginIp) {
         this.loginIp = loginIp;
     }
 
-    public Date getLoginDate()
-    {
+    public Date getLoginDate() {
         return loginDate;
     }
 
-    public void setLoginDate(Date loginDate)
-    {
+    public void setLoginDate(Date loginDate) {
         this.loginDate = loginDate;
     }
 
-    public SysDept getDept()
-    {
+    public SysDept getDept() {
         return dept;
     }
 
-    public void setDept(SysDept dept)
-    {
+    public void setDept(SysDept dept) {
         this.dept = dept;
     }
 
-    public List<SysRole> getRoles()
-    {
+    public List<SysRole> getRoles() {
         return roles;
     }
 
-    public void setRoles(List<SysRole> roles)
-    {
+    public void setRoles(List<SysRole> roles) {
         this.roles = roles;
     }
 
-    public Long[] getRoleIds()
-    {
+    public Long[] getRoleIds() {
         return roleIds;
     }
 
-    public void setRoleIds(Long[] roleIds)
-    {
+    public void setRoleIds(Long[] roleIds) {
         this.roleIds = roleIds;
     }
 
-    public Long[] getPostIds()
-    {
+    public Long[] getPostIds() {
         return postIds;
     }
 
-    public void setPostIds(Long[] postIds)
-    {
+    public void setPostIds(Long[] postIds) {
         this.postIds = postIds;
     }
 
-    public Long getRoleId()
-    {
+    public Long getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(Long roleId)
-    {
+    public void setRoleId(Long roleId) {
         this.roleId = roleId;
     }
 
@@ -718,7 +760,7 @@ SysUser extends BaseEntity
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
                 .append("userId", getUserId())
                 .append("deptId", getDeptId())
                 .append("userName", getUserName())
@@ -765,19 +807,20 @@ SysUser extends BaseEntity
 
     /**
      * 同步中心库比较字符
+     *
      * @return
      */
-    public String toSyncCentCompareString(){
-        return new ToStringBuilder(this,ToStringStyle.SIMPLE_STYLE)
-                .append("empNo",getEmpNo())
-                .append("idCard",getIdCard())
-                .append("userName",getUserName())
+    public String toSyncCentCompareString() {
+        return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
+                .append("empNo", getEmpNo())
+                .append("idCard", getIdCard())
+                .append("userName", getUserName())
                 .append("nickName", getNickName())
                 .append("sex", getSex())
                 .append("phonenumber", getPhonenumber())
                 .append("familyAddress", getFamilyAddress())
                 //.append("carId",getCarId())
-                .append("face",getFace())
+                .append("face", getFace())
                 .toString();
     }
 }

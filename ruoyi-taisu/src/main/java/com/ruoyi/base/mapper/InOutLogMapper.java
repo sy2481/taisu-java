@@ -4,18 +4,18 @@ import com.ruoyi.base.domain.InOutLog;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 进出记录Mapper接口
- * 
+ *
  * @author ruoyi
  * @date 2022-03-07
  */
-public interface InOutLogMapper 
-{
+public interface InOutLogMapper {
     /**
      * 查询进出记录
-     * 
+     *
      * @param id 进出记录主键
      * @return 进出记录
      */
@@ -23,7 +23,7 @@ public interface InOutLogMapper
 
     /**
      * 查询进出记录列表
-     * 
+     *
      * @param inOutLog 进出记录
      * @return 进出记录集合
      */
@@ -31,7 +31,7 @@ public interface InOutLogMapper
 
     /**
      * 新增进出记录
-     * 
+     *
      * @param inOutLog 进出记录
      * @return 结果
      */
@@ -39,7 +39,7 @@ public interface InOutLogMapper
 
     /**
      * 修改进出记录
-     * 
+     *
      * @param inOutLog 进出记录
      * @return 结果
      */
@@ -47,7 +47,7 @@ public interface InOutLogMapper
 
     /**
      * 删除进出记录
-     * 
+     *
      * @param id 进出记录主键
      * @return 结果
      */
@@ -55,12 +55,11 @@ public interface InOutLogMapper
 
     /**
      * 批量删除进出记录
-     * 
+     *
      * @param ids 需要删除的数据主键集合
      * @return 结果
      */
     public int deleteInOutLogByIds(Long[] ids);
-
 
 
     /**
@@ -68,9 +67,16 @@ public interface InOutLogMapper
      */
     public InOutLog getInOutLogGuestByIdCard(@Param("idCard") String idCard,
                                              @Param("time") Integer time,
-                                             @Param("personType")String personType,@Param("deptId") Long deptId);
+                                             @Param("personType") String personType,
+                                             @Param("deptId") Long deptId);
 
 
-    int removeLog(@Param("id") Long id,@Param("operationName")String operationName);
+    int removeLog(@Param("id") Long id, @Param("operationName") String operationName);
 
+
+    List<InOutLog> selectExceptionInOutLogList(@Param("startTime") String startTime, @Param("endTime") String endTime);
+
+    List<Map<String, Object>> selectPersonListByTime(@Param("startTime") String startTime, @Param("endTime") String endTime);
+
+    List<InOutLog> selectPersonListByIdcardAndTime(@Param("icCard") String idCard, @Param("startTime") String startTime, @Param("endTime") String endTime);
 }

@@ -1,0 +1,599 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.BaseInoutLogMapper">
+
+    <resultMap type="BaseInoutLog" id="BaseInoutLogResult">
+        <result property="id" column="id"/>
+        <result property="vhNo" column="vh_no"/>
+        <result property="vhType" column="vh_type"/>
+        <result property="vhTypeName" column="vh_type_name"/>
+        <result property="cnstrArea" column="cnstr_area"/>
+        <result property="doorId" column="door_id"/>
+        <result property="idNo" column="id_no"/>
+        <result property="name" column="name"/>
+        <result property="icNo" column="ic_no"/>
+        <result property="carUserIdNo" column="car_user_id_no"/>
+        <result property="carUserName" column="car_user_name"/>
+        <result property="doorPwd" column="door_pwd"/>
+        <result property="beginTime" column="begin_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="facDorNm" column="fac_dor_nm"/>
+        <result property="mngIcNo" column="mng_ic_no"/>
+        <result property="mngTime" column="mng_time"/>
+        <result property="status" column="status"/>
+        <result property="cardType" column="card_type"/>
+        <result property="cardTypeName" column="card_type_name"/>
+        <result property="cardKind" column="card_kind"/>
+        <result property="cardKindName" column="card_kind_name"/>
+        <result property="carKind" column="car_kind"/>
+        <result property="carKindName" column="car_kind_name"/>
+        <result property="carType" column="car_type"/>
+        <result property="carTypeName" column="car_type_name"/>
+        <result property="locateUserType" column="locate_user_type"/>
+        <result property="locateUserTypeName" column="locate_user_type_name"/>
+        <result property="passagewayId" column="passageway_id"/>
+        <result property="passagewayName" column="passageway_name"/>
+        <result property="passagewayType" column="passageway_type"/>
+        <result property="identityWay" column="identity_way"/>
+        <result property="inOutMode" column="in_out_mode"/>
+        <result property="passagewayOpenTime" column="passageway_open_time"/>
+        <result property="useMatchingCarpalte" column="use_matching_carpalte"/>
+        <result property="historyIdNo" column="history_id_no"/>
+        <result property="passagewayMode" column="passageway_mode"/>
+        <result property="cnstrAreaIds" column="cnstr_area_ids"/>
+        <result property="positionName" column="position_name"/>
+        <result property="egNo" column="eg_no"/>
+        <result property="egNm" column="eg_nm"/>
+        <result property="vndNo" column="vnd_no"/>
+        <result property="vndAbr" column="vnd_abr"/>
+        <result property="oprEnvt21" column="opr_envt21"/>
+        <result property="taskMaster22" column="task_master22"/>
+        <result property="doorName" column="door_name"/>
+        <result property="facNm" column="fac_nm"/>
+        <result property="oprEnvtNm" column="opr_envt_nm"/>
+        <result property="tsNo" column="ts_no"/>
+        <result property="abnormalState" column="abnormal_state"/>
+        <result property="supplementaryStatus" column="supplementary_status"/>
+        <result property="identification" column="identification"/>
+        <result property="supplyManagerNo" column="supply_manager_no"/>
+        <result property="supplyManagerNm" column="supply_manager_nm"/>
+        <result property="supplyTime" column="supply_time"/>
+    </resultMap>
+
+    <sql id="selectBaseInoutLogVo">
+        select id,
+        vh_no,
+        vh_type,
+        vh_type_name,
+        cnstr_area,
+        door_id,
+        id_no,
+        name,
+        ic_no,
+        car_user_id_no,
+        car_user_name,
+        door_pwd,
+        begin_time,
+        end_time,
+        fac_dor_nm,
+        mng_ic_no,
+        mng_time,
+        status,
+        card_type,
+        card_type_name,
+        card_kind,
+        card_kind_name,
+        car_kind,
+        car_kind_name,
+        car_type,
+        car_type_name,
+        locate_user_type,
+        locate_user_type_name,
+        passageway_id,
+        passageway_name,
+        passageway_type,
+        identity_way,
+        in_out_mode,
+        passageway_open_time,
+        use_matching_carpalte,
+        history_id_no,
+        passageway_mode,
+        cnstr_area_ids,
+        position_name,
+        eg_no,
+        eg_nm,
+        vnd_no,
+        vnd_abr,
+        opr_envt21,
+        task_master22,
+        door_name,
+        fac_nm,
+        opr_envt_nm,
+        ts_no,
+        abnormal_state,
+        supplementary_status,
+        identification,
+        supply_manager_no, supply_manager_nm, supply_time
+        from base_inout_log
+    </sql>
+    <sql id="selectTop1BaseInoutLogVo">
+        select top 1 id, vh_no,
+        cnstr_area,
+        door_id,
+        id_no,
+        name,
+        ic_no,
+        car_user_id_no,
+        car_user_name,
+        door_pwd,
+        begin_time,
+        end_time,
+        fac_dor_nm,
+        mng_ic_no,
+        mng_time,
+        status,
+        card_type,
+        card_type_name,
+        card_kind,
+        card_kind_name,
+        car_kind,
+        car_kind_name,
+        car_type,
+        car_type_name,
+        locate_user_type,
+        locate_user_type_name,
+        passageway_id,
+        passageway_name,
+        passageway_type,
+        identity_way,
+        in_out_mode,
+        passageway_open_time,
+        use_matching_carpalte,
+        history_id_no,
+        passageway_mode,
+        cnstr_area_ids,
+        position_name,
+        ts_no,
+        abnormal_state,
+        supplementary_status,
+        identification,
+        supply_manager_no, supply_manager_nm, supply_time
+        from base_inout_log
+    </sql>
+    <select id="selectBaseInoutLogList" parameterType="BaseInoutLog" resultMap="BaseInoutLogResult">
+        <include refid="selectBaseInoutLogVo"/>
+        <where>
+            <if test="vhNo != null  and vhNo != ''">and vh_no like concat('%', #{vhNo}, '%')</if>
+            <if test="vhType != null ">and vh_type = #{vhType}</if>
+            <if test="vhTypeName != null  and vhTypeName != ''">and vh_type_name like concat('%', #{vhTypeName}, '%')
+            </if>
+            <if test="cnstrArea != null  and cnstrArea != ''">and cnstr_area like concat('%', #{cnstrArea}, '%')</if>
+            <if test="doorId != null ">and door_id = #{doorId}</if>
+            <if test="idNo != null  and idNo != ''">and id_no like concat('%', #{idNo}, '%')</if>
+            <if test="name != null  and name != ''">and name like concat('%', #{name}, '%')</if>
+            <if test="icNo != null  and icNo != ''">and ic_no like concat('%', #{icNo}, '%')</if>
+            <if test="carUserIdNo != null  and carUserIdNo != ''">and car_user_id_no like concat('%', #{carUserIdNo},
+                '%')
+            </if>
+            <if test="carUserName != null  and carUserName != ''">and car_user_name like concat('%', #{carUserName},
+                '%')
+            </if>
+            <if test="doorPwd != null  and doorPwd != ''">and door_pwd = #{doorPwd}</if>
+            <if test="beginTime != null ">and begin_time = #{beginTime}</if>
+            <if test="endTime != null ">and end_time = #{endTime}</if>
+            <if test="facDorNm != null  and facDorNm != ''">and fac_dor_nm = #{facDorNm}</if>
+            <if test="mngIcNo != null  and mngIcNo != ''">and mng_ic_no = #{mngIcNo}</if>
+            <if test="mngTime != null ">and mng_time = #{mngTime}</if>
+            <if test="status != null  and status != ''">and status = #{status}</if>
+            <if test="cardType != null ">and card_type = #{cardType}</if>
+            <if test="cardTypeName != null  and cardTypeName != ''">and card_type_name like concat('%', #{cardTypeName},
+                '%')
+            </if>
+            <if test="cardKind != null ">and card_kind = #{cardKind}</if>
+            <if test="cardKindName != null  and cardKindName != ''">and card_kind_name like concat('%', #{cardKindName},
+                '%')
+            </if>
+            <if test="carKind != null ">and car_kind = #{carKind}</if>
+            <if test="carKindName != null  and carKindName != ''">and car_kind_name like concat('%', #{carKindName},
+                '%')
+            </if>
+            <if test="carType != null ">and car_type = #{carType}</if>
+            <if test="carTypeName != null  and carTypeName != ''">and car_type_name like concat('%', #{carTypeName},
+                '%')
+            </if>
+            <if test="locateUserType != null ">and locate_user_type = #{locateUserType}</if>
+            <if test="locateUserTypeName != null  and locateUserTypeName != ''">and locate_user_type_name like
+                concat('%', #{locateUserTypeName}, '%')
+            </if>
+            <if test="passagewayId != null ">and passageway_id = #{passagewayId}</if>
+            <if test="passagewayName != null  and passagewayName != ''">and passageway_name like concat('%',
+                #{passagewayName}, '%')
+            </if>
+            <if test="passagewayType != null  and passagewayType != ''">and passageway_type = #{passagewayType}</if>
+            <if test="identityWay != null  and identityWay != ''">and identity_way = #{identityWay}</if>
+            <if test="inOutMode != null  and inOutMode != ''">and in_out_mode = #{inOutMode}</if>
+            <if test="passagewayOpenTime != null ">and passageway_open_time = #{passagewayOpenTime}</if>
+            <if test="useMatchingCarpalte != null  and useMatchingCarpalte != ''">and use_matching_carpalte =
+                #{useMatchingCarpalte}
+            </if>
+            <if test="historyIdNo != null  and historyIdNo != ''">and history_id_no = #{historyIdNo}</if>
+            <if test="passagewayMode != null  and passagewayMode != ''">and passageway_mode = #{passagewayMode}</if>
+            <if test="cnstrAreaIds != null  and cnstrAreaIds != ''">and cnstr_area_ids = #{cnstrAreaIds}</if>
+            <if test="positionName != null  and positionName != ''">and position_name like concat('%', #{positionName},
+                '%')
+            </if>
+            <if test="egNo != null  and egNo != ''">and eg_no like concat('%', #{egNo}, '%')</if>
+            <if test="egNm != null  and egNm != ''">and eg_nm like concat('%', #{egNm}, '%')</if>
+            <if test="vndNo != null  and vndNo != ''">and vnd_no like concat('%', #{vndNo}, '%')</if>
+            <if test="vndAbr != null  and vndAbr != ''">and vnd_abr like concat('%', #{vndAbr}, '%')</if>
+            <if test="oprEnvt21 != null  and oprEnvt21 != ''">and opr_envt21 = #{oprEnvt21}</if>
+            <if test="params.identifications != null  and params.identifications.length>0">and identification in
+                <foreach item="identification" collection="params.identifications" open="(" separator="," close=")">
+                    #{identification}
+                </foreach>
+            </if>
+            <if test="params.supplementaryStatuss != null and params.supplementaryStatuss.length>0">and
+                supplementary_status in
+                <foreach item="supplementaryStatus" collection="params.supplementaryStatuss" open="(" separator=","
+                         close=")">
+                    #{supplementaryStatus}
+                </foreach>
+            </if>
+            <if test="taskMaster22 != null  and taskMaster22 != ''">and task_master22 like concat('%', #{taskMaster22},
+                '%')
+            </if>
+            <if test="doorName != null  and doorName != ''">and door_name like concat('%', #{doorName}, '%')</if>
+            <if test="facNm != null  and facNm != ''">and fac_nm like concat('%', #{facNm}, '%')</if>
+            <if test="params.beginPassagewayOpenTime != null">and passageway_open_time &gt;=
+                #{params.beginPassagewayOpenTime}
+            </if>
+            <if test="params.endPassagewayOpenTime != null ">and passageway_open_time &lt;=
+                #{params.endPassagewayOpenTime}
+            </if>
+            <if test="oprEnvtNm != null  and oprEnvtNm != ''">and opr_envt_nm like concat('%', #{oprEnvtNm}, '%')</if>
+            <if test="tsNo != null  and tsNo != ''">and ts_no like concat('%', #{tsNo}, '%')</if>
+            <if test="abnormalState != null  and abnormalState != ''">and abnormal_state = #{abnormalState}</if>
+            <if test="supplementaryStatus != null  and supplementaryStatus != ''">and supplementary_status =
+                #{supplementaryStatus}
+            </if>
+            <if test="identification != null ">and identification = #{identification}</if>
+            <if test="supplyManagerNo != null  and supplyManagerNo != ''">and supply_manager_no like concat('%',
+                #{supplyManagerNo}, '%')
+            </if>
+            <if test="supplyManagerNm != null  and supplyManagerNm != ''">and supply_manager_nm like concat('%',
+                #{supplyManagerNm}, '%')
+            </if>
+            <if test="supplyTime != null ">and supply_time = #{supplyTime}</if>
+            <if test="params.overdue!=null and params.overdue eq 'Y'.toString() ">and passageway_open_time &gt;
+                end_time
+            </if>
+        </where>
+    </select>
+
+    <select id="selectBaseInoutLogById" parameterType="Long" resultMap="BaseInoutLogResult">
+        <include refid="selectBaseInoutLogVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectTop1BaseInoutLogByIdCard" parameterType="String" resultMap="BaseInoutLogResult">
+        <include refid="selectTop1BaseInoutLogVo"/>
+        where id_no = #{IdNo}
+        order by passageway_open_time desc
+    </select>
+
+    <select id="selectTop1BaseInoutLogByIcNo" parameterType="String" resultMap="BaseInoutLogResult">
+        <include refid="selectTop1BaseInoutLogVo"/>
+        where ic_no = #{IcNo}
+        order by passageway_open_time desc
+    </select>
+
+
+    <select id="selectBaseInoutLogListByVhNos" parameterType="String" resultMap="BaseInoutLogResult">
+        <include refid="selectBaseInoutLogVo"/>
+        where
+        <foreach item="vh_no" collection="array" open="(" separator="," close=")">
+            #{vhNo}
+        </foreach>
+        and status ='Y'
+    </select>
+
+
+    <select id="selectBaseInoutLogListByIdNos" parameterType="String" resultMap="BaseInoutLogResult">
+        <include refid="selectBaseInoutLogVo"/>
+        where
+        (
+        <foreach item="id_no" collection="array" open="(" separator="," close=")">
+            #{idNo}
+        </foreach>
+        or
+        <foreach item="car_user_id_no" collection="array" open="(" separator="," close=")">
+            #{carUserIdNo}
+        </foreach>
+        )
+        and status ='Y'
+    </select>
+
+
+    <insert id="insertBaseInoutLog" parameterType="BaseInoutLog" useGeneratedKeys="false">
+        insert into base_inout_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="vhNo != null">vh_no,</if>
+            <if test="vhType != null">vh_type,</if>
+            <if test="vhTypeName != null">vh_type_name,</if>
+            <if test="cnstrArea != null">cnstr_area,</if>
+            <if test="doorId != null">door_id,</if>
+            <if test="idNo != null">id_no,</if>
+            <if test="name != null">name,</if>
+            <if test="icNo != null">ic_no,</if>
+            <if test="carUserIdNo != null">car_user_id_no,</if>
+            <if test="carUserName != null">car_user_name,</if>
+            <if test="doorPwd != null">door_pwd,</if>
+            <if test="beginTime != null">begin_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="facDorNm != null">fac_dor_nm,</if>
+            <if test="mngIcNo != null">mng_ic_no,</if>
+            <if test="mngTime != null">mng_time,</if>
+            <if test="status != null">status,</if>
+            <if test="cardType != null">card_type,</if>
+            <if test="cardTypeName != null">card_type_name,</if>
+            <if test="cardKind != null">card_kind,</if>
+            <if test="cardKindName != null">card_kind_name,</if>
+            <if test="carKind != null">car_kind,</if>
+            <if test="carKindName != null">car_kind_name,</if>
+            <if test="carType != null">car_type,</if>
+            <if test="carTypeName != null">car_type_name,</if>
+            <if test="locateUserType != null">locate_user_type,</if>
+            <if test="locateUserTypeName != null">locate_user_type_name,</if>
+            <if test="passagewayId != null">passageway_id,</if>
+            <if test="passagewayName != null">passageway_name,</if>
+            <if test="passagewayType != null">passageway_type,</if>
+            <if test="identityWay != null">identity_way,</if>
+            <if test="inOutMode != null">in_out_mode,</if>
+            <if test="passagewayOpenTime != null">passageway_open_time,</if>
+            <if test="useMatchingCarpalte != null">use_matching_carpalte,</if>
+            <if test="historyIdNo != null">history_id_no,</if>
+            <if test="passagewayMode != null">passageway_mode,</if>
+            <if test="cnstrAreaIds != null">cnstr_area_ids,</if>
+            <if test="positionName != null">position_name,</if>
+            <if test="egNo != null">eg_no,</if>
+            <if test="egNm != null">eg_nm,</if>
+            <if test="vndNo != null">vnd_no,</if>
+            <if test="vndAbr != null">vnd_abr,</if>
+            <if test="oprEnvt21 != null">opr_envt21,</if>
+            <if test="taskMaster22 != null">task_master22,</if>
+            <if test="doorName != null">door_name,</if>
+            <if test="facNm != null">fac_nm,</if>
+            <if test="oprEnvtNm != null">opr_envt_nm,</if>
+            <if test="tsNo != null">ts_no,</if>
+            <if test="abnormalState != null">abnormal_state,</if>
+            <if test="supplementaryStatus != null">supplementary_status,</if>
+            <if test="identification != null">identification,</if>
+            <if test="supplyManagerNo != null">supply_manager_no,</if>
+            <if test="supplyManagerNm != null">supply_manager_nm,</if>
+            <if test="supplyTime != null">supply_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="vhNo != null">#{vhNo},</if>
+            <if test="vhType != null">#{vhType},</if>
+            <if test="vhTypeName != null">#{vhTypeName},</if>
+            <if test="cnstrArea != null">#{cnstrArea},</if>
+            <if test="doorId != null">#{doorId},</if>
+            <if test="idNo != null">#{idNo},</if>
+            <if test="name != null">#{name},</if>
+            <if test="icNo != null">#{icNo},</if>
+            <if test="carUserIdNo != null">#{carUserIdNo},</if>
+            <if test="carUserName != null">#{carUserName},</if>
+            <if test="doorPwd != null">#{doorPwd},</if>
+            <if test="beginTime != null">#{beginTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="facDorNm != null">#{facDorNm},</if>
+            <if test="mngIcNo != null">#{mngIcNo},</if>
+            <if test="mngTime != null">#{mngTime},</if>
+            <if test="status != null">#{status},</if>
+            <if test="cardType != null">#{cardType},</if>
+            <if test="cardTypeName != null">#{cardTypeName},</if>
+            <if test="cardKind != null">#{cardKind},</if>
+            <if test="cardKindName != null">#{cardKindName},</if>
+            <if test="carKind != null">#{carKind},</if>
+            <if test="carKindName != null">#{carKindName},</if>
+            <if test="carType != null">#{carType},</if>
+            <if test="carTypeName != null">#{carTypeName},</if>
+            <if test="locateUserType != null">#{locateUserType},</if>
+            <if test="locateUserTypeName != null">#{locateUserTypeName},</if>
+            <if test="passagewayId != null">#{passagewayId},</if>
+            <if test="passagewayName != null">#{passagewayName},</if>
+            <if test="passagewayType != null">#{passagewayType},</if>
+            <if test="identityWay != null">#{identityWay},</if>
+            <if test="inOutMode != null">#{inOutMode},</if>
+            <if test="passagewayOpenTime != null">#{passagewayOpenTime},</if>
+            <if test="useMatchingCarpalte != null">#{useMatchingCarpalte},</if>
+            <if test="historyIdNo != null">#{historyIdNo},</if>
+            <if test="passagewayMode != null">#{passagewayMode},</if>
+            <if test="cnstrAreaIds != null">#{cnstrAreaIds},</if>
+            <if test="positionName != null">#{positionName},</if>
+            <if test="egNo != null">#{egNo},</if>
+            <if test="egNm != null">#{egNm},</if>
+            <if test="vndNo != null">#{vndNo},</if>
+            <if test="vndAbr != null">#{vndAbr},</if>
+            <if test="oprEnvt21 != null">#{oprEnvt21},</if>
+            <if test="taskMaster22 != null">#{taskMaster22},</if>
+            <if test="doorName != null">#{doorName},</if>
+            <if test="facNm != null">#{facNm},</if>
+            <if test="oprEnvtNm != null">#{oprEnvtNm},</if>
+            <if test="tsNo != null">#{tsNo},</if>
+            <if test="abnormalState != null">#{abnormalState},</if>
+            <if test="supplementaryStatus != null">#{supplementaryStatus},</if>
+            <if test="identification != null">#{identification},</if>
+            <if test="supplyManagerNo != null">#{supplyManagerNo},</if>
+            <if test="supplyManagerNm != null">#{supplyManagerNm},</if>
+            <if test="supplyTime != null">#{supplyTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBaseInoutLog" parameterType="BaseInoutLog">
+        update base_inout_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="vhNo != null">vh_no = #{vhNo},</if>
+            <if test="vhType != null">vh_type = #{vhType},</if>
+            <if test="vhTypeName != null">vh_type_name = #{vhTypeName},</if>
+            <if test="cnstrArea != null">cnstr_area = #{cnstrArea},</if>
+            <if test="doorId != null">door_id = #{doorId},</if>
+            <if test="idNo != null">id_no = #{idNo},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="icNo != null">ic_no = #{icNo},</if>
+            <if test="carUserIdNo != null">car_user_id_no = #{carUserIdNo},</if>
+            <if test="carUserName != null">car_user_name = #{carUserName},</if>
+            <if test="doorPwd != null">door_pwd = #{doorPwd},</if>
+            <if test="beginTime != null">begin_time = #{beginTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="facDorNm != null">fac_dor_nm = #{facDorNm},</if>
+            <if test="mngIcNo != null">mng_ic_no = #{mngIcNo},</if>
+            <if test="mngTime != null">mng_time = #{mngTime},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="cardType != null">card_type = #{cardType},</if>
+            <if test="cardTypeName != null">card_type_name = #{cardTypeName},</if>
+            <if test="cardKind != null">card_kind = #{cardKind},</if>
+            <if test="cardKindName != null">card_kind_name = #{cardKindName},</if>
+            <if test="carKind != null">car_kind = #{carKind},</if>
+            <if test="carKindName != null">car_kind_name = #{carKindName},</if>
+            <if test="carType != null">car_type = #{carType},</if>
+            <if test="carTypeName != null">car_type_name = #{carTypeName},</if>
+            <if test="locateUserType != null">locate_user_type = #{locateUserType},</if>
+            <if test="locateUserTypeName != null">locate_user_type_name = #{locateUserTypeName},</if>
+            <if test="passagewayId != null">passageway_id = #{passagewayId},</if>
+            <if test="passagewayName != null">passageway_name = #{passagewayName},</if>
+            <if test="passagewayType != null">passageway_type = #{passagewayType},</if>
+            <if test="identityWay != null">identity_way = #{identityWay},</if>
+            <if test="inOutMode != null">in_out_mode = #{inOutMode},</if>
+            <if test="passagewayOpenTime != null">passageway_open_time = #{passagewayOpenTime},</if>
+            <if test="useMatchingCarpalte != null">use_matching_carpalte = #{useMatchingCarpalte},</if>
+            <if test="historyIdNo != null">history_id_no = #{historyIdNo},</if>
+            <if test="passagewayMode != null">passageway_mode = #{passagewayMode},</if>
+            <if test="cnstrAreaIds != null">cnstr_area_ids = #{cnstrAreaIds},</if>
+            <if test="positionName != null">position_name = #{positionName},</if>
+            <if test="egNo != null">eg_no = #{egNo},</if>
+            <if test="egNm != null">eg_nm = #{egNm},</if>
+            <if test="vndNo != null">vnd_no = #{vndNo},</if>
+            <if test="vndAbr != null">vnd_abr = #{vndAbr},</if>
+            <if test="oprEnvt21 != null">opr_envt21 = #{oprEnvt21},</if>
+            <if test="taskMaster22 != null">task_master22 = #{taskMaster22},</if>
+            <if test="doorName != null">door_name = #{doorName},</if>
+            <if test="facNm != null">fac_nm = #{facNm},</if>
+            <if test="oprEnvtNm != null">opr_envt_nm = #{oprEnvtNm},</if>
+            <if test="tsNo != null">ts_no = #{tsNo},</if>
+            <if test="abnormalState != null">abnormal_state = #{abnormalState},</if>
+            <if test="supplementaryStatus != null">supplementary_status = #{supplementaryStatus},</if>
+            <if test="identification != null">identification = #{identification},</if>
+            <if test="supplyManagerNo != null">supply_manager_no = #{supplyManagerNo},</if>
+            <if test="supplyManagerNm != null">supply_manager_nm = #{supplyManagerNm},</if>
+            <if test="supplyTime != null">supply_time = #{supplyTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBaseInoutLogById" parameterType="Long">
+        delete
+        from base_inout_log
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteBaseInoutLogByIds" parameterType="String">
+        delete from base_inout_log where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectBaseInoutLogByVhNo" resultMap="BaseInoutLogResult">
+        <include refid="selectBaseInoutLogVo"/>
+        where vh_no = #{vhNo}
+        <if test="inOutMode != null">and in_out_mode = #{inOutMode}</if>
+        <if test="cardKind != null ">and card_kind = #{cardKind}</if>
+    </select>
+
+    <select id="accessQueryTodayList" resultMap="BaseInoutLogResult">
+        <include refid="selectBaseInoutLogVo"/>
+        <where>
+            <if test="cnstrAreaId != null  and cnstrAreaId != ''">and cnstr_area_ids like concat(#{cnstrAreaId}, '%')
+            </if>
+            <if test="today != null  and today != ''">and CONVERT(varchar(100), passageway_open_time, 23) = #{today}
+            </if>
+            <if test="vndNo != null  and vndNo != ''">and vnd_no = #{vndNo}</if>
+            <if test="inOutMode != null  and inOutMode != ''">and in_out_mode = #{inOutMode}</if>
+        </where>
+        and (supplementary_status='正常' or supplementary_status='已補錄')
+        order by passageway_open_time
+    </select>
+
+    <select id="accessQueryTodayNoExFactoryList" resultMap="BaseInoutLogResult">
+        <include refid="selectBaseInoutLogVo"/>
+        <where>
+            <if test="cnstrAreaId != null  and cnstrAreaId != ''">and cnstr_area_ids like concat(#{cnstrAreaId}, '%')
+            </if>
+            <if test="today != null  and today != ''">and CONVERT(varchar(100), begin_time, 23) = #{today}</if>
+
+        </where>
+    </select>
+
+    <select id="selectCntNotOutByVhNos" resultMap="BaseInoutLogResult">
+        SELECT a.vh_no,COUNT(a.id) cnt FROM
+        (SELECT id,vh_no,id_no FROM base_inout_log
+        WHERE (supplementary_status ='正常' or supplementary_status ='已補錄') AND in_out_mode='入'
+        <if test="vhNos != null  and vhNos != ''">
+            AND card_kind=#{cardKind}
+        </if>
+
+        <if test="vhNos != null  and vhNos != ''">AND vh_no IN
+            <foreach item="vhNo" collection="vhNos" open="(" separator="," close=")">
+                #{vhNo}
+            </foreach>
+        </if>
+        ) a
+        LEFT JOIN
+        (SELECT id,vh_no,id_no FROM base_inout_log
+        WHERE (supplementary_status ='正常' or supplementary_status ='已補錄') AND in_out_mode='出'
+        <if test="vhNos != null  and vhNos != ''">
+            AND card_kind=#{cardKind}
+        </if>
+        <if test="vhNos != null  and vhNos != ''">AND vh_no IN
+            <foreach item="vhNo" collection="vhNos" open="(" separator="," close=")">
+                #{vhNo}
+            </foreach>
+        </if>
+
+        ) b
+        ON a.vh_no=b.vh_no AND a.id_no=b.id_no
+        WHERE b.id IS NULL
+        GROUP BY a.vh_no
+    </select>
+
+    <select id="listWarn" parameterType="com.ruoyi.base.domain.BaseBoardWarn"
+            resultType="com.ruoyi.base.domain.BaseBoardWarn">
+        select * from base_board_warn
+        <where>
+            <if test="time != null">and CONVERT(varchar(100), time, 23) = #{time}</if>
+            <if test="status != null  and status != ''">and status = #{status}</if>
+            <if test="type != null  and type != ''">and type = #{type}</if>
+        </where>
+        order by status asc,time desc
+    </select>
+
+    <delete id="deleteBaseInoutLogNotSupp">
+        delete from base_inout_log where
+        id_no=#{idNo}
+        AND abnormal_state=#{abnormalState}
+        AND supplementary_status='未補錄'
+    </delete>
+
+    <update id="delayBaseInoutLogByVhNo">
+        update base_inout_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="endTime != null">end_time = #{endTime},</if>
+        </trim>
+        where vh_no = #{vhNo}
+    </update>
+</mapper>

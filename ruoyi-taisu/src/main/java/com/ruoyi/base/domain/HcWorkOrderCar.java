@@ -152,12 +152,6 @@ public class HcWorkOrderCar extends BaseEntity
     @ApiModelProperty(value = "是否下發：Y=是，N=否")
     private String issued;
 
-    /** 工單日期 */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Excel(name = "工單日期", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
-    @ApiModelProperty(value = "工單日期")
-    private Date vhTime;
-
     /**
      * 車輛下的危化人員
      */
@@ -395,16 +389,6 @@ public class HcWorkOrderCar extends BaseEntity
 
     public void setIssued(String issued) {
         this.issued = issued;
-    }
-
-    public void setVhTime(Date vhTime)
-    {
-        this.vhTime = vhTime;
-    }
-
-    public Date getVhTime()
-    {
-        return vhTime;
     }
 
     public List<HcWorkOrderUser> getHcWorkOrderUsers() {

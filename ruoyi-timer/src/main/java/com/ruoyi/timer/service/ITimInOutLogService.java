@@ -15,6 +15,8 @@ public interface ITimInOutLogService {
      */
     Map<String,Object> getInOutLog(Integer maxId,String factoryCode);
 
+    List<TimInOutLog> getInOutLogBasicData(Integer maxId,String factoryCode);
+
     /**
      * 获取延时数据
      * @param maxId

@@ -28,7 +28,7 @@ public class TaskSyncErp {
     IHcWorkOrderService hcWorkOrderService;
 
     //每3分鐘跑一次
-    @Scheduled(cron = "0 0/3 * * * ?")
+    //@Scheduled(cron = "0 0/3 * * * ?")
     public void syncHcFromErp(){
         log.info("------------從v0NBRKX5同步危化工單(出廠日期為*的只新增)-開始-------------");
         List<V0NBRKX5Bo> boList = new ArrayList<>();

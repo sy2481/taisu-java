@@ -155,7 +155,7 @@ public class RuoYiConfig
         return appl;
     }
 
-    public static void setAppl(String appl) {
-        RuoYiConfig.appl = appl;
+    public void setAppl(String appl) {
+        this.appl = appl;
     }
 }

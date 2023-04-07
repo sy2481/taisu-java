@@ -125,4 +125,19 @@ public class PersonSendService {
         return (Integer) downSednResultObj.get("code");
     }
 
+    /**
+     * 下发人员信息请求
+     * 必要条件：定位卡、人脸照片、身份证号
+     * 触发环境：员工绑定定位卡时
+     * 员工编辑（修改）
+     * 接口员工上传照片
+     * return Inter
+     */
+    public Integer reCreatePersonInfoRequest(PersonVO personVo) {
+        String json = JSONObject.toJSONString(personVo);
+        String resultStr = HttpUtils.sendJsonPost(host + "/hik/person/reCreate", json);
+        JSONObject downSednResultObj = JSONObject.parseObject(resultStr);
+        return (Integer) downSednResultObj.get("code");
+    }
+
 }

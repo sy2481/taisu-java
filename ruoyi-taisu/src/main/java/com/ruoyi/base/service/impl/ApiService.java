@@ -8,9 +8,7 @@ import com.ruoyi.base.interact.LocationCardSendService;
 import com.ruoyi.base.interact.PersonSendService;
 import com.ruoyi.base.interact.UserJurisdiction;
 import com.ruoyi.base.mapper.*;
-import com.ruoyi.base.service.IHikEquipmentService;
-import com.ruoyi.base.service.IPersonBindService;
-import com.ruoyi.base.service.SafetycarService;
+import com.ruoyi.base.service.*;
 import com.ruoyi.base.utils.HttpUtils;
 import com.ruoyi.base.utils.OldIpMap;
 import com.ruoyi.base.utils.PlcRedisUtils;
@@ -110,6 +108,10 @@ public class ApiService {
     private HcWorkOrderCarMapper hcWorkOrderCarMapper;
     @Autowired
     private HcWorkOrderUserMapper hcWorkOrderUserMapper;
+    @Autowired
+    private InOutLogBasicDataService inOutLogBasicDataService;
+    @Autowired
+    private InOutUserStatusService inOutUserStatusService;
 
     /* 人员查询相关方法 *********************************************************************************************************************/
 
@@ -610,6 +612,10 @@ public class ApiService {
     public void inOutLogInsertCar(String idCardNo, String locationCardNo, String equipmentIp, String logType, String carParam) {
         //预备拿一下回写数据库的编号
         String idNo = "";
+        Integer idCardType = 0;
+        String name = "";
+        String carIdCardIpLtLic = "";
+        String carIdCardPz = "";
         InOutLog log = new InOutLog();
         log.setLocationCardNo(locationCardNo);
         log.setIp(equipmentIp);
@@ -624,6 +630,8 @@ public class ApiService {
             // 员工进入
             competeLogFromUser(log, userList.get(0));
             idNo = userList.get(0).getEmpNo();
+            idCardType = 1;
+            name = log.getName();
         } else {
             List<ManFactory> factoryList = factoryMapper.getByCommonParams(idCardNo, null, null, null);
             if (factoryList.size() == 0) {
@@ -632,6 +640,8 @@ public class ApiService {
             //厂商人员进入
             competeLogFromFactory(log, factoryList.get(0));
             idNo = factoryList.get(0).getIpLtLic();
+            idCardType = 2;
+            name = log.getName();
         }
         competeLogFromEquipment(log, equipmentIp);
         // 第一位，出入，0-入场，1-离场
@@ -643,6 +653,7 @@ public class ApiService {
         //最後再拼成兩位字符串
         log.setLogType(logType + secType);
         inOutLogMapper.insertInOutLog(log);
+
 
         try {
             //获取厂区
@@ -663,8 +674,8 @@ public class ApiService {
             //然后还要往旧数据库插入数据；
             //车道信息补全
             TcInOutLog tcInOutLogCar = null;
-            logger.info("equipmentIp" + equipmentIp);
-            System.out.println("logType : " + logType);
+            //logger.info("equipmentIp" + equipmentIp);
+            //System.out.println("logType : " + logType);
             if (carParam != null) {
                 //获取到车辆信息
                 String searchCar = "";
@@ -677,16 +688,85 @@ public class ApiService {
                 if (!CollectionUtils.isEmpty(safetycarlist)) {
                     BaseSafetycar baseSafetycar = safetycarlist.get(0);
                     String CarIdNo = baseSafetycar.getIpLtLic() + baseSafetycar.getPz();
+                    carIdCardIpLtLic = baseSafetycar.getIpLtLic();
+                    carIdCardPz = baseSafetycar.getPz();
                     tcInOutLogCar = getTcInOutLog(equipmentIp, logType + secType, CarIdNo, factoryCode);
                 }
             }
 
             //然后还要往旧数据库插入数据； factoryCode:模拟字段
             String personSecType = log.getPersonType();
-            System.out.println("logType + personSecType = " + logType + personSecType);
+            //System.out.println("logType + personSecType = " + logType + personSecType);
             TcInOutLog tcInOutLog = getTcInOutLog(equipmentIp, logType + personSecType, idNo, factoryCode);
-            System.out.println("tcInOutLog = " + tcInOutLog);
+            //System.out.println("tcInOutLog = " + tcInOutLog);
 
+            Date today = DateUtils.parseDate(DateUtils.getDate());
+            String todayDateTime = DateUtils.parseDateToStr(DateUtils.YYYYMMDDHHMMSS0, today);
+            String currentDateTime = DateUtils.parseDateToStr(DateUtils.YYYYMMDDHHMMSS1, today);
+
+            List<InOutLogBasicData> toUpdate = inOutLogBasicDataService.selectInOutLogBasicDataListByIdcardAndWorkTime(idNo, todayDateTime);
+            if (idCardType == 2) {
+                if (logType.equals("0")) {
+                    for (InOutLogBasicData inOutLogBasicData : toUpdate) {
+                        inOutLogBasicData.setInOrOutFlag(1);
+                        inOutLogBasicData.setOpltTime(currentDateTime);
+                        inOutLogBasicDataService.updateInOutLogBasicDataByWorkTime(inOutLogBasicData);
+                    }
+
+                } else if (logType.equals("1")) {
+                    for (InOutLogBasicData inOutLogBasicData : toUpdate) {
+                        inOutLogBasicData.setInOrOutFlag(2);
+                        inOutLogBasicData.setDoutTime(currentDateTime);
+                        inOutLogBasicDataService.updateInOutLogBasicDataByWorkTime(inOutLogBasicData);
+                    }
+                }
+            } else if (idCardType == 1) {
+                SysUser user=new SysUser();
+                user.setIdCard(idNo);
+               SysUser userInfo= sysUserMapper.selectUserList(user).get(0);
+              String deptName= sysDeptMapper.selectDeptById(userInfo.getDeptId()).getDeptName();
+                InOutUserStatus inOutUserStatus = inOutUserStatusService.selectInOutUserStatusByIdNo(idNo);
+                if (inOutUserStatus == null) {
+                    InOutUserStatus inOutUserStatusInfo = new InOutUserStatus();
+                    inOutUserStatusInfo.setDeptName(deptName);
+                    inOutUserStatusInfo.setIdNo(idNo);
+                    inOutUserStatusInfo.setUsername(name);
+                    if (logType.equals("0")) {
+                        inOutUserStatusInfo.setInTime(new Date());
+                        inOutUserStatusInfo.setInOrOutFlag(1);
+                    } else if (logType.equals("1")) {
+                        inOutUserStatusInfo.setOutTime(new Date());
+                        inOutUserStatusInfo.setInOrOutFlag(2);
+                    }
+                    inOutUserStatusService.insertInOutUserStatus(inOutUserStatusInfo);
+                } else {
+                    if (logType.equals("0")) {
+                        inOutUserStatus.setDeptName(deptName);
+                        inOutUserStatus.setInTime(new Date());
+                        inOutUserStatus.setInOrOutFlag(1);
+                    } else if (logType.equals("1")) {
+                        inOutUserStatus.setDeptName(deptName);
+                        inOutUserStatus.setOutTime(new Date());
+                        inOutUserStatus.setInOrOutFlag(2);
+                    }
+                    inOutUserStatusService.updateInOutUserStatus(inOutUserStatus);
+                }
+            }
+
+            //Date today = DateUtils.parseDate(DateUtils.getDate());
+
+
+            if (carIdCardIpLtLic != "") {
+                List<InOutLogBasicData> updateInOutLogBasicDatas = inOutLogBasicDataService.selectCarInOutLogBasicDataList(carIdCardIpLtLic, DateUtils.parseDateToStr(DateUtils.YYYYMMDDHHMMSS0, today));
+                for (InOutLogBasicData updateInfo : updateInOutLogBasicDatas) {
+                    if (logType.equals("0")) {
+                        updateInfo.setInOrOutFlag(1);
+                    } else if (logType.equals("1")) {
+                        updateInfo.setInOrOutFlag(2);
+                    }
+                    inOutLogBasicDataService.updateInOutLogBasicData(updateInfo);
+                }
+            }
 
             switch (factoryCode) {
                 case "PPC2A01"://AE廠
@@ -750,7 +830,8 @@ public class ApiService {
      * @param CarPlateHistory 歷史車牌號-模糊匹配專用
      */
     @Transactional(readOnly = false)
-    public void inOutLogInsertCarForHC(String idCardNo, String equipmentIp, String logType, String carParam, String idCardNo2, String CarPlateHistory) {
+    public void inOutLogInsertCarForHC(String idCardNo, String equipmentIp, String logType, String carParam, String
+            idCardNo2, String CarPlateHistory) {
         // 第一位，出入，0-入场，1-离场
         // 第二位，0-員工、1-廠商、2-車輛、3-危化   因為不用反寫舊數據庫  所以不需要第二位
         String FullLogType = logType + "3";
@@ -781,7 +862,7 @@ public class ApiService {
         List<HcWorkOrderUser> hcWorkOrderUser_Escort = hcWorkOrderUserList.stream().filter(g -> Objects.equals(g.getIdNo(), idCardNo2)).collect(Collectors.toList());
         if (hcWorkOrderUser_Escort.size() > 0) {
             log.setIdCard(idCardNo);
-            log.setName(hcWorkOrderUser_Escort.get(0).getEscortLicense());
+            log.setName(hcWorkOrderUser_Escort.get(0).getNm());
             log.setFactoryName(hcWorkOrderUser_Escort.get(0).getCompany());
             log.setWorkNo(hcWorkOrderUser_Escort.get(0).getVhNo());
         }
@@ -823,7 +904,7 @@ public class ApiService {
 
         //region 更新工單表的數據
         HcWorkOrderCar hcWorkOrderCar = new HcWorkOrderCar();
-        hcWorkOrderCar.setVhNo(log.getWorkNo());
+        hcWorkOrderCar.setIdNo(log.getPlateNo());
         hcWorkOrderCar.setFacDorNm(factoryCode);
         List<HcWorkOrderCar> ThisHCWorkOrderCarList = hcWorkOrderCarMapper.selectHcWorkOrderCarList(hcWorkOrderCar);
         if (ThisHCWorkOrderCarList.size() > 0) {
@@ -846,7 +927,8 @@ public class ApiService {
 
 
     @Transactional(readOnly = false)
-    public void inOutLogInsertCarForShipment(String idCardNo, String locationCardNo, String equipmentIp, String logType, String carParam) {
+    public void inOutLogInsertCarForShipment(String idCardNo, String locationCardNo, String equipmentIp, String
+            logType, String carParam) {
         //预备拿一下回写数据库的编号
         String idNo = "";
         InOutLog log = new InOutLog();

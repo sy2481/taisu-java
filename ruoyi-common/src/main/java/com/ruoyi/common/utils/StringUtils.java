@@ -592,4 +592,30 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils
         }
         return true;
     }
+
+    //判斷是否數字
+    public static boolean checkNumber(String s) {
+        if(StringUtils.isEmpty(s)){
+            return false;
+        }
+        for (int i = s.length(); --i >= 0; ) {
+            if (!Character.isDigit(s.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //判斷首字符是否字母
+    public static boolean checkBeginWithLetter(String s) {
+        if(StringUtils.isEmpty(s)){
+            return false;
+        }
+        char c = s.charAt(0);
+        if (((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z'))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

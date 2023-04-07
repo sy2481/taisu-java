@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.BaseErpMapper">
+
+    <resultMap type="BaseErp" id="BaseErpResult">
+        <result property="vhNo"    column="vh_no"    />
+        <result property="aplDp"    column="apl_dp"    />
+        <result property="egNm"    column="eg_nm"    />
+        <result property="egNo"    column="eg_no"    />
+        <result property="cnstNum"    column="cnst_num"    />
+        <result property="cnstSite"    column="cnst_site"    />
+        <result property="tkVnd"    column="tk_vnd"    />
+        <result property="tkVndSafBos"    column="tk_vnd_saf_bos"    />
+        <result property="cnstType"    column="cnst_type"    />
+        <result property="cnstTime"    column="cnst_time"    />
+        <result property="oprEnvt"    column="opr_envt"    />
+        <result property="taskMaster"    column="task_master"    />
+        <result property="inspector"    column="inspector"    />
+        <result property="mlType"    column="ml_type"    />
+        <result property="safetyManMk"    column="safety_man_mk"    />
+        <result property="ipltDatTm"    column="iplt_dat_tm"    />
+        <result property="opltDatTm"    column="oplt_dat_tm"    />
+        <result property="jbcont"    column="jbcont"    />
+        <result property="ptnm"    column="ptnm"    />
+        <result property="startwork"    column="startwork"    />
+        <result property="jsa"    column="jsa"    />
+    </resultMap>
+
+    <sql id="selectBaseErpVo">
+        select vh_no, apl_dp, eg_nm, eg_no, cnst_num, cnst_site, tk_vnd, tk_vnd_saf_bos, cnst_type, cnst_time, opr_envt, task_master, inspector, ml_type, safety_man_mk, iplt_dat_tm, oplt_dat_tm, jbcont, ptnm, startwork, jsa from base_erp
+    </sql>
+
+    <select id="selectBaseErpList" parameterType="BaseErp" resultMap="BaseErpResult">
+        <include refid="selectBaseErpVo"/>
+        <where>
+            <if test="vhNo != null  and vhNo != ''"> and vh_no = #{vhNo}</if>
+            <if test="aplDp != null  and aplDp != ''"> and apl_dp = #{aplDp}</if>
+            <if test="egNm != null  and egNm != ''"> and eg_nm = #{egNm}</if>
+            <if test="egNo != null  and egNo != ''"> and eg_no = #{egNo}</if>
+            <if test="cnstNum != null  and cnstNum != ''"> and cnst_num = #{cnstNum}</if>
+            <if test="cnstSite != null  and cnstSite != ''"> and cnst_site = #{cnstSite}</if>
+            <if test="tkVnd != null  and tkVnd != ''"> and tk_vnd = #{tkVnd}</if>
+            <if test="tkVndSafBos != null  and tkVndSafBos != ''"> and tk_vnd_saf_bos = #{tkVndSafBos}</if>
+            <if test="cnstType != null  and cnstType != ''"> and cnst_type = #{cnstType}</if>
+            <if test="cnstTime != null  and cnstTime != ''"> and cnst_time = #{cnstTime}</if>
+            <if test="oprEnvt != null  and oprEnvt != ''"> and opr_envt = #{oprEnvt}</if>
+            <if test="taskMaster != null  and taskMaster != ''"> and task_master = #{taskMaster}</if>
+            <if test="inspector != null  and inspector != ''"> and inspector = #{inspector}</if>
+            <if test="mlType != null  and mlType != ''"> and ml_type = #{mlType}</if>
+            <if test="safetyManMk != null  and safetyManMk != ''"> and safety_man_mk = #{safetyManMk}</if>
+            <if test="ipltDatTm != null  and ipltDatTm != ''"> and iplt_dat_tm = #{ipltDatTm}</if>
+            <if test="opltDatTm != null  and opltDatTm != ''"> and oplt_dat_tm = #{opltDatTm}</if>
+            <if test="jbcont != null  and jbcont != ''"> and jbcont = #{jbcont}</if>
+            <if test="ptnm != null  and ptnm != ''"> and ptnm = #{ptnm}</if>
+            <if test="startwork != null  and startwork != ''"> and startwork = #{startwork}</if>
+            <if test="jsa != null  and jsa != ''"> and jsa = #{jsa}</if>
+        </where>
+    </select>
+
+    <select id="selectBaseErpByVhNo" parameterType="String" resultMap="BaseErpResult">
+        <include refid="selectBaseErpVo"/>
+        where vh_no = #{vhNo}
+    </select>
+
+    <insert id="insertBaseErp" parameterType="BaseErp">
+        insert into base_erp
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="vhNo != null">vh_no,</if>
+            <if test="aplDp != null">apl_dp,</if>
+            <if test="egNm != null">eg_nm,</if>
+            <if test="egNo != null">eg_no,</if>
+            <if test="cnstNum != null">cnst_num,</if>
+            <if test="cnstSite != null">cnst_site,</if>
+            <if test="tkVnd != null">tk_vnd,</if>
+            <if test="tkVndSafBos != null">tk_vnd_saf_bos,</if>
+            <if test="cnstType != null">cnst_type,</if>
+            <if test="cnstTime != null">cnst_time,</if>
+            <if test="oprEnvt != null">opr_envt,</if>
+            <if test="taskMaster != null">task_master,</if>
+            <if test="inspector != null">inspector,</if>
+            <if test="mlType != null">ml_type,</if>
+            <if test="safetyManMk != null">safety_man_mk,</if>
+            <if test="ipltDatTm != null">iplt_dat_tm,</if>
+            <if test="opltDatTm != null">oplt_dat_tm,</if>
+            <if test="jbcont != null">jbcont,</if>
+            <if test="ptnm != null">ptnm,</if>
+            <if test="startwork != null">startwork,</if>
+            <if test="jsa != null">jsa,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="vhNo != null">#{vhNo},</if>
+            <if test="aplDp != null">#{aplDp},</if>
+            <if test="egNm != null">#{egNm},</if>
+            <if test="egNo != null">#{egNo},</if>
+            <if test="cnstNum != null">#{cnstNum},</if>
+            <if test="cnstSite != null">#{cnstSite},</if>
+            <if test="tkVnd != null">#{tkVnd},</if>
+            <if test="tkVndSafBos != null">#{tkVndSafBos},</if>
+            <if test="cnstType != null">#{cnstType},</if>
+            <if test="cnstTime != null">#{cnstTime},</if>
+            <if test="oprEnvt != null">#{oprEnvt},</if>
+            <if test="taskMaster != null">#{taskMaster},</if>
+            <if test="inspector != null">#{inspector},</if>
+            <if test="mlType != null">#{mlType},</if>
+            <if test="safetyManMk != null">#{safetyManMk},</if>
+            <if test="ipltDatTm != null">#{ipltDatTm},</if>
+            <if test="opltDatTm != null">#{opltDatTm},</if>
+            <if test="jbcont != null">#{jbcont},</if>
+            <if test="ptnm != null">#{ptnm},</if>
+            <if test="startwork != null">#{startwork},</if>
+            <if test="jsa != null">#{jsa},</if>
+        </trim>
+    </insert>
+
+    <update id="updateBaseErp" parameterType="BaseErp">
+        update base_erp
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="aplDp != null">apl_dp = #{aplDp},</if>
+            <if test="egNm != null">eg_nm = #{egNm},</if>
+            <if test="egNo != null">eg_no = #{egNo},</if>
+            <if test="cnstNum != null">cnst_num = #{cnstNum},</if>
+            <if test="cnstSite != null">cnst_site = #{cnstSite},</if>
+            <if test="tkVnd != null">tk_vnd = #{tkVnd},</if>
+            <if test="tkVndSafBos != null">tk_vnd_saf_bos = #{tkVndSafBos},</if>
+            <if test="cnstType != null">cnst_type = #{cnstType},</if>
+            <if test="cnstTime != null">cnst_time = #{cnstTime},</if>
+            <if test="oprEnvt != null">opr_envt = #{oprEnvt},</if>
+            <if test="taskMaster != null">task_master = #{taskMaster},</if>
+            <if test="inspector != null">inspector = #{inspector},</if>
+            <if test="mlType != null">ml_type = #{mlType},</if>
+            <if test="safetyManMk != null">safety_man_mk = #{safetyManMk},</if>
+            <if test="ipltDatTm != null">iplt_dat_tm = #{ipltDatTm},</if>
+            <if test="opltDatTm != null">oplt_dat_tm = #{opltDatTm},</if>
+            <if test="jbcont != null">jbcont = #{jbcont},</if>
+            <if test="ptnm != null">ptnm = #{ptnm},</if>
+            <if test="startwork != null">startwork = #{startwork},</if>
+            <if test="jsa != null">jsa = #{jsa},</if>
+        </trim>
+        where vh_no = #{vhNo}
+    </update>
+
+    <delete id="deleteBaseErpByVhNo" parameterType="String">
+        delete from base_erp where vh_no = #{vhNo}
+    </delete>
+
+    <delete id="deleteBaseErpByVhNos" >
+        delete from base_erp
+    </delete>
+
+    <select id="selectCount" resultType="int">
+        select  count(*) from base_erp
+    </select>
+
+    <select id="selectBaseErpAllList"  resultMap="BaseErpResult">
+        select vh_no, apl_dp, eg_nm, eg_no, cnst_num, cnst_site, tk_vnd, tk_vnd_saf_bos, cnst_type, cnst_time, opr_envt, task_master, inspector, ml_type, safety_man_mk, iplt_dat_tm, oplt_dat_tm, jbcont, ptnm, startwork, jsa from base_erp
+    </select>
+</mapper>

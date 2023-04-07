@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.timer.mapper.MrVw11er0Mapper">
+    <resultMap type="com.ruoyi.timer.domain.MrVw11er0" id="MrVw11er0Result">
+        <result property="vhno"    column="VhNo"    />
+        <result property="apldp"    column="AplDp"    />
+        <result property="egnm"    column="EgNm"    />
+        <result property="egno"    column="EgNo"    />
+        <result property="cnstnum"    column="CnstNum"    />
+        <result property="cnstsite"    column="CnstSite"    />
+        <result property="tkvnd"    column="TkVnd"    />
+        <result property="tkvndsafbos"    column="TkVndSafBos"    />
+        <result property="cnsttype15"    column="CnstType_15"    />
+        <result property="cnsttime19"    column="CnstTime_19"    />
+        <result property="oprenvt21"    column="OprEnvt_21"    />
+        <result property="taskmaster22"    column="TaskMaster_22"    />
+        <result property="inspector23"    column="Inspector_23"    />
+        <result property="mltype"    column="MlType"    />
+        <result property="safetymanmk"    column="SafetyManMk"    />
+        <result property="ipltdattm"    column="IPLTDatTm"    />
+        <result property="opltdattm"    column="OPLTDatTm"    />
+        <result property="jbcont"    column="JBCONT"    />
+        <result property="ptnm"    column="PTNM"    />
+        <result property="startwork"    column="StartWork"    />
+        <result property="jsa"    column="JSA"    />
+    </resultMap>
+
+    <sql id="selectMrVw11er0Vo">
+        select VhNo, AplDp, EgNm, EgNo, CnstNum, CnstSite, TkVnd, TkVndSafBos, CnstType_15, CnstTime_19, OprEnvt_21, TaskMaster_22, Inspector_23, MlType, SafetyManMk, IPLTDatTm, OPLTDatTm, JBCONT, PTNM, StartWork, JSA from mr_vw11ER0
+    </sql>
+
+
+
+    <select id="selectMrVw11er0List" parameterType="MrVw11er0" resultMap="MrVw11er0Result">
+        <include refid="selectMrVw11er0Vo"/>
+        <where>
+            <if test="vhno != null  and vhno != ''"> and VhNo = #{vhno}</if>
+            <if test="apldp != null  and apldp != ''"> and AplDp = #{apldp}</if>
+            <if test="egnm != null  and egnm != ''"> and EgNm = #{egnm}</if>
+            <if test="egno != null  and egno != ''"> and EgNo = #{egno}</if>
+            <if test="cnstnum != null  and cnstnum != ''"> and CnstNum = #{cnstnum}</if>
+            <if test="cnstsite != null  and cnstsite != ''"> and CnstSite = #{cnstsite}</if>
+            <if test="tkvnd != null  and tkvnd != ''"> and TkVnd = #{tkvnd}</if>
+            <if test="tkvndsafbos != null  and tkvndsafbos != ''"> and TkVndSafBos = #{tkvndsafbos}</if>
+            <if test="cnsttype15 != null  and cnsttype15 != ''"> and CnstType_15 = #{cnsttype15}</if>
+            <if test="cnsttime19 != null  and cnsttime19 != ''"> and CnstTime_19 = #{cnsttime19}</if>
+            <if test="oprenvt21 != null  and oprenvt21 != ''"> and OprEnvt_21 = #{oprenvt21}</if>
+            <if test="taskmaster22 != null  and taskmaster22 != ''"> and TaskMaster_22 = #{taskmaster22}</if>
+            <if test="inspector23 != null  and inspector23 != ''"> and Inspector_23 = #{inspector23}</if>
+            <if test="mltype != null  and mltype != ''"> and MlType = #{mltype}</if>
+            <if test="safetymanmk != null  and safetymanmk != ''"> and SafetyManMk = #{safetymanmk}</if>
+            <if test="ipltdattm != null  and ipltdattm != ''"> and IPLTDatTm = #{ipltdattm}</if>
+            <if test="opltdattm != null  and opltdattm != ''"> and OPLTDatTm = #{opltdattm}</if>
+            <if test="jbcont != null  and jbcont != ''"> and JBCONT = #{jbcont}</if>
+            <if test="ptnm != null  and ptnm != ''"> and PTNM = #{ptnm}</if>
+            <if test="startwork != null  and startwork != ''"> and StartWork = #{startwork}</if>
+            <if test="jsa != null  and jsa != ''"> and JSA = #{jsa}</if>
+        </where>
+    </select>
+
+    <select id="selectMrVw11er0ByVhno" parameterType="String" resultMap="MrVw11er0Result">
+        <include refid="selectMrVw11er0Vo"/>
+        where VhNo = #{vhno}
+    </select>
+
+
+
+    <select id="selectMrVw11er0Count" resultType="integer">
+        select count(vhno) from mr_vw11ER0
+    </select>
+
+
+    <select id="selectMrVw11er0LAllist" resultMap="MrVw11er0Result">
+        select VhNo, AplDp, EgNm, EgNo, CnstNum, CnstSite, TkVnd, TkVndSafBos, CnstType_15, CnstTime_19, OprEnvt_21, TaskMaster_22, Inspector_23, MlType, SafetyManMk, IPLTDatTm, OPLTDatTm, JBCONT, PTNM, StartWork, JSA from mr_vw11ER0
+    </select>
+
+</mapper>

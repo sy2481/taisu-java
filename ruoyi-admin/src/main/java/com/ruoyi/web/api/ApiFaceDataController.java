@@ -153,7 +153,7 @@ public class ApiFaceDataController {
                     return Response.builder().code(1).data(face).build();
                 }
             }
-            //循环压缩
+            //循环压缩 150KB内
             if (file.getSize() > 1024 * 100) {
                 fileUrl = ImgFileTools.compressionLessByGoogle(RuoYiConfig.getProfile(), fileUrl, 100);
             }

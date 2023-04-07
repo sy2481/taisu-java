@@ -14,6 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+
+import com.ruoyi.common.utils.poi.ExcelUtil;
+
+import javax.servlet.http.HttpServletResponse;
+
 import java.util.List;
 
 /**
@@ -76,6 +81,19 @@ public class SafetyCarController extends BaseController {
     @GetMapping(value = "/{idno}")
     public AjaxResult getInfo(@PathVariable("idno") String idno) {
         return AjaxResult.success(safetycarService.selectBaseSafetycarByIdno(idno));
+    }
+
+    /**
+     * 导出车辆信息列表
+     */
+    @PreAuthorize("@ss.hasPermi('base:safetyCar:export')")
+    @Log(title = "导出", businessType = BusinessType.EXPORT)
+    @PostMapping("/export")
+    public void export(HttpServletResponse response, BaseSafetycar baseSafetycar)
+    {
+        List<BaseSafetycar> list = safetycarService.selectBaseSafetycarList(baseSafetycar);
+        ExcelUtil<BaseSafetycar> util = new ExcelUtil<BaseSafetycar>(BaseSafetycar.class);
+        util.exportExcel(response, list, "车辆数据");
     }
 
 

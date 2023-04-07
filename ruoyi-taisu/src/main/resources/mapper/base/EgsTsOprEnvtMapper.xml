@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.EgsTsOprEnvtMapper">
+
+    <resultMap type="EgsTsOprEnvt" id="EgsTsOprEnvtResult">
+        <result property="oprId"    column="opr_id"    />
+        <result property="oprCd"    column="opr_cd"    />
+        <result property="oprNm"    column="opr_nm"    />
+        <result property="oprDisplay"    column="opr_display"    />
+        <result property="oprColor"    column="opr_color"    />
+        <result property="oprCerts"    column="opr_certs"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectEgsTsOprEnvtVo">
+        select opr_id, opr_cd, opr_nm, opr_display, opr_color, opr_certs, create_by, create_time, update_by, update_time from egs_ts_opr_envt
+    </sql>
+
+    <select id="selectEgsTsOprEnvtList" parameterType="EgsTsOprEnvt" resultMap="EgsTsOprEnvtResult">
+        <include refid="selectEgsTsOprEnvtVo"/>
+        <where>
+            <if test="oprCd != null  and oprCd != ''"> and opr_cd = #{oprCd}</if>
+            <if test="oprNm != null  and oprNm != ''"> and opr_nm like concat('%', #{oprNm}, '%')</if>
+            <if test="oprDisplay != null  and oprDisplay != ''"> and opr_display like concat('%', #{oprDisplay}, '%')</if>
+            <if test="oprColor != null  and oprColor != ''"> and opr_color = #{oprColor}</if>
+            <if test="oprCerts != null  and oprCerts != ''"> and opr_certs = #{oprCerts}</if>
+            <if test="params!=null and params.ids != null and params.ids != ''">
+                and id in
+                <foreach item="id" collection="params.ids.split(',')" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+
+        </where>
+    </select>
+
+    <select id="selectEgsTsOprEnvtByOprId" parameterType="Long" resultMap="EgsTsOprEnvtResult">
+        <include refid="selectEgsTsOprEnvtVo"/>
+        where opr_id = #{oprId}
+    </select>
+
+    <insert id="insertEgsTsOprEnvt" parameterType="EgsTsOprEnvt">
+        insert into egs_ts_opr_envt
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="oprId != null">opr_id,</if>
+            <if test="oprCd != null">opr_cd,</if>
+            <if test="oprNm != null">opr_nm,</if>
+            <if test="oprDisplay != null">opr_display,</if>
+            <if test="oprColor != null">opr_color,</if>
+            <if test="oprCerts != null">opr_certs,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="oprId != null">#{oprId},</if>
+            <if test="oprCd != null">#{oprCd},</if>
+            <if test="oprNm != null">#{oprNm},</if>
+            <if test="oprDisplay != null">#{oprDisplay},</if>
+            <if test="oprColor != null">#{oprColor},</if>
+            <if test="oprCerts != null">#{oprCerts},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateEgsTsOprEnvt" parameterType="EgsTsOprEnvt">
+        update egs_ts_opr_envt
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="oprCd != null">opr_cd = #{oprCd},</if>
+            <if test="oprNm != null">opr_nm = #{oprNm},</if>
+            <if test="oprDisplay != null">opr_display = #{oprDisplay},</if>
+            <if test="oprColor != null">opr_color = #{oprColor},</if>
+            <if test="oprCerts != null">opr_certs = #{oprCerts},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where opr_id = #{oprId}
+    </update>
+
+    <delete id="deleteEgsTsOprEnvtByOprId" parameterType="Long">
+        delete from egs_ts_opr_envt where opr_id = #{oprId}
+    </delete>
+
+    <delete id="deleteEgsTsOprEnvtByOprIds" parameterType="String">
+        delete from egs_ts_opr_envt where opr_id in
+        <foreach item="oprId" collection="array" open="(" separator="," close=")">
+            #{oprId}
+        </foreach>
+    </delete>
+
+    <select id="existEgsTsOprEnvt" parameterType="EgsTsOprEnvt" resultMap="EgsTsOprEnvtResult">
+        <include refid="selectEgsTsOprEnvtVo"/>
+        <where>
+            <if test="oprId != null and oprId!=''">and opr_id != #{oprId}</if>
+            and opr_cd = #{oprCd}
+        </where>
+    </select>
+
+    <select id="selectEgsTsOprEnvtListByOprCds" resultMap="EgsTsOprEnvtResult">
+        <include refid="selectEgsTsOprEnvtVo"/>
+        where opr_cd in
+        <foreach item="oprCd" collection="array" open="(" separator="," close=")">
+            #{oprCd}
+        </foreach>
+    </select>
+</mapper>

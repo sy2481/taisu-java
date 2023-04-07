@@ -116,7 +116,7 @@ public interface HcWorkOrderCarMapper {
      *
      * @return
      */
-    public List<HcWorkOrderCar> selectHcWorkOrderCarListToHr();
+    public List<HcWorkOrderCar> selectHcWorkOrderCarListToHr(Date opltTm);
 
     /**
      * 修改司機信息

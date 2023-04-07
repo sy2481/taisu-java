@@ -212,7 +212,61 @@ public class PlcSocket {
     }
 
 
-    public static void sentMessage(String ip,String port, String index) {
+    public static void sentNewMessage(String ip, String port, String index) {
+        String[] commands = index.split(",");
+        if (ip != null && (ip.equals("") || (ip.equals("127.0.0.1")) || commands.length == 0)) {
+            return;
+        }
+        PlcSocket plc = new PlcSocket(ip, 6000, 0, PlcSocket.CODE_TYPE.HEX.name());
+
+        if (commands.length > 0) {
+            for (String command : commands) {
+                plc.sendComm(command);
+//        plc.sendComm("02FF0A0000000000204D010000");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        plc.close();
+    }
+
+
+//        if (ip != null && (ip.equals("") || (ip.equals("127.0.0.1")))) {
+//            return;
+//        }
+//        if (!index.equals("")) {
+//            PlcSocket plc = new PlcSocket(ip, 6000, 0, PlcSocket.CODE_TYPE.HEX.name());
+//            // byte[] bytes = CrcUtils.hexStringToByte(String.format(PlcCommandConstant.CLOSE_DOOR_COMMAND, index));
+//            plc.sendComm(String.format(PlcCommandConstant.CLOSE_DOOR_COMMAND, index));
+////        plc.sendComm("02FF0A0000000000204D010000");
+//            try {
+//                Thread.sleep(500);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+////        plc.sendComm("02FF0A0000000000204D010010");
+//            //byte[] bytes1 = CrcUtils.hexStringToByte(String.format(PlcCommandConstant.OPEN_DOOR_COMMAND, index));
+//            plc.sendComm(String.format(PlcCommandConstant.OPEN_DOOR_COMMAND, index));
+//            try {
+//                Thread.sleep(1000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+////        plc.sendComm("02FF0A0000000000204D010000");
+//            plc.sendComm(String.format(PlcCommandConstant.CLOSE_DOOR_COMMAND, index));
+//            try {
+//                Thread.sleep(500);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//            plc.close();
+//        }
+
+
+    public static void sentMessage(String ip, String port, String index) {
         if (ip != null && (ip.equals("") || (ip.equals("127.0.0.1")))) {
             return;
         }

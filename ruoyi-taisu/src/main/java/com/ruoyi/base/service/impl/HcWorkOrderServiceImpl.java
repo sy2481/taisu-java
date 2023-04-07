@@ -268,7 +268,8 @@ public class HcWorkOrderServiceImpl implements IHcWorkOrderService {
         int result = 0;
 
         //需要移动的车辆hcWorkOrderCarList
-        List<HcWorkOrderCar> hcWorkOrderCarList = hcWorkOrderCarMapper.selectHcWorkOrderCarListToHr();
+        Date opltTm=DateUtils.getToDayBeginTime();//必須是當天的00:00:00前的數據
+        List<HcWorkOrderCar> hcWorkOrderCarList = hcWorkOrderCarMapper.selectHcWorkOrderCarListToHr(opltTm);
         if (hcWorkOrderCarList.size() == 0) {
             return result;
         }

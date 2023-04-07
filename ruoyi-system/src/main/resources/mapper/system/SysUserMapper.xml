@@ -48,7 +48,7 @@
         <result property="emisStandard"    column="emis_standard"    />
         <result property="emisStandardName"    column="emis_standard_name"    />
         <result property="envSign"    column="env_sign"    />
-
+<!--        <result property="inOrOutFlag" column="in_or_out_flag"/>-->
         <association property="dept" column="dept_id" javaType="SysDept" resultMap="deptResult"/>
         <!--<association property="factory"    column="factory_id" javaType="SysDept" select="com.ruoyi.system.mapper.SysDeptMapper.selectDeptById" />-->
         <collection property="roles" javaType="java.util.List" resultMap="RoleResult"/>
@@ -413,6 +413,7 @@
         <if test="sended != null ">sended,</if>
         <if test="plc != null and plc != ''">plc,</if>
         <if test="displayStatus != null and displayStatus != ''">display_status,</if>
+        <!--if test="inOrOutFlag != null">in_or_out_flag,</if-->
         create_time
         )values(
         <if test="userId != null and userId != ''">#{userId},</if>
@@ -441,6 +442,7 @@
         <if test="sended != null ">#{sended},</if>
         <if test="plc != null and plc != ''">#{plc},</if>
         <if test="displayStatus != null and displayStatus != ''">#{displayStatus},</if>
+        <!--if test="inOrOutFlag != null">#{inOrOutFlag},</if-->
         getdate()
         )
     </insert>
@@ -477,6 +479,7 @@
             <if test="emisStandardName != null">emis_standard_name = #{emisStandardName},</if>
             <if test="envSign != null">env_sign = #{envSign},</if>
             <if test="displayStatus != null and displayStatus != ''">display_status = #{displayStatus},</if>
+            <!--if test="inOrOutFlag != null">in_or_out_flag= #{inOrOutFlag},</if-->
             plc = #{plc},
             update_time = getdate()
         </set>
@@ -609,6 +612,7 @@
             <if test="item.sended != null ">sended,</if>
             <if test="item.plc != null and item.plc != ''">plc,</if>
             <if test="item.displayStatus != null and item.displayStatus != ''">display_status,</if>
+            <!--if test="item.inOrOutFlag != null and item.inOrOutFlag != ''">in_or_out_flag,</if-->
             create_time
             )values(
             <if test="item.deptId != null and item.deptId != ''">#{item.deptId},</if>
@@ -636,6 +640,7 @@
             <if test="item.sended != null ">#{item.sended},</if>
             <if test="item.plc != null and item.plc != ''">#{item.plc},</if>
             <if test="item.displayStatus != null and item.displayStatus != ''">#{item.displayStatus},</if>
+             <!--if test="item.inOrOutFlag != null and item.inOrOutFlag != ''">#{item.inOrOutFlag},</if-->
             getdate()
             )
         </foreach>

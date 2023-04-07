@@ -46,12 +46,12 @@
 
     <select id="getInOutLog" resultMap="TimInOutLogResult" >
         <!--当天的全部-->
-        SELECT * FROM InOutLog WHERE DateTime &lt;= #{nextDay} and DateTime &gt; #{today} and AID>#{maxAid} and FctDorNm=#{factoryCode}  order by AID
+        SELECT * FROM InOutLog WHERE DateTime &lt;= #{nextDay} and DateTime &gt; #{today} and AID>#{maxAid} and FctDorNm=#{factoryCode}  order by AID desc
     </select>
 
     <select id="getInOutLogEVA" resultMap="TimInOutLogResult" >
         <!--当天的全部-->
-        SELECT * FROM InOutLog WHERE DateTime &lt;= #{nextDay} and DateTime &gt; #{today} and AID>#{maxAid} and FctDorNm=#{factoryCode}  order by AID
+        SELECT * FROM InOutLog WHERE DateTime &lt;= #{nextDay} and DateTime &gt; #{today} and AID>#{maxAid} and FctDorNm=#{factoryCode}  order by AID desc
     </select>
 
     <select id="getInOutLogExtend" resultMap="TimInOutLogResult" >

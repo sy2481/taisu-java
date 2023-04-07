@@ -399,7 +399,7 @@ public class ApiInOutCheckController {
         baseSafetycar.setIdno(plateNo);
         List<BaseSafetycar> baseSafetycars = safetycarService.selectSafetyCarList(baseSafetycar);
         Long carType = 2L;
-        if (baseSafetycars != null) {
+        if (baseSafetycars != null&& baseSafetycars.size()>0) {
              if(baseSafetycars.get(0).getCarType()!=null){
                  carType=baseSafetycars.get(0).getCarType();
              }

@@ -1,7 +1,9 @@
 package com.ruoyi.base.service;
 
+import java.util.Date;
 import java.util.List;
 import com.ruoyi.base.domain.InOutLog;
+import com.ruoyi.base.vo.SelectExceptionInOutLogListVO;
 import org.apache.ibatis.annotations.Param;
 
 /**
@@ -67,4 +69,6 @@ public interface IInOutLogService
     public InOutLog getInOutLogGuestByIdCard( String idCard,Integer time,String personType,Long deptId);
 
     int removeLog(Long id);
+
+    public List<SelectExceptionInOutLogListVO>  selectExceptionInOutLogList(Date startTime);
 }

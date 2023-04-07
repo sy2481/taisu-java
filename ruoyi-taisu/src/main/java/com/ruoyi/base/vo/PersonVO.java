@@ -28,7 +28,8 @@ public class PersonVO implements Serializable {
     private String personId;
     /** 人员名称 **/
     private String personName;
-    /** 人员类型 0-内部员工、1-厂商员工 **/
+    /** 人员类型 0-内部员工、1-厂商员工**/
+    /**添加一個危化類型2 --by sunlj**/
     private Integer personType;
     /** 手机号 **/
     private String phoneNo;

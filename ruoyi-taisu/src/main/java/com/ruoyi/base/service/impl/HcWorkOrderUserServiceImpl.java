@@ -157,20 +157,20 @@ public class HcWorkOrderUserServiceImpl implements IHcWorkOrderUserService {
                 hcWorkOrderUser.getIpltTm(),
                 hcWorkOrderUser.getId());
         if (cnt >= 2) {
-            throw new ServiceException("保存危化人員【" + hcWorkOrderUser.getIdNo() + "-" + hcWorkOrderUser.getNm() + "】失敗，該危化工單下已存在2個以上的人員。");
+            throw new ServiceException("保存物流人員【" + hcWorkOrderUser.getIdNo() + "-" + hcWorkOrderUser.getNm() + "】失敗，該物流車輛下已存在2個以上的人員。");
         }
         //同一個工單、同車輛、同入廠時間下身份證不能重複
         List<HcWorkOrderUser> sameIdnoList = hcWorkOrderUserMapper.existSameIdno(hcWorkOrderUser);
         if (sameIdnoList.size() > 0) {
             HcWorkOrderUser vo = sameIdnoList.get(0);
-            throw new ServiceException("保存危化人員【" + hcWorkOrderUser.getIdNo() + "-" + hcWorkOrderUser.getNm() + "】失敗，該危化工單下已存在同身份證號的危化人員。");
+            throw new ServiceException("保存物流人員【" + hcWorkOrderUser.getIdNo() + "-" + hcWorkOrderUser.getNm() + "】失敗，該物流車輛下已存在同身份證號的物流人員。");
         }
         if (hcWorkOrderUser.getUserType() == 1) {
             //同一個工單下，只能存在一個司機
             List<HcWorkOrderUser> driverList = hcWorkOrderUserMapper.existDriver(hcWorkOrderUser);
             if (driverList.size() > 0) {
                 HcWorkOrderUser vo = driverList.get(0);
-                throw new ServiceException("保存危化人員【" + hcWorkOrderUser.getIdNo() + "-" + hcWorkOrderUser.getNm() + "】失敗，該危化工單下已存在司機，如需修改，請先讓其他同行人員先改為押運員。");
+                throw new ServiceException("保存物流人員【" + hcWorkOrderUser.getIdNo() + "-" + hcWorkOrderUser.getNm() + "】失敗，該物流車輛下已存在司機，如需修改，請先讓其他同行人員先改為押運員。");
             }
         }
 
@@ -202,9 +202,9 @@ public class HcWorkOrderUserServiceImpl implements IHcWorkOrderUserService {
      */
     private void redunHcWorkOrderCar(HcWorkOrderUser entity) {
         HcWorkOrderCar hcWorkOrderCar = hcWorkOrderCarMapper.selectHcWorkOrderCarByVhNoIdNo(entity.getVhNo(), entity.getLicense(),entity.getIpltTm());
-        ;
+
         if (hcWorkOrderCar == null) {
-            throw new ServiceException("該人員的車輛數據缺失，請聯繫管理員。");
+            return;
         }
 
         //如果是司機，回寫到車輛表

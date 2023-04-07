@@ -373,6 +373,7 @@ public class HcWorkOrderUser extends BaseEntity {
                 .append("createTime", getCreateTime())
                 .append("updateBy", getUpdateBy())
                 .append("updateTime", getUpdateTime())
+                .append("ipltTm",getIpltTm())
                 .toString();
     }
 }

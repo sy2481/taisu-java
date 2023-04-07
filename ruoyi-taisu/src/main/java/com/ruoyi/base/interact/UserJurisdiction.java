@@ -74,6 +74,44 @@ public class UserJurisdiction {
         return indexNos;
     }
 
+    public List<String> getCarDeviceCodeByUser(SysUser sysUser) {
+
+        //查询到员工的厂区(多个)
+        SysUser user = userMapper.selectUserById(sysUser.getUserId());
+        if (StringUtils.isBlank(user.getFactoryId())) {
+            return null;
+        }
+        List<Long> longList = new ArrayList<>();
+        List<String> indexNos = new ArrayList<>();
+        //通道不为空，权限根据通道下发
+        if (StringUtils.isNotBlank(user.getPlc())) {
+            String[] split = user.getPlc().split(",");
+            for (String plc : split) {
+                longList.add(new Long(plc));
+            }
+            List<PlcEquipment> plcEquipmentById = plcEquipmentService.getPlcEquipmentById(longList);
+            for (PlcEquipment plcEquipment : plcEquipmentById) {
+                //indexNos.addAll(equipmentMapper.listPersonEquipmentCode(plcEquipment.getIp()));
+                //修改查找plc下车辆设备
+                indexNos.addAll(equipmentMapper.listCarEquipmentCode(plcEquipment.getIp()));
+            }
+        }else {
+            //通道为空，根据厂区权限
+            String[] split = user.getFactoryId().split(",");
+            //根据厂区拿PLC(in)
+            for (String factory : split) {
+                longList.add(new Long(factory));
+            }
+            List<PlcEquipment> plcEquipmentByDept = plcEquipmentService.getPlcEquipmentByDept(longList);
+            for (PlcEquipment plcEquipment : plcEquipmentByDept) {
+                //修改查找plc下车辆设备
+                indexNos.addAll(equipmentMapper.listCarEquipmentCode(plcEquipment.getIp()));
+//                indexNos.addAll(equipmentMapper.listPersonEquipmentCode(plcEquipment.getIp()));
+            }
+        }
+        return indexNos;
+    }
+
     public List<String> getCodeByUserNew(SysUser sysUser) {
 
         //查询到员工的厂区(多个)

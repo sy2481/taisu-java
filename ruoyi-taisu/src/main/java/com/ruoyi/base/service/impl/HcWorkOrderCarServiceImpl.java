@@ -681,6 +681,10 @@ public class HcWorkOrderCarServiceImpl implements IHcWorkOrderCarService {
                     hcWorkOrderUser.setAddress(ZJFConverter.SimToTra(hcWorkOrderUser.getAddress()));
                 }
 
+                if (StringUtils.isNotEmpty(hcWorkOrderUser.getCompany())) {
+                    hcWorkOrderUser.setCompany(ZJFConverter.SimToTra(hcWorkOrderUser.getCompany()));
+                }
+
                 //從身份證獲取生日和性別
                 hcWorkOrderUser.setBirthday(BatisUtils.getBirthFromIdNo(hcWorkOrderUser.getIdNo()));
                 hcWorkOrderUser.setSex(BatisUtils.getSexFromIdNo(hcWorkOrderUser.getIdNo()));

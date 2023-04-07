@@ -88,7 +88,7 @@ public class ImgFileTools {
         File img = new File(prefix + filePath);
         //不存在，或者比 100k 小，直接结束
         if (!img.exists() || img.length() < sizeKb * 1024) {
-            return filePath;
+            return "/profile" + filePath;
         }
 
         //根据点分割下，然后获得新路径
@@ -113,7 +113,7 @@ public class ImgFileTools {
                 return "/profile" + newFileName;
             }
         }
-        return filePath;
+        return "/profile" + filePath;
     }
 
     /**

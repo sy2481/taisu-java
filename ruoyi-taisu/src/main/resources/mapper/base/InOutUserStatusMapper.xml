@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.base.mapper.InOutUserStatusMapper">
+
+    <resultMap type="InOutUserStatus" id="InOutUserStatusResult">
+        <result property="idNo"    column="id_no"    />
+        <result property="username"    column="username"    />
+        <result property="deptName" column="dept_name" />
+        <result property="inTime"    column="in_time"    />
+        <result property="outTime"    column="out_time"    />
+        <result property="inOrOutFlag"    column="in_or_out_flag"    />
+    </resultMap>
+
+    <sql id="selectInOutUserStatusVo">
+        select id_no, username,dept_name, in_time, out_time, in_or_out_flag from in_out_user_status
+    </sql>
+
+    <select id="selectInOutUserStatusList" parameterType="InOutUserStatus" resultMap="InOutUserStatusResult">
+        <include refid="selectInOutUserStatusVo"/>
+        <where>
+            <if test="username != null  and username != ''"> and username like concat('%', #{username}, '%')</if>
+            <if test="inTime != null "> and in_time = #{inTime}</if>
+            <if test="outTime != null "> and out_time = #{outTime}</if>
+            <if test="inOrOutFlag != null "> and in_or_out_flag = #{inOrOutFlag}</if>
+        </where>
+    </select>
+
+    <select id="selectInOutUserStatusByIdNo" parameterType="String" resultMap="InOutUserStatusResult">
+        <include refid="selectInOutUserStatusVo"/>
+        where id_no = #{idNo}
+    </select>
+
+    <insert id="insertInOutUserStatus" parameterType="InOutUserStatus">
+        insert into in_out_user_status
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="idNo != null">id_no,</if>
+            <if test="username != null">username,</if>
+            <if test="deptName !=null">dept_name</if>
+            <if test="inTime != null">in_time,</if>
+            <if test="outTime != null">out_time,</if>
+            <if test="inOrOutFlag != null">in_or_out_flag,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="idNo != null">#{idNo},</if>
+            <if test="username != null">#{username},</if>
+            <if test="deptName !=null">#{deptName}</if>
+            <if test="inTime != null">#{inTime},</if>
+            <if test="outTime != null">#{outTime},</if>
+            <if test="inOrOutFlag != null">#{inOrOutFlag},</if>
+        </trim>
+    </insert>
+
+    <update id="updateInOutUserStatus" parameterType="InOutUserStatus">
+        update in_out_user_status
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="username != null">username = #{username},</if>
+            <if test="deptName !=null">dept_name=#{deptName}</if>
+            <if test="inTime != null">in_time = #{inTime},</if>
+            <if test="outTime != null">out_time = #{outTime},</if>
+            <if test="inOrOutFlag != null">in_or_out_flag = #{inOrOutFlag},</if>
+        </trim>
+        where id_no = #{idNo}
+    </update>
+
+    <delete id="deleteInOutUserStatusByIdNo" parameterType="String">
+        delete from in_out_user_status where id_no = #{idNo}
+    </delete>
+
+    <delete id="deleteInOutUserStatusByIdNos" parameterType="String">
+        delete from in_out_user_status where id_no in
+        <foreach item="idNo" collection="array" open="(" separator="," close=")">
+            #{idNo}
+        </foreach>
+    </delete>
+
+
+    <select id="selectInCount" resultType="java.lang.Integer">
+        select count(*) from in_out_user_status where in_or_out_flag=1
+    </select>
+</mapper>
